@@ -148,7 +148,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     $filtered_repo = ShipItRepo::typedOpen(
       ShipItDestinationRepo::class,
       $filtered_dir->getPath(),
-      '--orphan=master',
+      '--orphan='.$config->getDestinationBranch(),
     );
     $filtered_repo->commitPatch($changeset);
 
