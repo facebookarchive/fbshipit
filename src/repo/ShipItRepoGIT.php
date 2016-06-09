@@ -91,17 +91,15 @@ class ShipItRepoGIT
 
     $message = trim($message);
 
-    $matches = [];
-    preg_match(
-      "/^((.*\\n)?)---\\n /us",
-      $message,
-      $matches,
-      PREG_OFFSET_CAPTURE
-    );
-    if (count($matches) > 0) {
-      // get rid of file list
-      $length = strlen($matches[1][0]);
-      $message = trim(substr($message, 0, $length));
+    $start_of_filelist = strrpos($message, "\n---\n ");
+    if ($start_of_filelist !== false) {
+      // Get rid of the file list when a summary is
+      // included in the commit message
+      $message = trim(substr($message, 0, $start_of_filelist));
+    } else if (strpos($message, "---\n ") === 0) {
+      // Git rid of the file list in the situation where there is
+      // no summary in the commit message (when it starts with "---\n").
+      $message = '';
     }
 
     $changeset = (new ShipItChangeset())->withMessage($message);
