@@ -327,7 +327,7 @@ class ShipItRepoGIT
       $dest->getPath(),
       'tar',
       'x',
-    ))->runSynchronously();
+    ))->setStdIn($tar)->runSynchronously();
 
     return shape('tempDir' => $dest, 'revision' => $rev);
   }
