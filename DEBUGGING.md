@@ -71,7 +71,7 @@ $ ls /tmp/wdt-github-patches/
 
 The patches are named after the commit ID in the source repository. You should
 be able to reproduce the `git-am` error by applying these
-patches by hand - then debug like any other bad-patch issue.
+patches by hand, then debug like any other bad-patch issue.
 
 ## Common Causes
 
