@@ -14,7 +14,7 @@ For example, Facebook uses it to:
 ## Major Features
 
  - read from Git or Mercurial (hg) repositories
- - write to Git repositories
+ - write to Git or Mercurial (hg) repositories
  - rewrite `user@uuid` authors from HgSubversion/git-svn
  - remove files or directories matching certain patterns
  - remove/rewrite sections of commit messages
