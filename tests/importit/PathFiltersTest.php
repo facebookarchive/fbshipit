@@ -70,7 +70,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
 
   public function testMoveDirectoriesThrowsWithDuplciationMappings(): void {
     /* HH_IGNORE_ERROR[2049]: Y U NO TYPECHECK? */
-    $this->setExpectedException(InvariantException::class);
+    $this->expectException(InvariantException::class);
     $in = ImmVector {
       'does/not/matter',
     };
