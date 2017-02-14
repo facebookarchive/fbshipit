@@ -142,6 +142,85 @@ if (isset($argv) && idx($argv, 0) === realpath(__FILE__)) {
 }
 ```
 
+```Hack
+<?hh
+
+namespace Facebook\ImportIt;
+
+use \Facebook\ShipIt\ {
+  MyGitHubUtils,
+  MySourceRepoInitPhase,
+  ShipItBaseConfig,
+  ShipItChangeset,
+  ShipItCleanPhase,
+  ShipItPullPhase,
+  ShipItRepoSide,
+  ShipItTransport
+};
+
+class ImportMyProject {
+
+  public static function filterChangeset(
+    ShipItChangeset $changeset,
+  ): ShipItChangeset {
+    return $changeset
+      |> ImportItPathFilters::moveDirectories(
+          $$,
+          ShipMyProject::getPathMappings(),
+        );
+  }
+
+  public static function cliMain(): void {
+    // The repository state will be updated and modified, so we need to use a
+    // consistent destination repository for all ImportIt phases.
+    $source_repo_getter = (ShipItBaseConfig $c) ==> {
+      return new ImportItRepoGIT(
+        $c->getSourcePath(),
+        $c->getSourceBranch(),
+      );
+    };
+
+    (new ShipItPhaseRunner(
+      new ShipItBaseConfig(
+        /* default working dir = */ '/var/tmp/shipit',
+        'source_dir_name',
+        'dest_dir_name',
+      ),
+      ImmVector {
+        new MySourceRepoInitPhase(/* ... */ ),
+        new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
+        new ShipItPullPhase(ShipItRepoSide::DESTINATION),
+        new ShipItGitHubInitPhase(
+          'my-github-org',
+          'my-github-project',
+          ShipItRepoSide::SOURCE,
+          ShipItTransport::HTTPS,
+          MyGitHubUtils::class,
+        ),
+        new ShipItCleanPhase(ShipItRepoSide::SOURCE),
+        new ShipItPullPhase(ShipItRepoSide::SOURCE),
+        new ImportItCheckoutBaseRevisionPhase($source_repo_getter),
+        new ImportItApplyPatchPhase(
+          $source_repo_getter,
+          ShipItRepoSide::SOURCE,
+        ),
+        new ImportItApplyPatchPhase(
+          $source_repo_getter,
+          ShipItRepoSide::DESTINATION,
+          $changeset ==> self::filterChangeset($changeset),
+        ),
+      },
+    ))
+      ->run();
+  }
+}
+
+// Allow require() from unit test
+if (isset($argv) && idx($argv, 0) === realpath(__FILE__)) {
+  ImportMyProject::cliMain();
+}
+```
+
 This will require two additional classes:
 
  - `MySourceRepoInitPhase` - clone and checkout the source repository.
