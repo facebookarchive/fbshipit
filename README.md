@@ -120,6 +120,7 @@ class ShipMyProject
         'my-github-org',
         'my-github-project',
         ShipItRepoSide::DESTINATION,
+        ShipItTransport::HTTPS,
         MyGitHubUtils::class,
       ),
       new ShipItCreateNewRepoPhase(),
