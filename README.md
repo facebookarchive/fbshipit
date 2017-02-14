@@ -79,7 +79,15 @@ Filters are provided for common operations - the most frequent are:
 
 namespace Facebook\ShipIt;
 
-class ShipMyProject {
+class ShipMyProject
+  implements \Facebook\ImportIt\ImportItPathMappings {
+
+  public static function getPathMappings(): ImmMap<string, string> {
+    return ImmMap {
+      'myproject/' => '',
+    };
+  }
+
   public static function filterChangeset(
     ShipItChangeset $changeset,
   ): ShipItChangeset {
@@ -93,10 +101,8 @@ class ShipMyProject {
           },
         )
       |> ShipItPathFilters::moveDirectories(
-        $$,
-          ImmMap {
-            'myproject/' => '',
-          },
+          $$,
+          self::getPathMappings(),
         );
   }
 
