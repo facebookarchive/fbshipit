@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -41,17 +41,19 @@ class ShipItRepoHG extends ShipItRepo
 
   <<__Override>>
   public function updateBranchTo(string $base_rev): void {
-    if (!$this->branch) {
+    $branch = $this->branch;
+    if ($branch === null) {
       throw new ShipItRepoHGException($this, 'setBranch must be called first.');
     }
-    $this->hgCommand('bookmark', '--force', '--rev', $base_rev, $this->branch);
-    $this->hgCommand('update', $this->branch);
+    $this->hgCommand('bookmark', '--force', '--rev', $base_rev, $branch);
+    $this->hgCommand('update', $branch);
   }
 
   <<__Override>>
   public function getHeadChangeset(
   ): ?ShipItChangeset {
-    if (!$this->branch) {
+    $branch = $this->branch;
+    if ($branch === null) {
       throw new ShipItRepoHGException($this, "setBranch must be called first.");
     }
     $log = $this->hgCommand(
@@ -59,7 +61,7 @@ class ShipItRepoHG extends ShipItRepo
       '--limit',
       '1',
       '-r',
-      $this->branch,
+      $branch,
        '--template',
        '{node}\\n',
     );
@@ -78,10 +80,10 @@ class ShipItRepoHG extends ShipItRepo
     string $revision,
     ImmSet<string> $roots,
   ): ?string {
-    if (!$this->branch) {
+    $branch = $this->branch;
+    if ($branch === null) {
       throw new ShipItRepoHGException($this, "setBranch must be called first.");
     }
-    $branch = $this->branch;
     $log = $this->hgCommand(
       'log',
       '--limit',
@@ -162,13 +164,17 @@ class ShipItRepoHG extends ShipItRepo
   }
 
   public function push(): void {
-    $this->hgCommand('push', '--branch', $this->branch);
+    $branch = $this->branch;
+    if ($branch === null) {
+      throw new ShipItRepoHGException($this, 'setBranch must be called first.');
+    }
+    $this->hgCommand('push', '--branch', $branch);
   }
 
   /*
    * Generator yielding patch sections of the diff blocks (individually).
    */
-  protected static function ParseHgRegions(string $patch) {
+  protected static function ParseHgRegions(string $patch): Iterator<string> {
     $contents = '';
     foreach(explode("\n", $patch) as $line) {
       $line = preg_replace('/(\r\n|\n)/', "\n", $line);
@@ -325,7 +331,7 @@ class ShipItRepoHG extends ShipItRepo
     return $changeset->withDiffs($diffs->toImmVector());
   }
 
-  protected function hgPipeCommand(?string $stdin, ...$args): string {
+  protected function hgPipeCommand(?string $stdin, string ...$args): string {
     // Some server-side commands will inexplicitly fail, and then succeed the
     // next time they are ran.  There are a some, however, that we never want
     // to re-run because we'll lose error messages as a result.
@@ -342,13 +348,13 @@ class ShipItRepoHG extends ShipItRepo
         'HGPLAIN' => '1',
       })
       ->setRetries($retry_count);
-    if ($stdin) {
+    if ($stdin !== null) {
       $command->setStdIn($stdin);
     }
     return $command->runSynchronously()->getStdOut();
   }
 
-  protected function hgCommand(...$args): string {
+  protected function hgCommand(string ...$args): string {
     return $this->hgPipeCommand(null, ...$args);
   }
 
@@ -397,7 +403,7 @@ class ShipItRepoHG extends ShipItRepo
 
     $ret = Vector { };
     foreach (
-      ShipItUtil::parsePatchWithoutHeader($patch) as $hunk
+      ShipItUtil::parsePatch($patch) as $hunk
     ) {
       $ret[] = self::parseDiffHunk($hunk);
     }
@@ -451,11 +457,15 @@ class ShipItRepoHG extends ShipItRepo
     ImmSet<string> $roots,
     ?string $rev = null,
   ): shape('tempDir' => ShipItTempDir, 'revision' => string) {
+    $branch = $this->branch;
+    if ($branch === null) {
+      throw new ShipItRepoHGException($this, 'setBranch must be called first.');
+    }
     if ($rev === null) {
       $rev = $this->hgCommand(
         'log',
         '-r',
-        $this->branch,
+        $branch,
         '-T',
         '{node}'
       );

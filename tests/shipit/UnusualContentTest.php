@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -106,7 +106,7 @@ final class UnusualContentTest extends BaseTest {
     );
   }
 
-  public function testAddingNewlineAtEOF() {
+  public function testAddingNewlineAtEOF(): void {
     $header = file_get_contents(
       __DIR__.'/git-diffs/add-newline-at-eof.header',
     );
@@ -124,7 +124,7 @@ final class UnusualContentTest extends BaseTest {
     $this->assertContains('\ No newline at end of file', $hunk);
   }
 
-  public function testStripFileListFromShortCommit() {
+  public function testStripFileListFromShortCommit(): void {
     $header = file_get_contents(
       __DIR__.'/git-diffs/no-summary-in-message.header',
     );
@@ -141,7 +141,7 @@ final class UnusualContentTest extends BaseTest {
     $this->assertEquals("", $message);
   }
 
-  public function testStripFileListFromLongCommit() {
+  public function testStripFileListFromLongCommit(): void {
     $header = file_get_contents(
       __DIR__.'/git-diffs/has-summary-in-message.header',
     );

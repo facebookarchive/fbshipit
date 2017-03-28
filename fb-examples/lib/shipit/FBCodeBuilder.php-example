@@ -126,6 +126,7 @@ trait FBCodeBuilderTrait {
           '@^'.FBCodeBuilder::DEST_GITHUB_HASHES.'@',
           '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'/facebook_@',
           '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'/README.facebook$@',
+          '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'/TARGETS@',
         },
         /* exceptions = */ ImmVector {
           '@^'.FBCodeBuilder::DEST_GITHUB_HASHES.'$@',

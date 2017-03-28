@@ -93,7 +93,8 @@ final class ShipItFlow extends FBShipItCLI {
     return ImmMap {
       // order matters!
       'fbcode/flow/github/_gitattributes' => '.gitattributes',
-      'fbcode/flow/github/' => '',
+      'fbcode/flow/github/website/yarn.lock' => 'website/yarn.lock',
+      'fbcode/flow/github/.merlin' => '.merlin',
       'fbcode/flow/' => '',
       'fbcode/hphp/hack/src/' => 'hack/',
     };

@@ -1,0 +1,58 @@
+<?hh
+/**
+ * Copyright (c) 2017-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+namespace Facebook\ImportIt;
+
+require_once(__DIR__.'/../autoload.php');
+
+use \Facebook\ShipIt\ {
+  ShipItChangeset,
+  ShipItPathFilters
+};
+
+final class ImportItFlow extends FBImportItCLI {
+  const type TShipIt = \Facebook\ShipIt\ShipItFlow;
+
+  <<__Override>>
+  protected static function projectFilterChangeset(
+    ShipItChangeset $changeset,
+  ): ShipItChangeset {
+    $shipit_class = static::getShipItClass();
+    $github_only_files = $shipit_class::getPathMappings()
+      ->filterWithKey(($internal, $_external) ==> strpos($internal, '/github/'))
+      ->values()
+      ->toImmSet();
+    return $changeset
+      |> ShipItPathFilters::rewritePaths(
+          $$,
+          $path ==> {
+            // prepend github-only files with `github/`
+            if ($github_only_files->contains($path)) {
+              return 'github/'.$path;
+            }
+            return $path;
+          }
+        )
+      |> ShipItPathFilters::rewritePaths(
+          $$,
+          $path ==> {
+            if (strpos($path, '.gitattributes') !== false) {
+              return str_replace('.gitattributes', '_gitattributes', $path);
+            }
+            return $path;
+          },
+        )
+      |> parent::projectFilterChangeset($$);
+  }
+}
+
+// Allow require() from unit test
+if (isset($argv) && realpath($argv[0]) === realpath(__FILE__)) {
+  ImportItFlow::cliMain();
+}

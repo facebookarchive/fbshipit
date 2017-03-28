@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -109,9 +109,10 @@ final class ShipItChangeset {
 
   public function withDebugMessage(
     \HH\FormatString<\PlainSprintf> $format_string,
-    ...$args
+    mixed ...$args
   ): ShipItChangeset {
     $messages = $this->getDebugMessages()->toVector();
+    /* HH_FIXME[4027]: cannot be a literal string */
     $messages[] = sprintf($format_string, ...$args);
 
     $out = clone $this;

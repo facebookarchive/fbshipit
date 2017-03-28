@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -53,7 +53,7 @@ abstract class ShipItRepo {
   // Level of verbosity for -v option
   const VERBOSE_STANDARD = 3;
 
-  static public $VERBOSE = 0;
+  static public int $VERBOSE = 0;
 
   const TYPE_GIT = 'git';
   const TYPE_HG  = 'hg';

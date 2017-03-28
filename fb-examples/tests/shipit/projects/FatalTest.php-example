@@ -1,6 +1,6 @@
 <?hh // strict
 /**
- * Copyright (c) 2016-present, Facebook, Inc.
+ * Copyright (c) 2017-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -9,23 +9,18 @@
  */
 namespace Facebook\ShipIt;
 
-final class FBLualibTest extends FBPublicProjectBaseTest {
+final class FatalTest extends FBPublicProjectBaseTest {
   <<__Override>>
-  protected static function map(
-    ShipItChangeset $changeset,
-  ): ShipItChangeset {
-    return ShipItFBLualib::filterChangeset(
-      $changeset,
-    );
+  protected static function map(ShipItChangeset $changeset): ShipItChangeset {
+    return ShipItFatal::filterChangeset($changeset);
   }
 
   <<__Override>>
   public static function getExamplePathMappings(): ImmMap<string, ?string> {
     return ImmMap {
-      'fbcode/fblualib/foo' => 'fblualib/foo',
-      'fbcode/fblualib/public_tld/INSTALL.md' => 'INSTALL.md',
-      'fbcode/fblualib/editline/fb/editline/init.lua'
-        => 'fblualib/editline/fb/editline/init.lua',
+      'fbcode/fatal/NormalFile.h' => 'fatal/NormalFile.h',
+      'fbcode/fatal/public_tld/TLDFile.txt' => 'TLDFile.txt',
+      'fbcode/fatal/facebook/secret' => null,
     };
   }
 

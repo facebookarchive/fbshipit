@@ -106,6 +106,7 @@ abstract class FBProjectBaseTest extends \Facebook\ShipIt\BaseTest {
 
   final protected static function getShipItClass(
   ): classname<ISupportsFBImportIt> {
+    // UNSAFE_EXPR
     return self::invoke_static_bypass_visibility(
       static::getImportItClass(),
       'getShipItClass',

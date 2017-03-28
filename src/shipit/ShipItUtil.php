@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -24,20 +24,10 @@ abstract class ShipItUtil {
   const RETURN_STDERR = 32;
 
   /*
-   * Generator yielding patch sections starting with header,
-   * then each of the diff blocks (individually)
-   * and finally the footer
+   * Generator yielding patch sections of the diff blocks (individually)
+   * and finally the footer.
    */
-  public static function parsePatchWithHeader(string $patch) {
-    return self::parsePatch($patch, true);
-  }
-
-  public static function parsePatchWithoutHeader(string $patch) {
-    return self::parsePatch($patch, false);
-  }
-
-  private static function parsePatch(string $patch, bool $expectHeader) {
-    $lookForDiff = !$expectHeader;
+  public static function parsePatch(string $patch): Iterator<string> {
     $contents = '';
     $matches = [];
 
@@ -48,16 +38,8 @@ abstract class ShipItUtil {
     foreach (explode("\n", $patch) as $line) {
       $line = preg_replace('/(\r\n|\n)/', "\n", $line);
 
-      if (!$lookForDiff) {
-        if (rtrim($line) === '---') {
-          $lookForDiff = true;
-        }
-        $contents .= $line."\n";
-        continue;
-      }
-
       if (preg_match('@^diff --git [ab]/(.*?) [ab]/\1$@', trim($line))) {
-        if ($contents !== '' || $expectHeader) {
+        if ($contents !== '') {
           yield $contents;
         }
         $seen_range_header = false;
@@ -137,7 +119,7 @@ abstract class ShipItUtil {
     string $path,
     ?string $stdin,
     int $flags,
-    ...$args
+    string ...$args
   ): string {
     $command = new ShipItShellCommand($path, ...$args);
 

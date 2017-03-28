@@ -75,6 +75,11 @@ abstract class FBShipItCLI
         $changeset ==> self::filterChangeset($changeset),
         $static_config['sourceRoots'],
       ),
+      new ShipItSaveConfigPhase(
+        $static_config['githubOrg'],
+        $static_config['githubProject'],
+        $static_config['sourceRoots'],
+      ),
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::SOURCE),
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::DESTINATION),
       new FBRepoInitPhase(

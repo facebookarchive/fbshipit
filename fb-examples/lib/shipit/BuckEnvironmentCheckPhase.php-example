@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -13,7 +13,7 @@ namespace Facebook\ShipIt;
 final class BuckEnvironmentCheckPhase extends EnvironmentCheckPhase {
   private static function runCommand(
     int $extra_flags,
-    ...$command
+    string ...$command
   ): string {
 /* HH_FIXME[4128] Use ShipItShellCommand */
     return ShipItUtil::shellExec(

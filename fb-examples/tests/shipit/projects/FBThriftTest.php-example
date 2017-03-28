@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 namespace Facebook\ShipIt;
 
 final class FBThriftTest extends FBPublicProjectBaseTest {

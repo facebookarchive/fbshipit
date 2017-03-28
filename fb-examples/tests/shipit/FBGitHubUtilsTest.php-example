@@ -52,6 +52,7 @@ final class FBGitHubUtilsTest extends BaseTest {
     string $organization,
     string $project,
   ): ShipItGitHubCredentials {
+    // UNSAFE_EXPR
     return self::invoke_static_bypass_visibility(
       FBGitHubUtils::class,
       'getCredentialsForProjectFrom',

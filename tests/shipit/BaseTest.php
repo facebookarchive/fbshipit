@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -20,7 +20,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
 
   protected function execSteps(
     string $cwd,
-    ...$steps
+    Container<string> ...$steps
   ): void {
     foreach ($steps as $step) {
 /* HH_FIXME[4128] Use ShipItShellCommand */
@@ -36,8 +36,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
   static protected function invoke_static_bypass_visibility<T>(
     classname<T> $classname,
     string $method,
-    ...$args
-  ) {
+    mixed ...$args
+  ): mixed {
     invariant(
       method_exists($classname, $method),
       'Method "%s" does not exists on "%s"!',

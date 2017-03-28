@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -22,11 +22,11 @@ final class FlowTest extends FBPublicProjectBaseTest {
     $test_file_name = ShipItFilterSanityCheckPhase::TEST_FILE_NAME;
     return ImmMap {
       'fbcode/flow/foo' => 'foo',
-      'fbcode/flow/github/foo' => 'foo',
+      'fbcode/flow/github/.merlin' => '.merlin',
       'fbcode/flow/github/_gitattributes' => '.gitattributes',
       'fbcode/flow/yarn.lock' => null,
       'fbcode/flow/foo/yarn.lock' => null,
-      'fbcode/flow/github/yarn.lock' => 'yarn.lock',
+      'fbcode/flow/github/website/yarn.lock' => 'website/yarn.lock',
       'fbcode/hphp/hack/src/'.$test_file_name => 'hack/'.$test_file_name,
       'fbcode/hphp/hack/src/utils/errors.ml' => null,
       'fbcode/hphp/hack/src/utils/foo.ml' => 'hack/utils/foo.ml',

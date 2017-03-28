@@ -12,58 +12,78 @@ namespace Facebook\ShipIt;
 require_once(__DIR__.'/../autoload.php');
 
 final class ShipItRelay extends FBShipItCLI {
-  const FBRK_ROOT = 'fbobjc/Libraries/FBReactKit';
+  const FBRK_ROOT = 'fbobjc/Libraries/FBReactKit/';
+  const RELAY_OSS = self::FBRK_ROOT.'js/RKJSModules/Libraries/Relay/oss/';
+
+  // Open source modules.
+  const GITHUB_ROOT = self::RELAY_OSS.'__github__/';
+  const BABEL_PLUGIN_RELAY = self::RELAY_OSS.'babel-plugin-relay/';
+  const REACT_RELAY = self::RELAY_OSS.'react-relay/';
+  const RELAY_COMPILER = self::RELAY_OSS.'relay-compiler/';
+  const RELAY_RUNTIME = self::RELAY_OSS.'relay-runtime/';
+
+  // Directories which will be removed in the future.
   const NEW_PLUGIN_ROOT =
-    'fbobjc/Libraries/FBReactKit/js/RKJSModules/Libraries/Relay/babel-plugin-graphql';
-  const RELAY_ROOT =
-    'fbobjc/Libraries/FBReactKit/js/RKJSModules/Libraries/Relay/relay';
+    self::FBRK_ROOT.'js/RKJSModules/Libraries/Relay/babel-plugin-graphql/';
+  const RELAY_ROOT = self::FBRK_ROOT.'js/RKJSModules/Libraries/Relay/relay/';
   const PLUGIN_ROOT =
-    'fbobjc/Libraries/FBReactKit/js/server/fb-transforms/babel-relay-plugin';
+    self::FBRK_ROOT.'js/server/fb-transforms/babel-relay-plugin/';
 
   <<__Override>>
   protected static function projectFilterChangeset(
     ShipItChangeset $changeset,
   ): ShipItChangeset {
-    $changeset = FBCommonFilters::stripSummariesByDefault($changeset);
-    $changeset = FBCommonFilters::applyAll($changeset);
-
-    $changeset = ShipItPathFilters::stripPaths(
-      $changeset,
-      ImmVector {
-        // Only sync out files from the Relay project
-        // Ignore __forks__ (but permit __github__/__forks__/)
-        '@^'.self::RELAY_ROOT.'/__forks__/@',
-        // The public project uses different Flow configs than we do internally
-        '@^'.self::RELAY_ROOT.'/\.flowconfig$@',
-        // The yarn.lock uses the offline-cache internally which makes it
-        // useless externally.
-        '@/yarn\.lock$@',
-      },
-    );
-
-    $changeset = ShipItPathFilters::rewritePaths(
-      $changeset,
-      $path ==> preg_replace('@/\.github\.flowconfig$@',
-        '/.flowconfig', $path),
-    );
-
-    $changeset = ShipItPathFilters::moveDirectories(
-      $changeset,
-      static::getPathMappings(),
-    );
-
-    return $changeset;
+    return $changeset
+      |> FBCommonFilters::stripSummariesByDefault($$)
+      |> FBCommonFilters::applyAll($$)
+      |> ShipItPathFilters::stripPaths(
+          $$,
+          ImmVector {
+            // Don't include the README in the top directory.
+            '@^'.self::RELAY_OSS.'README.md@',
+            // Only sync out files from the Relay project
+            // Ignore __forks__ (but permit __github__/__forks__/)
+            '@^'.self::RELAY_OSS.'(?!__github__).+?/__forks__/@',
+            '@^'.self::RELAY_ROOT.'__forks__/@',
+            // The public project uses different Flow configs than we do internally
+            '@^'.self::RELAY_ROOT.'\.flowconfig$@',
+            // The yarn.lock uses the offline-cache internally which makes it
+            // useless externally.
+            '@/yarn\.lock$@',
+          },
+        )
+      |> ShipItPathFilters::rewritePaths(
+          $$,
+          $path ==> preg_replace('@/\.github\.flowconfig$@',
+            '/.flowconfig', $path),
+        )
+      |> ShipItPathFilters::moveDirectories(
+        $$,
+        static::getPathMappings(),
+      );
   }
 
   <<__Override>>
   public static function getPathMappings(): ImmMap<string, string> {
     return ImmMap {
-      self::NEW_PLUGIN_ROOT.'/' => 'src/babel-plugin-graphql/',
-      self::PLUGIN_ROOT.'/' => 'scripts/babel-relay-plugin/',
-      self::RELAY_ROOT.'/__github__/eslintrc' => '.eslintrc',
-      self::RELAY_ROOT.'/__github__/src/flowconfig' => 'src/.flowconfig',
-      self::RELAY_ROOT.'/__github__/' => '',
-      self::RELAY_ROOT.'/' => 'src/',
+      // Special cases
+      self::GITHUB_ROOT.'eslintrc' => '.eslintrc',
+      self::GITHUB_ROOT.'src/flowconfig' => 'src/.flowconfig',
+
+      // Modules
+      self::GITHUB_ROOT => '',
+      self::BABEL_PLUGIN_RELAY => 'packages/babel-plugin-relay/',
+      self::REACT_RELAY => 'packages/react-relay/',
+      self::RELAY_COMPILER => 'packages/relay-compiler/',
+      self::RELAY_RUNTIME => 'packages/relay-runtime/',
+
+      // Directories which will be removed in the future.
+      self::NEW_PLUGIN_ROOT => 'src/babel-plugin-graphql/',
+      self::PLUGIN_ROOT => 'scripts/babel-relay-plugin/',
+      self::RELAY_ROOT.'__github__/eslintrc' => '.eslintrc',
+      self::RELAY_ROOT.'__github__/src/flowconfig' => 'src/.flowconfig',
+      self::RELAY_ROOT.'__github__/' => '',
+      self::RELAY_ROOT => 'src/',
     };
   }
 
@@ -74,6 +94,9 @@ final class ShipItRelay extends FBShipItCLI {
       'githubOrg' => 'facebook',
       'githubProject' => 'relay',
       'sourceRoots' => ImmSet {
+        self::RELAY_OSS,
+
+        // Directories which will be removed in the future.
         self::NEW_PLUGIN_ROOT,
         self::RELAY_ROOT,
         self::PLUGIN_ROOT,

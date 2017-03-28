@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -61,7 +61,7 @@ final class NewlinesTest extends BaseTest {
 
   private function createTestFiles(
     ShipItTempDir $temp_dir,
-  ) {
+  ): void {
     file_put_contents($temp_dir->getPath().'/unix.txt', self::UNIX_TXT);
     file_put_contents($temp_dir->getPath().'/windows.txt', self::WINDOWS_TXT);
   }

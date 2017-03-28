@@ -1,4 +1,4 @@
-<?hh
+<?hh // strict
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -209,7 +209,7 @@ class ShipItRepoGIT
   ): ?ShipItChangeset {
     $ret = self::parseHeader($header);
     $diffs = Vector { };
-    foreach(ShipItUtil::parsePatchWithoutHeader($patch) as $hunk) {
+    foreach(ShipItUtil::parsePatch($patch) as $hunk) {
       $diffs[] = self::parseDiffHunk($hunk);
     }
     if ($ret === null) {
@@ -285,7 +285,7 @@ class ShipItRepoGIT
     return $this->getHEADSha();
   }
 
-  protected function gitPipeCommand(?string $stdin, ...$args): string {
+  protected function gitPipeCommand(?string $stdin, string ...$args): string {
     if (!file_exists("{$this->path}/.git")) {
       throw new ShipItRepoGITException(
         $this,
@@ -301,13 +301,13 @@ class ShipItRepoGIT
         // git itself.
         'HOME' => $this->fakeHome->getPath(),
       });
-    if ($stdin) {
+    if ($stdin !== null) {
       $command->setStdIn($stdin);
     }
     return $command->runSynchronously()->getStdOut();
   }
 
-  protected function gitCommand(...$args): string {
+  protected function gitCommand(string ...$args): string {
     return $this->gitPipeCommand(null, ...$args);
   }
 
