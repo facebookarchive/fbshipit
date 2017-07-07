@@ -260,8 +260,8 @@ and for these to be re-used between your projects. For examples from Facebook's
 usage, see:
 
  - [FBLuaLib's sync script](fb-examples/bin/shipit_fblualib.php-example)
- - [FBCommonFilters](fb-examples/lib/FBCommonFilters.php-example)
- - [FBShipItCLI](fb-examples/lib/FBShipItCLI.php-example)
+ - [FBCommonFilters](fb-examples/lib/shipit/FBCommonFilters.php-example)
+ - [FBShipItCLI](fb-examples/lib/shipit/FBShipItCLI.php-example)
 
 ## Further Examples
 
