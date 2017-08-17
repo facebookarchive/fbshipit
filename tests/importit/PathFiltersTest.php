@@ -49,13 +49,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
   /**
    * @dataProvider examplesForMoveDirectories
    */
-  public function testMoveDirectories(
-    ImmMap<string, string> $map,
-    ImmVector<string> $in,
-    ImmVector<string> $expected,
-  ): void {
-    $changeset = (new \Facebook\ShipIt\ShipItChangeset())
-      ->withDiffs($in->map($path ==> shape('path' => $path, 'body' => 'junk')));
+  ap($path ==> shape('path' => $path, 'body' => 'junk')));
     $changeset = ImportItPathFilters::moveDirectories($changeset, $map);
     $this->assertEquals(
       $expected->toArray(),
