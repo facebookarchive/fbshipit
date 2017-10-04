@@ -3,7 +3,11 @@ set -ex
 hhvm --version
 
 apt-get update
-apt-get install -y mercurial
+apt-get install -y mercurial locales
+
+locale-gen en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 curl https://getcomposer.org/installer | hhvm -d hhvm.jit=0 --php -- /dev/stdin --install-dir=/usr/local/bin --filename=composer
 
 cd /var/source
