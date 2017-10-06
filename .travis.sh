@@ -3,7 +3,10 @@ set -ex
 hhvm --version
 
 apt-get update
-apt-get install -y python-pip locales
+apt-get install -y \
+  locales \
+  python-dev \
+  python-pip
 pip install Mercurial
 
 locale-gen en_US.UTF-8
