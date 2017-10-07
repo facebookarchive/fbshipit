@@ -4,6 +4,7 @@ hhvm --version
 
 apt-get update
 apt-get install -y \
+  git \
   locales \
   python-dev \
   python-pip
