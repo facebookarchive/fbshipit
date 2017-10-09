@@ -1,6 +1,5 @@
 #!/bin/sh
 set -ex
-hhvm --version
 
 apt-get update
 apt-get install -y \
@@ -12,6 +11,10 @@ pip install Mercurial
 
 locale-gen en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+git --version
+hg --version
+hhvm --version
 
 curl https://getcomposer.org/installer | hhvm -d hhvm.jit=0 --php -- /dev/stdin --install-dir=/usr/local/bin --filename=composer
 
