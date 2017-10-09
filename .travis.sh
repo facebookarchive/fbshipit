@@ -1,13 +1,13 @@
 #!/bin/sh
 set -ex
 
+add-apt-repository ppa:git-core/ppa
+add-apt-repository ppa:mercurial-ppa/releases
 apt-get update
 apt-get install -y \
   git \
-  locales \
-  python-dev \
-  python-pip
-pip install Mercurial
+  mercurial \
+  locales
 
 locale-gen en_US.UTF-8
 export LC_ALL=en_US.UTF-8
