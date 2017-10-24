@@ -16,8 +16,8 @@ final class FBCommonFilters {
   public static function applyAll(
     ShipItChangeset $changeset,
     shape(
-      'stripCommonFiles/exceptions' => ?ImmVector<string>,
-      'filterMessageSections/keepFields' => ?ImmSet<string>,
+      ?'stripCommonFiles/exceptions' => ImmVector<string>,
+      ?'filterMessageSections/keepFields' => ImmSet<string>,
     ) $config = shape(),
   ): ShipItChangeset {
     return $changeset
