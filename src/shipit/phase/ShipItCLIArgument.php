@@ -10,16 +10,16 @@
 namespace Facebook\ShipIt;
 
 type ShipItCLIArgument = shape(
-  'short_name' => ?string,
+  ?'short_name' => string,
   'long_name' => string,
   // If null, the function is considered deprecated
-  'description' => ?string,
+  ?'description' => string,
   // Set non-null if deprecated with a replacement
-  'replacement' => ?string,
+  ?'replacement' => string,
   // Handler function for when the option is set
-  'write' => ?(function(string):mixed),
+  ?'write' => (function(string):mixed),
   // Detect if a required option has been set; if this isn't provided, it will
   // be required on the command line. Specifying this function allows it to be
   // prefilled on the config object instead
-  'isset' => ?(function():bool),
+  ?'isset' => (function():bool),
 );

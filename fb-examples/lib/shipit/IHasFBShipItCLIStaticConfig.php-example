@@ -13,7 +13,7 @@ type FBShipItCLIStaticConfig = shape(
   'internalRepo' => string,
   'githubOrg' => string,
   'githubProject' => string,
-  'destDirName' => ?string, // defaults to githubProject
+  ?'destDirName' => string, // defaults to githubProject
 );
 
 interface IHasFBShipItCLIStaticConfig {

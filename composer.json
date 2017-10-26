@@ -4,7 +4,7 @@
   "keywords": [ "Facebook", "FBShipIt", "Hack" ],
   "license": [ "BSD-3-Clause" ],
   "require": {
-    "hhvm": "~3.12",
+    "hhvm": "~3.22",
     "91carriage/phpunit-hhi": "^5.1.0"
   },
   "require-dev": {
