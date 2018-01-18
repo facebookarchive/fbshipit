@@ -5,10 +5,10 @@
   "license": [ "BSD-3-Clause" ],
   "require": {
     "hhvm": "~3.22",
-    "91carriage/phpunit-hhi": "^5.1.0"
+    "91carriage/phpunit-hhi": "^5.7.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.1.0"
+    "phpunit/phpunit": "^5.7.0"
   },
   "autoload": {
     "classmap": [
