@@ -14,6 +14,6 @@ final class ShipItUtilTest extends BaseTest {
     $patch = \file_get_contents(__DIR__.'/git-diffs/diff-in-diff.patch');
     $sections = Vector {};
     $sections->addAll(ShipItUtil::parsePatch($patch));
-    $this->assertEquals(1, $sections->count(), 'Should only get one section!');
+    $this->assertEquals(2, $sections->count(), 'Should only get one section!');
   }
 }
