@@ -75,6 +75,7 @@ final class ShipItGitHubInitPhase extends ShipItPhase {
     };
   }
 
+  <<__Override>>
   public function runImpl(
     ShipItBaseConfig $config,
   ): void {

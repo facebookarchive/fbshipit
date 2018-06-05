@@ -157,6 +157,7 @@ abstract class ShipItGitHubUtils {
         );
       }
       \curl_setopt($ch, \CURLOPT_HEADER, 1);
+      /* HHAST_FIXME[DontAwaitInALoop] */
       $response = await \HH\Asio\curl_exec($ch);
       $header_len = \curl_getinfo($ch, \CURLINFO_HEADER_SIZE);
       $response_header = \substr($response, 0, $header_len);
