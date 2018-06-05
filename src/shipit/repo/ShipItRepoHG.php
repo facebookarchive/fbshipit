@@ -29,7 +29,7 @@ class ShipItRepoHG extends ShipItRepo
       // set on the constructor call. So it can be used in hgCommand, etc.
       $hg_root = \trim($this->hgCommand('root'));
     } catch (ShipItRepoException $ex) {
-      throw new ShipItRepoHGException($this, "{$this->path} is not a HG repo");
+      throw new ShipItRepoHGException($this, $this->path." is not a HG repo");
     }
   }
 
@@ -70,7 +70,7 @@ class ShipItRepoHG extends ShipItRepo
       return null;
     }
     if (\strlen($log) != 40) {
-      throw new ShipItRepoHGException($this, "{$log} doesn't look like a valid".
+      throw new ShipItRepoHGException($this, $log." doesn't look like a valid".
                                             " hg changeset id");
     }
     return $this->getChangesetFromID($log);
@@ -89,7 +89,7 @@ class ShipItRepoHG extends ShipItRepo
       '--limit',
       '1',
       '-r',
-      "({$revision}::{$branch}) - {$revision}",
+      "(".$revision."::".$branch.") - ".$revision,
        '--template',
        '{node}\\n',
        ...$roots,
@@ -99,7 +99,7 @@ class ShipItRepoHG extends ShipItRepo
       return null;
     }
     if (\strlen($log) != 40) {
-      throw new ShipItRepoHGException($this, "{$log} doesn't look like a valid".
+      throw new ShipItRepoHGException($this, $log." doesn't look like a valid".
                                             " hg changeset id");
     }
     return $log;
@@ -161,15 +161,15 @@ class ShipItRepoHG extends ShipItRepo
     // Mon Sep 17 is a magic date used by format-patch to distinguish from real
     // mailboxes. cf. https://git-scm.com/docs/git-format-patch
     $commit_message = self::getCommitMessage($patch);
-    $ret = "From {$patch->getID()} Mon Sep 17 00:00:00 2001\n".
-           "From: {$patch->getAuthor()}\n".
+    $ret = "From ".$patch->getID()." Mon Sep 17 00:00:00 2001\n".
+           "From: ".$patch->getAuthor()."\n".
            "Date: ".\date('r', $patch->getTimestamp())."\n".
-           "Subject: [PATCH] {$commit_message}\n---\n\n";
+           "Subject: [PATCH] ".$commit_message."\n---\n\n";
     foreach($patch->getDiffs() as $diff) {
       $path = $diff['path'];
       $body = $diff['body'];
 
-      $ret .= "diff --git a/{$path} b/{$path}\n{$body}";
+      $ret .= "diff --git a/".$path." b/".$path."\n".$body;
     }
     $ret .= "--\n1.7.9.5\n";
     return $ret;
@@ -231,7 +231,7 @@ class ShipItRepoHG extends ShipItRepo
         $subject = $line;
         continue;
       }
-      $message .= "{$line}\n";
+      $message .= $line."\n";
     }
 
     return $changeset
@@ -388,7 +388,7 @@ class ShipItRepoHG extends ShipItRepo
     $lock = $this->getSharedLock()->getExclusive();
 
     if (ShipItRepo::$VERBOSE & ShipItRepo::VERBOSE_FETCH) {
-      \fwrite(\STDERR, "** Updating checkout in {$this->path}\n");
+      \fwrite(\STDERR, "** Updating checkout in ".$this->path."\n");
     }
     $this->hgCommand('pull');
   }

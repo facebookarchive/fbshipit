@@ -12,7 +12,7 @@ namespace Facebook\ShipIt;
 class ShipItRepoException extends \Exception {
   public function __construct(?ShipItRepo $repo, string $message) {
     if ($repo !== null) {
-      $message = \get_class($repo) . ": $message";
+      $message = \get_class($repo) . ": ".$message;
     }
     parent::__construct($message);
   }

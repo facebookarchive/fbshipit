@@ -20,11 +20,11 @@ final class ImportItSubmoduleFilter {
     string $old_rev,
     string $new_rev,
   ): string {
-    return "--- a/{$path}\n".
-           "+++ b/{$path}\n".
+    return "--- a/".$path."\n".
+           "+++ b/".$path."\n".
            "@@ -1 +1 @@\n".
-           "-Subproject commit {$old_rev}\n".
-           "+Subproject commit {$new_rev}\n";
+           "-Subproject commit ".$old_rev."\n".
+           "+Subproject commit ".$new_rev."\n";
   }
 
   /**

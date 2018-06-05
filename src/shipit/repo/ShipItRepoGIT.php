@@ -260,16 +260,16 @@ class ShipItRepoGIT
 
     // Mon Sep 17 is a magic date used by format-patch to distinguish from real
     // mailboxes. cf. https://git-scm.com/docs/git-format-patch
-    $ret = "From {$patch->getID()} Mon Sep 17 00:00:00 2001\n".
-            "From: {$patch->getAuthor()}\n".
+    $ret = "From ".$patch->getID()." Mon Sep 17 00:00:00 2001\n".
+            "From: ".$patch->getAuthor()."\n".
             "Date: " . \date('r', $patch->getTimestamp()) . "\n".
-            "Subject: [PATCH] {$patch->getSubject()}\n\n".
-            "{$message}\n---\n\n";
+            "Subject: [PATCH] ".$patch->getSubject()."\n\n".
+$message."\n---\n\n";
     foreach($patch->getDiffs() as $diff) {
       $path = $diff['path'];
       $body = $diff['body'];
 
-      $ret .= "diff --git a/{$path} b/{$path}\n{$body}";
+      $ret .= "diff --git a/".$path." b/".$path."\n".$body;
     }
     $ret .= "--\n1.7.9.5\n";
     return $ret;
@@ -361,7 +361,7 @@ class ShipItRepoGIT
   }
 
   protected function gitPipeCommand(?string $stdin, string ...$args): string {
-    if (!\file_exists("{$this->path}/.git")) {
+    if (!\file_exists($this->path."/.git")) {
       throw new ShipItRepoGITException(
         $this,
         $this->path." is not a GIT repo",
@@ -402,7 +402,7 @@ class ShipItRepoGIT
     }
 
     if (ShipItRepo::$VERBOSE & ShipItRepo::VERBOSE_FETCH) {
-      \fwrite(\STDERR, "** Cloning $origin to $path\n");
+      \fwrite(\STDERR, "** Cloning ".$origin." to ".$path."\n");
     }
 
     (new ShipItShellCommand(
@@ -419,7 +419,7 @@ class ShipItRepoGIT
   <<__Override>>
   public function pull(): void {
     if (ShipItRepo::$VERBOSE & ShipItRepo::VERBOSE_FETCH) {
-      \fwrite(\STDERR, "** Updating checkout in {$this->path}\n");
+      \fwrite(\STDERR, "** Updating checkout in ".$this->path."\n");
     }
 
     try {

@@ -124,7 +124,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     ?string $revision = null,
   ): void {
     if (\file_exists($output_dir)) {
-      throw new ShipItException("path '$output_dir' already exists");
+      throw new ShipItException("path '".$output_dir."' already exists");
     }
     \mkdir($output_dir, 0755, /* recursive = */ true);
 

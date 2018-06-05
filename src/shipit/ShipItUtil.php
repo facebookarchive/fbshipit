@@ -125,13 +125,13 @@ abstract class ShipItUtil {
 
     if ($flags & self::VERBOSE_SHELL) {
       $cmd = \implode(' ', $args);
-      \fwrite(\STDERR, "\$ $cmd\n");
+      \fwrite(\STDERR, "\$ ".$cmd."\n");
     }
 
 
     if ($stdin !== null) {
       if ($flags & self::VERBOSE_SHELL_INPUT) {
-        \fwrite(\STDERR, "--STDIN--\n$stdin\n");
+        \fwrite(\STDERR, "--STDIN--\n".$stdin."\n");
       }
       $command->setStdIn($stdin);
     }

@@ -57,7 +57,7 @@ final class ShipItMessageSections {
           continue;
         }
       }
-      $sections[$section] .= "\n{$line}";
+      $sections[$section] .= "\n".$line;
       $newpara = ($line === '');
     }
     if ($sections[""] === '') {
@@ -83,7 +83,7 @@ final class ShipItMessageSections {
       } else {
         $section_head .= "\n";
       }
-      $out .= $section_head."$text\n\n";
+      $out .= $section_head.$text."\n\n";
     }
     return \rtrim($out);
   }

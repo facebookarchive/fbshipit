@@ -122,7 +122,7 @@ class ShipItShellCommand {
       $env_vars->toArray(),
     );
     if (!$fp || !\is_array($pipes)) {
-      throw new \Exception("Failed executing $command");
+      throw new \Exception("Failed executing ".$command);
     }
     if ($stdin !== null) {
       while (\strlen($stdin)) {

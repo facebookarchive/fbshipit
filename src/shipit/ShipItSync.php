@@ -42,7 +42,7 @@ class ShipItSync {
       $changeset = $src->getChangesetFromID($rev);
 
       if (!$changeset) {
-        throw new ShipItException("Unable to get patch for $rev");
+        throw new ShipItException("Unable to get patch for ".$rev);
       }
 
       $changesets[] = $changeset;
@@ -222,7 +222,7 @@ class ShipItSync {
     }
     if (!\preg_match('/^D[0-9]{6,}$/', $diff)) {
       throw new ShipItException(
-        "Last differential revision number ('{$diff}') is invalid"
+        "Last differential revision number ('".$diff."') is invalid"
       );
     }
     return $diff;
@@ -230,7 +230,7 @@ class ShipItSync {
 
   private static function checkFindDiff(?string $id, string $diff): string {
     if ($id === null) {
-      throw new ShipItException("Unable to find $diff in source repo");
+      throw new ShipItException("Unable to find ".$diff." in source repo");
     }
     return $id;
   }
