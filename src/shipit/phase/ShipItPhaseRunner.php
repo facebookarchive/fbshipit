@@ -244,7 +244,7 @@ class ShipItPhaseRunner {
       $prefix = $short !== null
         ? '-'.\rtrim($short, ':').', '
         : '';
-      $suffix = $is_optional ? "=VALUE" : ($is_required ? "=".$long: '');
+      $suffix = $is_optional ? "=VALUE" : ($is_required ? "=$long" : '');
       $left = '  '.$prefix.'--'.$long.$suffix;
       $max_left = \max(\strlen($left), $max_left);
 
@@ -259,12 +259,13 @@ class ShipItPhaseRunner {
     $opt_help = \implode("", $rows->map($row ==>
       \sprintf("%s  %s\n", \str_pad($row[0], $max_left), $row[1])
     ));
+    /* HHAST_FIXME[NoStringInterpolationLinter] */
     echo <<<EOF
 Usage:
-.$filename." [options]
+${filename} [options]
 
 Options:
-".$opt_help.
+${opt_help}
 
 EOF;
   }
