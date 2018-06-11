@@ -1,0 +1,98 @@
+<?hh // strict
+/**
+ * Copyright (c) 2018-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+namespace Facebook\ShipIt\Config;
+
+use \Facebook\ShipIt\ {
+  FBShipItCLIStaticConfig,
+  FBShipItConfig,
+  FBSourceBranchConfig,
+};
+
+final class PytorchPytorch extends FBShipItConfig {
+  const string ROOT = 'fbcode/caffe2/';
+  const string SOURCE_BRANCH = 'fbsync';
+
+  <<__Override>>
+  protected static function getDefaultStrippedFiles(): ImmVector<string> {
+    return ImmVector {
+      '@\.facebook$@',
+      '@/C2_BUCK_DEFS$@', /** Caffe2 mobile buck defs **/
+      '@(^|/)fb_protobuf.sh@', /** Caffe2 fb protobuf script **/
+      '@\.hgsparse-caffe2-dev@', /** Caffe2 hg sparse configs **/
+      '@\.hgsparse-caffe2-xplat@', /** Caffe2 hg sparse configs **/
+    };
+  }
+
+  <<__Override>>
+  public static function getDefaultPathMappings(): ImmMap<string, string> {
+    return ImmMap {
+      self::ROOT => '',
+    };
+  }
+
+  <<__Override>>
+  public static function getSubmoduleMappings(): ImmMap<string, string> {
+    return ImmMap {
+      self::ROOT.'submodules/benchmark-rev.txt' => 'third_party/benchmark',
+      self::ROOT.'submodules/catch-rev.txt' => 'third_party/catch',
+      self::ROOT.'submodules/cereal-rev.txt' => 'third_party/cereal',
+      self::ROOT.'submodules/cpuinfo-rev.txt' => 'third_party/cpuinfo',
+      self::ROOT.'submodules/cub-rev.txt' => 'third_party/cub',
+      self::ROOT.'submodules/eigen-rev.txt' => 'third_party/eigen',
+      self::ROOT.'submodules/FP16-rev.txt' => 'third_party/FP16',
+      self::ROOT.'submodules/FXdiv-rev.txt' => 'third_party/FXdiv',
+      self::ROOT.'submodules/gloo-rev.txt' => 'third_party/gloo',
+      self::ROOT.'submodules/googletest-rev.txt' => 'third_party/googletest',
+      self::ROOT.'submodules/ideep-rev.txt' => 'third_party/ideep',
+      self::ROOT.'submodules/ios-cmake-rev.txt' => 'third_party/ios-cmake',
+      self::ROOT.'submodules/nccl-rev.txt' => 'third_party/nccl',
+      self::ROOT.'submodules/nervanagpu-rev.txt' => 'third_party/nervanagpu',
+      self::ROOT.'submodules/NNPACK-rev.txt' => 'third_party/NNPACK',
+      self::ROOT.'submodules/onnx-rev.txt' => 'third_party/onnx',
+      self::ROOT.'submodules/onnx-tensorrt-rev.txt' =>
+        'third_party/onnx-tensorrt',
+      self::ROOT.'submodules/protobuf-rev.txt' => 'third_party/protobuf',
+      self::ROOT.'submodules/psimd-rev.txt' => 'third_party/psimd',
+      self::ROOT.'submodules/pthreadpool-rev.txt' => 'third_party/pthreadpool',
+      self::ROOT.'submodules/pybind11-rev.txt' => 'third_party/pybind11',
+      self::ROOT.'submodules/python-enum-rev.txt' => 'third_party/python-enum',
+      self::ROOT.'submodules/python-peachpy-rev.txt' =>
+        'third_party/python-peachpy',
+      self::ROOT.'submodules/python-six-rev.txt' => 'third_party/python-six',
+      self::ROOT.'submodules/sleef-rev.txt' => 'third_party/sleef',
+      self::ROOT.'submodules/tbb-rev.txt' => 'third_party/tbb',
+      self::ROOT.'submodules/zstd-rev.txt' => 'third_party/zstd',
+    };
+  }
+
+  <<__Override>>
+  public static function getStaticConfig(): FBShipItCLIStaticConfig {
+    return shape(
+      'internalRepo' => 'fbsource',
+      'githubOrg' => 'pytorch',
+      'githubProject' => 'pytorch',
+    );
+  }
+
+  <<__Override>>
+  public static function getBranchConfigs(): ImmVector<FBSourceBranchConfig> {
+    return ImmVector {
+      shape(
+        'internal' => static::SOURCE_BRANCH,
+        'external' => static::SOURCE_BRANCH,
+      ),
+    };
+  }
+
+  <<__Override>>
+  public static function getLandBranch(): ?string {
+    return static::SOURCE_BRANCH;
+  }
+}

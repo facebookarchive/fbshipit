@@ -1,0 +1,39 @@
+<?hh // strict
+/**
+ * Copyright (c) 2018-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+namespace Facebook\ShipIt\Config;
+
+final class PytorchPytorchTest extends FBConfigBaseTest {
+  <<__Override>>
+  public static function getExamplePathMappings(): ImmMap<string, ?string> {
+    return ImmMap {
+      'fbcode/caffe2/foo' => 'foo',
+      'fbcode/caffe2/fb' => null,
+      'fbcode/caffe2/caffe2/foo' => 'caffe2/foo',
+      'fbcode/caffe2/caffe2/fb' => null,
+      'fbcode/caffe2/caffe2/TARGETS' => null,
+      'fbcode/caffe2/torch/foo' => 'torch/foo',
+      'fbcode/caffe2/torch/fb' => null,
+      'fbcode/caffe2/torch/TARGETS' => null,
+      'fbcode/caffe2/README.facebook' => null,
+    };
+  }
+
+  <<__Override>>
+  protected static function getExampleBranchMappings(
+  ): ImmMap<string, ImmMap<string, ?string>> {
+    $branch_mappings = Map {};
+    // All branches have the same mapping logic.
+    foreach (PytorchPytorch::getBranchConfigs() as $branch_config) {
+      $branch_mappings[$branch_config['external']] =
+        static::getExamplePathMappings();
+    }
+    return $branch_mappings->toImmMap();
+  }
+}
