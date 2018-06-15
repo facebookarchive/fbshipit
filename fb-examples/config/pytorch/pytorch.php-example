@@ -17,7 +17,8 @@ use \Facebook\ShipIt\ {
 
 final class PytorchPytorch extends FBShipItConfig {
   const string ROOT = 'fbcode/caffe2/';
-  const string SOURCE_BRANCH = 'fbsync';
+  const string SOURCE_BRANCH = 'master';
+  const string DESTINATION_BRANCH = 'fbsync';
 
   <<__Override>>
   protected static function getDefaultStrippedFiles(): ImmVector<string> {
@@ -86,7 +87,7 @@ final class PytorchPytorch extends FBShipItConfig {
     return ImmVector {
       shape(
         'internal' => static::SOURCE_BRANCH,
-        'external' => static::SOURCE_BRANCH,
+        'external' => static::DESTINATION_BRANCH,
       ),
     };
   }
