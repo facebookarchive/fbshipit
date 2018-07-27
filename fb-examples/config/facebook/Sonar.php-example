@@ -19,13 +19,7 @@ final class FacebookSonar extends FBShipItConfig {
   public static function getDefaultPathMappings(): ImmMap<string, string> {
     return ImmMap {
       'xplat/sonar/' => '',
-      'fbobjc/Libraries/SonarKit/Sample/' => 'iOS/Sample/',
-      'fbobjc/Libraries/SonarKit/SonarKit/' => 'iOS/SonarKit/',
-      'fbobjc/Libraries/SonarKit/FBDefines/' => 'iOS/SonarKit/FBDefines/',
       'fbobjc/Libraries/FBCxxUtils/FBCxxUtils/' => 'iOS/SonarKit/FBCxxUtils/',
-      'fbobjc/Libraries/SonarKit/SonarKitPlugins/OSSPlugins/' => 'iOS/Plugins/',
-      'fbobjc/Libraries/SonarKit/SonarKitTests/' => 'iOS/SonarKitTests/',
-      'fbobjc/Libraries/SonarKit/SonarKitTestUtils/' => 'iOS/SonarKitTestUtils/',
     };
   }
 
@@ -40,6 +34,7 @@ protected static function getStripCommonFilesExceptions(): ImmVector<string> {
   protected static function getDefaultStrippedFiles(): ImmVector<string> {
     return ImmVector {
       '@xplat/sonar/src/fb[/|$]@',
+      '@xplat/sonar/iOS/SonarKit/FBCxxUtils[/|$]@',
       '@xplat/sonar/create-plugin.py$@',
       '@xplat/sonar/templates[/|$]@',
       '@xplat/sonar/scripts/sandcastle-build.sh@',
