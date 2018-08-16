@@ -30,7 +30,7 @@ particular, it does not understand merge commits.
 
 ## Requirements
 
- - [HHVM 3.24 or later](https://docs.hhvm.com/hhvm/installation)
+ - [HHVM (latest release)](https://docs.hhvm.com/hhvm/installation)
  - [Composer](https://getcomposer.org/doc/00-intro.md)
 
 ## Installing
