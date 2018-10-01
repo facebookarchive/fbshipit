@@ -49,11 +49,16 @@ final class FBCommonFilters {
   public static function stripSummariesByDefault(
     ShipItChangeset $changeset,
   ): ShipItChangeset {
-    if (ShipItMentions::containsMention($changeset, '@public')) {
+    $mentions = ShipItMentions::getMentions($changeset);
+    if ($mentions->contains('@public')) {
       return ShipItMentions::rewriteMentions(
         $changeset,
         $mention ==> $mention === '@public' ? '' : $mention,
       );
+    }
+
+    if ($mentions->contains('@already-on-github')) {
+      return $changeset;
     }
 
     $sections = ShipItMessageSections::getSections(
