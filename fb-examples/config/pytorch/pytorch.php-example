@@ -73,7 +73,8 @@ final class PytorchPytorch extends FBShipItConfig {
       self::ROOT.'submodules/gemmlowp.txt' => 'third_party/gemmlowp/gemmlowp',
       self::ROOT.'submodules/neon2sse.txt' => 'third_party/neon2sse',
       self::ROOT.'submodules/QNNPACK.txt' => 'third_party/QNNPACK',
-      self::ROOT.'submodules/fbgemm.txt' => 'third_party/fbgemm',
+      'fbcode/opensource/project_hashes/pytorch/fbgemm-rev.txt' =>
+        'third_party/fbgemm',
     };
   }
 
