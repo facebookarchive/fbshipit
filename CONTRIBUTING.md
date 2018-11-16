@@ -60,4 +60,4 @@ foo(
 
 ## License
 By contributing to FBShipIt, you agree that your contributions will be licensed
-under its BSD license.
+under its MIT license.

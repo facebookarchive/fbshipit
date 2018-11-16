@@ -270,4 +270,4 @@ The code for all public Facebook projects that use FBShipit is available in
 
 ## License
 
-FBShipIt is BSD-licensed. We also provide an additional patent grant.
+FBShipIt is MIT-licensed.

@@ -1,11 +1,9 @@
 <?hh // strict
 /**
- * Copyright (c) 2016-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 namespace Facebook\ShipIt\Config;
 
@@ -57,9 +55,9 @@ final class FacebookChefUtils extends FBShipItConfig {
     # Therefore, below we do a NegativeLookAhead regex and anything that's not
     # in this list gets rejected.
     #
-    # For scripts/chefctl-github/ the entire directory is included, so that all 
-    # works normally. But for scripts/chef/ we only include a single file, so 
-    # for that directory we ALSO have to explicitly allow the shipit test file 
+    # For scripts/chefctl-github/ the entire directory is included, so that all
+    # works normally. But for scripts/chef/ we only include a single file, so
+    # for that directory we ALSO have to explicitly allow the shipit test file
     # or it will crash.
     $valid = array(
       'chef/chefctl.rb',

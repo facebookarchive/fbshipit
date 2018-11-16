@@ -2,7 +2,7 @@
   "name": "facebook/fbshipit",
   "description": "Library for syncing code repositories",
   "keywords": [ "Facebook", "FBShipIt", "Hack" ],
-  "license": [ "BSD-3-Clause" ],
+  "license": [ "MIT" ],
   "require": {
     "hhvm": "~3.24",
     "91carriage/phpunit-hhi": "^5.7.4"
