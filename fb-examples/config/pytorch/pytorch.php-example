@@ -28,7 +28,6 @@ final class PytorchPytorch extends FBShipItConfig {
       '@(^|/)fb_protobuf.sh@', /** Caffe2 fb protobuf script **/
       '@\.hgsparse-caffe2-dev@', /** Caffe2 hg sparse configs **/
       '@\.hgsparse-caffe2-xplat@', /** Caffe2 hg sparse configs **/
-      '@\.bzl$@', /** All bazel files **/
     };
   }
 
