@@ -1,0 +1,33 @@
+<?hh // strict
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+namespace Facebook\ShipIt\Config;
+
+use type Facebook\ShipIt\ {
+  FBShipItCLIStaticConfig,
+  FBShipItConfig,
+};
+
+final class FacebookFaiPep extends FBShipItConfig {
+  const string ROOT = 'xplat/aibench/oss/';
+
+  <<__Override>>
+  public static function getDefaultPathMappings(): ImmMap<string, string> {
+    return ImmMap {
+      self::ROOT => '',
+    };
+  }
+
+  <<__Override>>
+  public static function getStaticConfig(): FBShipItCLIStaticConfig {
+    return shape(
+      'internalRepo' => 'fbsource',
+      'githubOrg' => 'facebook',
+      'githubProject' => 'FAI-PEP',
+    );
+  }
+}

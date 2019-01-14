@@ -1,0 +1,19 @@
+<?hh // strict
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+namespace Facebook\ShipIt\Config;
+
+final class FacebookFaiPepTest extends FBConfigBaseTest {
+  <<__Override>>
+  public static function getExamplePathMappings(): ImmMap<string, ?string> {
+    return ImmMap {
+      'xplat/aibench/oss/README.md' => 'README.md',
+      'xplat/aibench/oss/benchmarking/CONTRIBUTING.md' =>
+        'benchmarking/CONTRIBUTING.md',
+    };
+  }
+}
