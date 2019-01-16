@@ -13,7 +13,7 @@ use type Facebook\ShipIt\ {
 };
 
 final class PytorchFbgemm extends FBShipItConfig {
-  const string ROOT = 'fbcode/deeplearning/fbgemm2/';
+  const string ROOT = 'fbcode/deeplearning/fbgemm/';
 
   <<__Override>>
   public static function getDefaultPathMappings(): ImmMap<string, string> {

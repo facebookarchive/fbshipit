@@ -8,7 +8,7 @@
 namespace Facebook\ShipIt\Config;
 
 final class PytorchFbgemmTest extends FBConfigBaseTest {
-  const string ROOT = 'fbcode/deeplearning/fbgemm2/';
+  const string ROOT = 'fbcode/deeplearning/fbgemm/';
 
   <<__Override>>
   public static function getExamplePathMappings(): ImmMap<string, ?string> {
