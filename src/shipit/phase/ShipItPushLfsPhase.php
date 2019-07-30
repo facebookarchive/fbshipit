@@ -37,14 +37,14 @@ final class ShipItPushLfsPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  final public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-lfs',
         'description' => 'Skip LFS syncing',
         'write' => $_ ==> $this->skip(),
       ),
-    };
+    ];
   }
 
   <<__Override>>

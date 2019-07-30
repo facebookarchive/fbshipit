@@ -12,12 +12,12 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Math, Dict, C};
+use namespace HH\Lib\{Str, Math, Dict, C, Vec};
 
 class ShipItPhaseRunner {
   public function __construct(
     protected ShipItBaseConfig $config,
-    protected ImmVector<ShipItPhase> $phases,
+    protected vec<ShipItPhase> $phases,
   ) {}
 
   public function run(): void {
@@ -27,8 +27,8 @@ class ShipItPhaseRunner {
     }
   }
 
-  protected function getBasicCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  protected function getBasicCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'short_name' => 'h',
         'long_name' => 'help',
@@ -128,13 +128,13 @@ class ShipItPhaseRunner {
           return $this->config;
         },
       ),
-    };
+    ];
   }
 
-  final protected function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    $args = $this->getBasicCLIArguments()->toVector();
+  final protected function getCLIArguments(): vec<ShipItCLIArgument> {
+    $args = $this->getBasicCLIArguments();
     foreach ($this->phases as $phase) {
-      $args->addAll($phase->getCLIArguments());
+      $args = Vec\concat($args, $phase->getCLIArguments());
     }
 
     // Check for correctness
@@ -159,11 +159,11 @@ class ShipItPhaseRunner {
       );
     }
 
-    return $args->toImmVector();
+    return $args;
   }
 
   final protected function parseOptions(
-    ImmVector<ShipItCLIArgument> $config,
+    vec<ShipItCLIArgument> $config,
     dict<string, mixed> $raw_opts,
   ): void {
     foreach ($config as $opt) {
@@ -239,8 +239,9 @@ class ShipItPhaseRunner {
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     $raw_opts = \getopt(
-      Str\join($config->map($opt ==> Shapes::idx($opt, 'short_name', '')), ''),
-      $config->map($opt ==> $opt['long_name']),
+      Vec\map($config, $opt ==> Shapes::idx($opt, 'short_name', ''))
+        |> Str\join($$, ''),
+      Vec\map($config, $opt ==> $opt['long_name']),
     )
       |> dict($$);
     if (
@@ -257,13 +258,11 @@ class ShipItPhaseRunner {
     $this->parseOptions($config, $raw_opts);
   }
 
-  protected static function printHelp(
-    ImmVector<ShipItCLIArgument> $config,
-  ): void {
+  protected static function printHelp(vec<ShipItCLIArgument> $config): void {
     /* HH_FIXME[2050] Previously hidden by unsafe_expr */
     $filename = $_SERVER['SCRIPT_NAME'];
     $max_left = 0;
-    $rows = Map {};
+    $rows = dict[];
     foreach ($config as $opt) {
       $description = Shapes::idx($opt, 'description');
       if ($description === null) {
@@ -296,10 +295,11 @@ class ShipItPhaseRunner {
 
     $help = $rows['help'];
     $rows->removeKey('help');
-    $rows = (Map {'help' => $help})->setAll($rows);
+    $rows = Dict\merge(dict['help' => $help], $rows);
 
     $opt_help = Str\join(
-      $rows->map(
+      Dict\map(
+        $rows,
         $row ==> /* HH_IGNORE_ERROR[2049] __PHPStdLib */
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       /* HH_FIXME[4297] Exposed by upgraded typechecker (new_inference) */

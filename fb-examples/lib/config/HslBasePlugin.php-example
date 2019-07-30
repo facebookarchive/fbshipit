@@ -23,12 +23,12 @@ abstract class HhvmHslBasePlugin extends FBWWWBasePlugin {
   abstract const string ROOT;
 
   <<__Override>>
-  public function getDefaultPathMappings(): ImmMap<string, string> {
-    return ImmMap {
+  public function getDefaultPathMappings(): dict<string, string> {
+    return dict[
       static::ROOT.'__github__/dot_' => '.',
       static::ROOT.'__github__/' => '',
       static::ROOT => 'src/',
-    };
+    ];
   }
 
   <<__Override>>

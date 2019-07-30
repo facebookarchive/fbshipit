@@ -21,7 +21,7 @@ final class ShipItSaveConfigPhase extends ShipItPhase {
     ),
     'source' => shape(
       'branch' => string,
-      'roots' => ImmSet<string>,
+      'roots' => keyset<string>,
     ),
   );
 
@@ -42,8 +42,8 @@ final class ShipItSaveConfigPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'save-config-to::',
         'description' =>
@@ -54,7 +54,7 @@ final class ShipItSaveConfigPhase extends ShipItPhase {
           return true;
         },
       ),
-    };
+    ];
   }
 
   public function renderConfig(ShipItBaseConfig $config): self::TSavedConfig {

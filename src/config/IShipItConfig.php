@@ -14,5 +14,5 @@ namespace Facebook\ShipIt\Config;
 
 interface IShipItConfig {
   public static function getBaseConfig(): \Facebook\ShipIt\ShipItBaseConfig;
-  public static function getPhases(): ImmVector<\Facebook\ShipIt\ShipItPhase>;
+  public static function getPhases(): vec<\Facebook\ShipIt\ShipItPhase>;
 }

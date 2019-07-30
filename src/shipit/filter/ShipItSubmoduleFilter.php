@@ -80,7 +80,7 @@ index %s..0000000
     string $text_file_with_rev,
     string $submodule_path,
   ): ShipItChangeset {
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $path = $diff['path'];
       $body = $diff['body'];
@@ -112,7 +112,7 @@ index %s..0000000
       );
     }
 
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 
   /**

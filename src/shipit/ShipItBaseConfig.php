@@ -18,7 +18,7 @@ final class ShipItBaseConfig {
     private string $baseDirectoryPath,
     private string $defaultSourceDirectoryName,
     private string $defaultDestinationDirectoryName,
-    private ImmSet<string> $sourceRoots,
+    private keyset<string> $sourceRoots,
     private bool $commitMarkerPrefix = false,
   ) {}
 
@@ -108,11 +108,11 @@ final class ShipItBaseConfig {
     );
   }
 
-  public function getSourceRoots(): ImmSet<string> {
+  public function getSourceRoots(): keyset<string> {
     return $this->sourceRoots;
   }
 
-  public function withSourceRoots(ImmSet<string> $roots): this {
+  public function withSourceRoots(keyset<string> $roots): this {
     return $this->modified(
       $ret ==> {
         $ret->sourceRoots = $roots;

@@ -12,6 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\{C};
 
 <<\Oncalls('open_source')>>
 final class ConditionalLinesFilterTest extends BaseTest {
@@ -34,8 +35,8 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '//',
     );
     $diffs = $changeset->getDiffs();
-    \expect($diffs->count())->toBePHPEqual(1);
-    $diff = $diffs->at(0)['body'];
+    \expect(C\count($diffs))->toBePHPEqual(1);
+    $diff = $diffs[0]['body'];
 
     \expect($diff)->toMatchRegex(re"/^\+\/\/ @x-oss\-disable\: baz$/m");
     \expect($diff)->toMatchRegex(re"/^\-  \/\/ @x-oss\-disable\: derp$/m");
@@ -51,8 +52,8 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '*/',
     );
     $diffs = $changeset->getDiffs();
-    \expect($diffs->count())->toBePHPEqual(1);
-    $diff = $diffs->at(0)['body'];
+    \expect(C\count($diffs))->toBePHPEqual(1);
+    $diff = $diffs[0]['body'];
 
     \expect($diff)->toMatchRegex(re"/^\+\/\* @x-oss\-disable\: baz \*\/$/m");
     \expect($diff)->toMatchRegex(re"/^\-  \/\* @x-oss\-disable\: derp \*\/$/m");
@@ -85,11 +86,11 @@ final class ConditionalLinesFilterTest extends BaseTest {
       $comment_start,
       $comment_end,
     );
-    \expect($commented->getDiffs()->at(0)['body'])->toNotEqual(
-      $changeset->getDiffs()->at(0)['body'],
+    \expect($commented->getDiffs()[0]['body'])->toNotEqual(
+      $changeset->getDiffs()[0]['body'],
     );
-    \expect($uncommented->getDiffs()->at(0)['body'])->toEqual(
-      $changeset->getDiffs()->at(0)['body'],
+    \expect($uncommented->getDiffs()[0]['body'])->toEqual(
+      $changeset->getDiffs()[0]['body'],
     );
   }
 }

@@ -12,73 +12,70 @@
  */
 namespace Facebook\ImportIt;
 
+use namespace HH\Lib\{Keyset, Vec};
 
 <<\Oncalls('open_source')>>
 final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
   public static function examplesForMoveDirectories(
-  ): dict<
-    string,
-    (ImmMap<string, string>, ImmVector<string>, ImmVector<string>),
-  > {
+  ): dict<string, (dict<string, string>, vec<string>, vec<string>)> {
     return dict[
       'second takes precedence (first is more specific)' => tuple(
-        ImmMap {
+        dict[
           'foo/public_tld/' => '',
           'foo/' => 'bar/',
-        },
-        ImmVector {'root_file', 'bar/bar_file'},
-        ImmVector {'foo/public_tld/root_file', 'foo/bar_file'},
+        ],
+        vec['root_file', 'bar/bar_file'],
+        vec['foo/public_tld/root_file', 'foo/bar_file'],
       ),
       'only one rule applied' => tuple(
-        ImmMap {
+        dict[
           'foo/' => '',
           'bar/' => 'project_bar/',
-        },
-        ImmVector {
+        ],
+        vec[
           'bar/part of project foo',
           'project_bar/part of project bar',
-        },
-        ImmVector {'foo/bar/part of project foo', 'bar/part of project bar'},
+        ],
+        vec['foo/bar/part of project foo', 'bar/part of project bar'],
       ),
       'subdirectories' => tuple(
-        ImmMap {
+        dict[
           'foo/test/' => 'testing/',
           'foo/' => '',
-        },
-        ImmVector {'testing/README', 'src.c'},
-        ImmVector {'foo/test/README', 'foo/src.c'},
+        ],
+        vec['testing/README', 'src.c'],
+        vec['foo/test/README', 'foo/src.c'],
       ),
     ];
   }
 
   <<\DataProvider('examplesForMoveDirectories')>>
   public function testMoveDirectories(
-    ImmMap<string, string> $map,
-    ImmVector<string> $in,
-    ImmVector<string> $expected,
+    dict<string, string> $map,
+    vec<string> $in,
+    vec<string> $expected,
   ): void {
     $changeset = (new \Facebook\ShipIt\ShipItChangeset())
-      ->withDiffs($in->map($path ==> shape('path' => $path, 'body' => 'junk')));
+      ->withDiffs(
+        Vec\map($in, $path ==> shape('path' => $path, 'body' => 'junk')),
+      );
     $changeset = ImportItPathFilters::moveDirectories($changeset, $map);
-    \expect(vec($changeset->getDiffs()->map($diff ==> $diff['path'])))
-      ->toBePHPEqual(vec($expected));
+    \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
+      ->toBePHPEqual($expected);
   }
 
   public function testMoveDirectoriesThrowsWithDuplciationMappings(): void {
     \expect(() ==> {
-      $in = ImmVector {
+      $in = vec[
         'does/not/matter',
-      };
+      ];
       $changeset = (new \Facebook\ShipIt\ShipItChangeset())
         ->withDiffs(
-          $in->map($path ==> shape('path' => $path, 'body' => 'junk')),
+          Vec\map($in, $path ==> shape('path' => $path, 'body' => 'junk')),
         );
       ImportItPathFilters::moveDirectories(
         $changeset,
-        ImmMap {
-          'somewhere/' => '',
-          'elsewhere/' => '',
-        },
+        dict['somewhere/' => '', 'elsewhere/' => ''],
       );
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);

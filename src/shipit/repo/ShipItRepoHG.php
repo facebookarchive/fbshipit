@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Str, Regex, Vec};
+use namespace HH\Lib\{C, Str, Regex, Vec, Keyset};
 
 final class ShipItRepoHGException extends ShipItRepoException {}
 
@@ -83,7 +83,7 @@ class ShipItRepoHG
 
   public function findNextCommit(
     string $revision,
-    ImmSet<string> $roots,
+    keyset<string> $roots,
   ): ?string {
     $branch = $this->branch;
     if ($branch === null) {
@@ -112,7 +112,7 @@ class ShipItRepoHG
     return $log;
   }
 
-  public function findLastSourceCommit(ImmSet<string> $roots): ?string {
+  public function findLastSourceCommit(keyset<string> $roots): ?string {
     $log = $this->hgCommand(
       'log',
       '--limit',
@@ -137,7 +137,7 @@ class ShipItRepoHG
   }
 
   public function commitPatch(ShipItChangeset $patch): string {
-    if ($patch->getDiffs()->count() === 0) {
+    if (C\is_empty($patch->getDiffs())) {
       // This is an empty commit, which `hg patch` does not handle properly.
       $this->hgCommand(
         '--config',
@@ -317,41 +317,41 @@ class ShipItRepoHG
       $patch,
       re"/^(?:rename|copy) (?:from|to) (?<files>.+)$/m",
     );
-    $has_rename_or_copy = new ImmSet(Vec\map($matches, $m ==> $m['files']));
-    $has_mode_change = $changeset
-      ->getDiffs()
-      ->filter($diff ==> Regex\matches($diff['body'], re"/^old mode/m"))
-      ->map($diff ==> $diff['path'])
-      ->toImmSet();
+    $has_rename_or_copy = Keyset\map($matches, $m ==> $m['files']);
+    $has_mode_change = $changeset->getDiffs()
+      |> Vec\filter(
+        $$,
+        $diff ==> Regex\matches($diff['body'], re"/^old mode/m"),
+      )
+      |> Keyset\map($$, $diff ==> $diff['path']);
 
-    $needs_git = $has_rename_or_copy
-      ->concat($has_mode_change)
-      ->toImmSet();
+    $needs_git = Keyset\union($has_rename_or_copy, $has_mode_change);
 
     if ($needs_git) {
-      $diffs = $changeset
-        ->getDiffs()
-        ->filter($diff ==> !$needs_git->contains($diff['path']))
-        ->toVector();
-      $diffs->addAll($this->makeDiffsUsingGit($revision, $needs_git));
-      $changeset = $changeset->withDiffs($diffs->toImmVector());
+      $diffs = Vec\filter(
+        $changeset->getDiffs(),
+        $diff ==> !C\contains($needs_git, $diff['path']),
+      );
+      $diffs = Vec\concat(
+        $diffs,
+        $this->makeDiffsUsingGit($revision, $needs_git),
+      );
+      $changeset = $changeset->withDiffs($diffs);
     }
 
     return $changeset->withID($revision);
   }
 
   <<__Override>>
-  public static function getDiffsFromPatch(
-    string $patch,
-  ): ImmVector<ShipItDiff> {
-    $diffs = Vector {};
+  public static function getDiffsFromPatch(string $patch): vec<ShipItDiff> {
+    $diffs = vec[];
     foreach (self::parseHgRegions($patch) as $region) {
       $diff = self::parseDiffHunk($region);
       if ($diff !== null) {
         $diffs[] = $diff;
       }
     }
-    return $diffs->toImmVector();
+    return $diffs;
   }
 
   public static function getChangesetFromExportedPatch(
@@ -375,9 +375,7 @@ class ShipItRepoHG
     }
 
     $command = (new ShipItShellCommand($this->path, 'hg', ...$args))
-      ->setEnvironmentVariables(ImmMap {
-        'HGPLAIN' => '1',
-      })
+      ->setEnvironmentVariables(dict['HGPLAIN' => '1'])
       ->setRetries($retry_count);
     if ($stdin !== null) {
       $command->setStdIn($stdin);
@@ -417,8 +415,8 @@ class ShipItRepoHG
 
   private function makeDiffsUsingGit(
     string $rev,
-    ImmSet<string> $files,
-  ): ImmVector<ShipItDiff> {
+    keyset<string> $files,
+  ): vec<ShipItDiff> {
     $tempdir = new ShipItTempDir('git-wd');
     $path = $tempdir->getPath();
 
@@ -446,18 +444,18 @@ class ShipItRepoHG
     );
     $patch = $result->getStdOut();
 
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach (ShipItUtil::parsePatch($patch) as $hunk) {
       $diff = self::parseDiffHunk($hunk);
       if ($diff !== null) {
         $diffs[] = $diff;
       }
     }
-    return $diffs->toImmVector();
+    return $diffs;
   }
 
   private function checkoutFilesAtRevToPath(
-    ImmSet<string> $files,
+    keyset<string> $files,
     string $rev,
     string $path,
   ): void {
@@ -473,11 +471,11 @@ class ShipItRepoHG
      *   rFBSed54f611dc0aebe17010b3416e64549d95ee3a49
      *   ... which is https://github.com/facebook/nuclide/commit/2057807d2653dd1af359f44f658eadac6eaae34b
      */
-    if ($files->count() === 0) {
-      $files = ImmSet {'.'};
+    if (C\is_empty($files)) {
+      $files = keyset['.'];
     }
-    $patterns = $files->map($file ==> 'path:'.$file);
-    $patterns = Str\join($patterns, "\n");
+    $patterns = Keyset\map($files, $file ==> 'path:'.$file)
+      |> Str\join($$, "\n");
 
     // Prefetch is needed for reasonable performance with the remote file
     // log extension
@@ -510,7 +508,7 @@ class ShipItRepoHG
   }
 
   public function export(
-    ImmSet<string> $roots,
+    keyset<string> $roots,
     ?string $rev = null,
   ): shape('tempDir' => ShipItTempDir, 'revision' => string) {
     $branch = $this->branch;

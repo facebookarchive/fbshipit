@@ -44,8 +44,8 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
 
   <<__Override>>
   final public function getCLIArguments(
-  ): ImmVector<\Facebook\ShipIt\ShipItCLIArgument> {
-    return ImmVector {
+  ): vec<\Facebook\ShipIt\ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'expected-head-revision::',
         'description' => 'The expected revision at the HEAD of the PR',
@@ -90,7 +90,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
           return $this->applyToLatest;
         },
       ),
-    };
+    ];
   }
 
   <<__Override>>

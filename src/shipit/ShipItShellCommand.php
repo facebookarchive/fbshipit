@@ -12,13 +12,13 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Dict, Vec};
 
 final class ShipItShellCommand {
   const type TFailureHandler = (function(ShipItShellCommandResult): void);
-  private ImmVector<string> $command;
+  private vec<string> $command;
 
-  private Map<string, string> $environmentVariables = Map {};
+  private dict<string, string> $environmentVariables = dict[];
   private bool $throwForNonZeroExit = true;
   private ?string $stdin = null;
   private bool $outputToScreen = false;
@@ -29,7 +29,7 @@ final class ShipItShellCommand {
     private ?string $path,
     /* HH_FIXME[4033] type hint */ ...$command
   ) {
-    $this->command = new ImmVector($command);
+    $this->command = vec($command);
   }
 
   public function setStdIn(string $input): this {
@@ -42,8 +42,11 @@ final class ShipItShellCommand {
     return $this;
   }
 
-  public function setEnvironmentVariables(ImmMap<string, string> $vars): this {
-    $this->environmentVariables->setAll($vars);
+  public function setEnvironmentVariables(dict<string, string> $vars): this {
+    $this->environmentVariables = Dict\merge(
+      $this->environmentVariables,
+      $vars,
+    );
     return $this;
   }
 
@@ -102,7 +105,8 @@ final class ShipItShellCommand {
   private function getCommandAsString(): string {
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return Str\join($this->command->map($str ==> \escapeshellarg($str)), ' ');
+    return Vec\map($this->command, $str ==> \escapeshellarg($str))
+      |> Str\join($$, ' ');
   }
 
   private function runOnceSynchronously(): ShipItShellCommandResult {

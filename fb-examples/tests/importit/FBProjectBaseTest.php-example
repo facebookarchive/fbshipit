@@ -32,17 +32,17 @@ abstract class FBProjectBaseTest extends \Facebook\ShipIt\FBBaseTest {
    *   changes to the specified internal path should be removed from the
    *   destination repository.
    */
-  protected static function getExamplePathMappings(): ImmMap<string, string> {
+  protected static function getExamplePathMappings(): dict<string, string> {
     $shipit_test_class = static::getShipItTestClass();
     $shipit_examples = $shipit_test_class::getExamplePathMappings();
-    $mapping = Map {};
+    $mapping = dict[];
     foreach ($shipit_examples as $dest_path => $src_path) {
       if ($src_path === null) {
         continue;
       }
       $mapping[$src_path] = $dest_path;
     }
-    return $mapping->toImmMap();
+    return $mapping;
   }
 
   protected static function map(
@@ -53,9 +53,10 @@ abstract class FBProjectBaseTest extends \Facebook\ShipIt\FBBaseTest {
   }
 
   final public function examplePathMappings(): dict<string, (string, ?string)> {
-    return static::getExamplePathMappings()
-      ->mapWithKey(($k, $v) ==> tuple($k, $v))
-      |> dict($$);
+    return Dict\map_with_key(
+      static::getExamplePathMappings(),
+      ($k, $v) ==> tuple($k, $v),
+    );
   }
 
   <<\DataProvider('examplePathMappings')>>
@@ -63,7 +64,7 @@ abstract class FBProjectBaseTest extends \Facebook\ShipIt\FBBaseTest {
     string $path_in,
     ?string $path_expected,
   ): void {
-    $diffs = ImmVector {shape('path' => $path_in, 'body' => 'junk')};
+    $diffs = vec[shape('path' => $path_in, 'body' => 'junk')];
     $changeset = (new ShipItChangeset())->withDiffs($diffs);
     $this->pathMappingCheck($changeset, $path_in, $path_expected);
   }
@@ -86,7 +87,7 @@ abstract class FBProjectBaseTest extends \Facebook\ShipIt\FBBaseTest {
         $path_expected,
       );
     }
-    \expect(vec($changeset->getDiffs()->map($diff ==> $diff['path'])))
+    \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
       ->toBePHPEqual(
         $expected_paths,
         Str\format(

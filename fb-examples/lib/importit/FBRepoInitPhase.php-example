@@ -34,9 +34,8 @@ final class FBRepoInitPhase extends \Facebook\ShipIt\ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(
-  ): ImmVector<\Facebook\ShipIt\ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<\Facebook\ShipIt\ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-'.$this->side.'-init',
         'description' => "Don't initialize the repository",
@@ -48,7 +47,7 @@ final class FBRepoInitPhase extends \Facebook\ShipIt\ShipItPhase {
       shape( // Removed; specified in code instead.
         'long_name' => 'src-repo::',
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -115,8 +114,10 @@ final class FBRepoInitPhase extends \Facebook\ShipIt\ShipItPhase {
       ->runSynchronously();
   }
 
-  private function getCloneCommand(): ImmVector<string> {
-    return \Facebook\ShipIt\FBRepoInitPhase::getCloneCommand($this->name)
-      ->filter($command ==> $command !== '--no-working-dir');
+  private function getCloneCommand(): vec<string> {
+    return Vec\filter(
+      \Facebook\ShipIt\FBRepoInitPhase::getCloneCommand($this->name),
+      $command ==> $command !== '--no-working-dir',
+    );
   }
 }

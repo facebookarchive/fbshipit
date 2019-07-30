@@ -12,7 +12,7 @@
  */
 namespace Facebook\ImportIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C};
 
 
 use type Facebook\ShipIt\{
@@ -41,8 +41,8 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
       'fbcode/hphp/facebook/third-party-rev.txt',
     );
 
-    \expect($changeset->getDiffs()->keys()->count())->toEqual(1);
-    $change = $changeset->getDiffs()->firstValue();
+    \expect(C\count($changeset->getDiffs()))->toEqual(1);
+    $change = C\nfirst($changeset->getDiffs());
     $change = \expect($change)->toNotBeNull();
     $change = $change['body'];
     \expect($change)->toNotBePHPEqual('');
@@ -168,7 +168,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
           $dest_dir->getPath(),
           //$source_dir->getPath(),
           (new ShipItTempDir('source-dir'))->getPath(),
-          ImmSet {},
+          keyset[],
         )
       )
         ->withDestinationBranch('master')

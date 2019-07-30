@@ -19,7 +19,7 @@ use type Facebook\ImportIt\{
   ImportItSyncPhase,
 };
 
-type GetPathMappingsFn = (function(): ImmMap<string, string>);
+type GetPathMappingsFn = (function(): dict<string, string>);
 
 type FBSourceBranchConfig = shape(
   'internal' => string,
@@ -51,7 +51,7 @@ abstract class FBShipItConfig {
 
   public abstract function getStaticConfig(): FBShipItCLIStaticConfig;
 
-  public abstract function getDefaultPathMappings(): ImmMap<string, string>;
+  public abstract function getDefaultPathMappings(): dict<string, string>;
 
   public function defaultProjectFilterChangeset(
     ShipItChangeset $changeset,
@@ -97,16 +97,16 @@ abstract class FBShipItConfig {
    * Example: '@^facebook[/|$]@' to whitelist files inside facebook/
    * directories.
    */
-  public function getStripCommonFileExceptions(): ImmVector<string> {
-    return ImmVector {};
+  public function getStripCommonFileExceptions(): vec<string> {
+    return vec[];
   }
 
   /*
    * Blacklist of regular expression strings that match project files which
    * should be stripped out of published commits.
    */
-  public function getDefaultStrippedFiles(): ImmVector<string> {
-    return ImmVector {};
+  public function getDefaultStrippedFiles(): vec<string> {
+    return vec[];
   }
 
   /*
@@ -114,8 +114,8 @@ abstract class FBShipItConfig {
    * should not be stripped, even if they match the above project-specific
    * blacklist.
    */
-  public function getDefaultStrippedFileExceptions(): ImmVector<string> {
-    return ImmVector {};
+  public function getDefaultStrippedFileExceptions(): vec<string> {
+    return vec[];
   }
 
   /**
@@ -143,37 +143,35 @@ abstract class FBShipItConfig {
     return $changeset;
   }
 
-  public function getSubmoduleMappings(): ImmMap<string, string> {
-    return ImmMap {};
+  public function getSubmoduleMappings(): dict<string, string> {
+    return dict[];
   }
 
   private function getSourceRoots(
     FBSourceBranchConfig $branch_config,
-  ): ImmSet<string> {
+  ): keyset<string> {
     $config = $this->getStaticConfig();
-    $paths = ($this->getPathMappingsFn($branch_config))()
-      ->keys()
-      ->toSet();
+    $paths = Keyset\keys(($this->getPathMappingsFn($branch_config))());
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     $interfaces = new Set(\class_implements(static::class));
     if (
       !$interfaces->contains(ISupportsFBCodeBuilder::class) &&
       $config['internalRepo'] === 'fbsource' &&
-      !$this->getSubmoduleMappings()->isEmpty()
+      !C\is_empty($this->getSubmoduleMappings())
     ) {
       // Add the default project hashes folder.  This is stripped after we add
       // any submodules.
-      $paths->add('fbcode/opensource/project_hashes/');
+      $paths[] = 'fbcode/opensource/project_hashes/';
     }
 
-    if ($paths->contains('')) {
+    if (C\contains($paths, '')) {
       // All paths are included.
-      return ImmSet {};
+      return keyset[];
     }
     // Sort least specific to most specific.
     $paths = Vec\sort($paths);
-    $roots = Set {};
+    $roots = keyset[];
     foreach ($paths as $path) {
       // If this path starts with any elements in the set of roots we have
       // already computed, we do not need to add this as it would be redundant.
@@ -186,9 +184,9 @@ abstract class FBShipItConfig {
       if ($root_match) {
         continue;
       }
-      $roots->add($path);
+      $roots[] = $path;
     }
-    return $roots->toImmSet();
+    return $roots;
   }
 
   public function getBaseConfig(
@@ -216,9 +214,10 @@ abstract class FBShipItConfig {
     ShipItChangeset $changeset,
     FBSourceBranchConfig $branch_config,
   ): ShipItChangeset {
-    $roots = $this->getBaseConfig($branch_config)
-      ->getSourceRoots()
-      ->filter($root ==> $root !== '');
+    $roots = Keyset\filter(
+      $this->getBaseConfig($branch_config)->getSourceRoots(),
+      $root ==> $root !== '',
+    );
     if (C\is_empty($roots)) {
       return $changeset;
     }
@@ -256,23 +255,22 @@ abstract class FBShipItConfig {
       // FBCodeBuilder needs these hashes, but doesn't use them as submodules.
       return $changeset;
     }
-    return $changeset
-      |> ShipItPathFilters::stripPaths(
-        $$,
-        ImmVector {
-          '@^fbcode/opensource/project_hashes/@',
-        },
-        ImmVector {
-          '@^fbcode/opensource/project_hashes/shipit_test_file.txt$@',
-        },
-      );
+    return ShipItPathFilters::stripPaths(
+      $changeset,
+      vec[
+        '@^fbcode/opensource/project_hashes/@',
+      ],
+      vec[
+        '@^fbcode/opensource/project_hashes/shipit_test_file.txt$@',
+      ],
+    );
   }
 
   public function getPhases(
     FBSourceBranchConfig $branch_config,
-  ): ImmVector<ShipItPhase> {
+  ): vec<ShipItPhase> {
     $static_config = $this->getStaticConfig();
-    return ImmVector {
+    return vec[
       new ShipItFilterSanityCheckPhase(
         $changeset ==> $this->filterChangeset($changeset, $branch_config),
       ),
@@ -311,7 +309,7 @@ abstract class FBShipItConfig {
       new ShipItSyncPhase(
         ($_config, $changeset) ==>
           $this->filterChangeset($changeset, $branch_config),
-        ImmSet {},
+        keyset[],
         ($changesets, $dest) ==>
           $this->postFilterChangesets($changesets, $dest),
         Shapes::idx($static_config, 'allow-empty-commit', false),
@@ -331,7 +329,7 @@ abstract class FBShipItConfig {
         FBGitHubUtils::class,
       ),
       new ShipItPushPhase(),
-    };
+    ];
   }
 
   //////////////////////////
@@ -353,9 +351,8 @@ abstract class FBShipItConfig {
       |> ImportItPathFilters::moveDirectories(
         $$,
         ($this->getPathMappingsFn($branch_config))(),
-        $this->getSubmoduleMappings()
-          ->keys()
-          ->map($path ==> '@^'.$path.'$@'),
+        Vec\keys($this->getSubmoduleMappings())
+          |> Vec\map($$, $path ==> '@^'.$path.'$@'),
       );
 
     $marker = $this->getCommentMarker();
@@ -381,8 +378,7 @@ abstract class FBShipItConfig {
     ShipItChangeset $changeset,
     FBSourceBranchConfig $branch_config,
   ): ShipItChangeset {
-    return $changeset
-      |> $this->projectImportChangeset($$, $branch_config);
+    return $this->projectImportChangeset($changeset, $branch_config);
   }
 
   final public function getImportBaseConfig(
@@ -400,7 +396,7 @@ abstract class FBShipItConfig {
         ),
         /* dest_dir = */ $static_config['internalRepo'],
         // We assume the entire GitHub repository is being imported.
-        /* source_roots = */ ImmSet {},
+        /* source_roots = */ keyset[],
       )
     )
       ->withSourceBranch($shipit_base_config->getDestinationBranch())
@@ -439,9 +435,9 @@ abstract class FBShipItConfig {
 
   final public function getImportPhases(
     FBSourceBranchConfig $branch_config,
-  ): ImmVector<\Facebook\ShipIt\ShipItPhase> {
+  ): vec<\Facebook\ShipIt\ShipItPhase> {
     $static_config = $this->getStaticConfig();
-    return ImmVector {
+    return vec[
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::SOURCE),
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::DESTINATION),
       new \Facebook\ShipIt\ShipItGitHubInitPhase(
@@ -466,7 +462,7 @@ abstract class FBShipItConfig {
       new ImportItSyncPhase(
         $changeset ==> $this->importChangeset($changeset, $branch_config),
       ),
-    };
+    ];
   }
 
   /**
@@ -478,13 +474,13 @@ abstract class FBShipItConfig {
    * If you need to override shipit logic for certain branches,
    * pass override functions into the shape.
    */
-  public function getBranchConfigs(): ImmVector<FBSourceBranchConfig> {
-    return ImmVector {
+  public function getBranchConfigs(): vec<FBSourceBranchConfig> {
+    return vec[
       shape(
         'internal' => 'master',
         'external' => 'master',
       ),
-    };
+    ];
   }
 
   /**
@@ -523,11 +519,12 @@ abstract class FBShipItConfig {
    * onto, then override this method to return null.
    */
   public function getLandBranch(): ?string {
-    $internal_branches = $this->getBranchConfigs()
-      ->map($branch_config ==> $branch_config['internal'])
-      ->toSet();
+    $internal_branches = Keyset\map(
+      $this->getBranchConfigs(),
+      $branch_config ==> $branch_config['internal'],
+    );
     invariant(
-      $internal_branches->contains('master'),
+      C\contains($internal_branches, 'master'),
       'Branch setup without master detected! You must override '.
       'getLandBranch to return the default diff land branch for your '.
       'project, or null if your project does not ship from the diff land '.
@@ -537,21 +534,21 @@ abstract class FBShipItConfig {
   }
 
   final public function postFilterChangesets(
-    ImmVector<ShipItChangeset> $changesets,
+    vec<ShipItChangeset> $changesets,
     ShipItRepo $dest,
-  ): ImmVector<ShipItChangeset> {
+  ): vec<ShipItChangeset> {
     $merged_changesets = $this->mergeSubmoduleChangesets($changesets);
     if ($this->shouldSkipUpdateSubmodules($merged_changesets, $dest)) {
-      return ImmVector {};
+      return vec[];
     } else {
       return $merged_changesets;
     }
   }
 
   final public function mergeSubmoduleChangesets(
-    ImmVector<ShipItChangeset> $changesets,
-  ): ImmVector<ShipItChangeset> {
-    $new_changesets = Vector {};
+    vec<ShipItChangeset> $changesets,
+  ): vec<ShipItChangeset> {
+    $new_changesets = vec[];
     $submodules_changeset = null;
     foreach ($changesets as $changeset) {
       if ($this->isUpdatingSubmodules($changeset)) {
@@ -597,16 +594,16 @@ abstract class FBShipItConfig {
     if ($submodules_changeset !== null) {
       $new_changesets[] = $submodules_changeset;
     }
-    return $new_changesets->toImmVector();
+    return $new_changesets;
   }
 
   final public function shouldSkipUpdateSubmodules(
-    ImmVector<ShipItChangeset> $changesets,
+    vec<ShipItChangeset> $changesets,
     ShipItRepo $dest,
   ): bool {
-    $changesets = $changesets->filter($changeset ==> $changeset->isValid());
+    $changesets = Vec\filter($changesets, $changeset ==> $changeset->isValid());
     if (
-      $changesets->count() === 1 && $this->isUpdatingSubmodules($changesets[0])
+      C\count($changesets) === 1 && $this->isUpdatingSubmodules($changesets[0])
     ) {
       // If that's all there is, skip the whole operation unless enough
       // time has passed or a non-submodule commit has been made.
@@ -644,8 +641,8 @@ abstract class FBShipItConfig {
   private function mergeSubmoduleDiffs(
     ShipItChangeset $old_changeset,
     ShipItChangeset $new_changeset,
-  ): ImmVector<ShipItDiff> {
-    $diffs_map = Map {};
+  ): vec<ShipItDiff> {
+    $diffs_map = dict[];
     foreach ($old_changeset->getDiffs() as $diff) {
       $diffs_map[$diff['path']] = $diff;
     }
@@ -653,7 +650,12 @@ abstract class FBShipItConfig {
       // Concatenate the new changeset's file body after the old changeset's
       // file body, or just add the new changeset's file if it does not exist
       // in the old changeset.
-      if ($diffs_map->contains($diff['path'])) {
+      if (
+        !C\is_empty(Vec\filter(
+          $diffs_map,
+          ($diff_map) ==> $diff_map['path'] === $diff['path'],
+        ))
+      ) {
         $new_body = $diffs_map[$diff['path']]['body'].$diff['body'];
       } else {
         $new_body = $diff['body'];
@@ -663,7 +665,7 @@ abstract class FBShipItConfig {
         'body' => $new_body,
       );
     }
-    return $diffs_map->values()->toImmVector();
+    return vec($diffs_map);
   }
 
   /**

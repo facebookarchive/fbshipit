@@ -21,5 +21,5 @@ interface ImportItSubmoduleMappings {
    * A map from revision text file to the location a submodule should be.  This
    * is passed to ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile.
    */
-  public static function getSubmoduleMappings(): ImmMap<string, string>;
+  public static function getSubmoduleMappings(): dict<string, string>;
 }

@@ -22,7 +22,7 @@ final class OSTeamFilters {
      * linked to your internal profile so that FB can track copyright and commit
      * stats correctly.
      */
-    $emailMap = ImmMap {
+    $emailMap = dict[
       'Phil Dibowitz <phild@fb.com>' => 'Phil Dibowitz <phil@ipom.com>',
       'Marcin Sawicki <odcinek@fb.com>' => 'Marcin Sawicki <odcinek@gmail.com>',
       'Bryan Wann <bwann@fb.com>' => 'Bryan Wann <bwann@wann.net>',
@@ -33,7 +33,7 @@ final class OSTeamFilters {
         'KC Braunschweig <kcbraunschweig@gmail.com>',
       'Naomi Reeves <nreeves@fb.com>' =>
         'Naomi Reeves <naomi.c.reeves@gmail.com>',
-    };
+    ];
 
     $author = $changeset->getAuthor();
     foreach ($emailMap as $internal => $external) {

@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C, Dict};
 
 /** Utility class for commit messages with sections preceded by "Header: ".
  *
@@ -23,7 +23,7 @@ use namespace HH\Lib\Str;
  *   Baz
  */
 final class ShipItMessageSections {
-  /** Get a Map { $header => $content} of sections.
+  /** Get a dict[$header => $content] of sections.
    *
    * @param $valid_sections what sections are real sections; if specified, and
    *   something that looks like a section header is seen that isn't in this
@@ -33,9 +33,9 @@ final class ShipItMessageSections {
    */
   public static function getSections(
     ShipItChangeset $changeset,
-    ?ImmSet<string> $valid_sections = null,
-  ): Map<string, string> {
-    $sections = Map {'' => ''};
+    ?keyset<string> $valid_sections = null,
+  ): dict<string, string> {
+    $sections = dict['' => ''];
     $section = '';
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
@@ -45,7 +45,7 @@ final class ShipItMessageSections {
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       if (\preg_match('/^[a-zA-Z ]+:/', $line)) {
         $h = Str\lowercase(Str\slice($line, 0, Str\search($line, ':')));
-        if ($valid_sections === null || $valid_sections->contains($h)) {
+        if ($valid_sections === null || C\contains($valid_sections, $h)) {
           $section = $h;
           $value = Str\trim(Str\slice($line, Str\length($section) + 1));
 
@@ -59,7 +59,7 @@ final class ShipItMessageSections {
             $valid_sections !== null
           ) {
             $h = Str\lowercase(Str\slice($value, 0, Str\search($value, ':')));
-            if ($valid_sections->contains($h)) {
+            if (C\contains($valid_sections, $h)) {
               $section = $h;
               $value = Str\trim(Str\slice($value, Str\length($section) + 1));
             }
@@ -71,15 +71,15 @@ final class ShipItMessageSections {
       $sections[$section] .= "\n{$line}";
     }
     if ($sections[""] === '') {
-      $sections->removeKey('');
+      unset($sections['']);
     }
 
-    return $sections->map($x ==> Str\trim($x));
+    return Dict\map($sections, $x ==> Str\trim($x));
   }
 
   /** Convert a section map back to a commit message */
   public static function buildMessage(
-    ImmMap<string, string> $sections,
+    dict<string, string> $sections,
   ): string {
     $out = '';
     foreach ($sections as $section => $text) {

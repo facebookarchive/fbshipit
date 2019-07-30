@@ -26,44 +26,39 @@ final class FBCodeBuilder {
 
   public static function getPathMappings(
     ?string $travis_config = null,
-  ): ImmMap<string, string> {
+  ): dict<string, string> {
     if ($travis_config === null) {
       $travis_config = FBCodeBuilder::SRC_FBCODE_BUILDER.'travis.yml';
     }
-    return ImmMap {
+    return dict[
       $travis_config => '.travis.yml',
       FBCodeBuilder::SRC_FBCODE_BUILDER => FBCodeBuilder::DEST_FBCODE_BUILDER,
       FBCodeBuilder::SRC_GITHUB_HASHES => FBCodeBuilder::DEST_GITHUB_HASHES,
-    };
+    ];
   }
-  public static function getDestStrippedFiles(): ImmVector<string> {
-    return ImmVector {
+  public static function getDestStrippedFiles(): vec<string> {
+    return vec[
       // Don't bother Github users with code only relevant internally.
       '@^build/facebook_.*@',
       '@^'.FBCodeBuilder::DEST_GITHUB_HASHES.'@',
       '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'facebook_@',
       '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'README.facebook$@',
       '@^'.FBCodeBuilder::DEST_FBCODE_BUILDER.'TARGETS@',
-    };
+    ];
   }
   public static function getDestStrippedFileExceptions(
-    ImmSet<string> $dependencies,
-  ): ImmVector<string> {
-    return ImmVector {
+    keyset<string> $dependencies,
+  ): vec<string> {
+    return vec[
       '@^'.FBCodeBuilder::DEST_GITHUB_HASHES.'$@',
       '@^'.
       FBCodeBuilder::DEST_GITHUB_HASHES.
       '('.
-      Str\join(
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          $dependencies->map($d ==> \preg_quote($d, '@')),
-        '|',
-      ).
+      Str\join(Keyset\map($dependencies, $d ==> PHP\preg_quote($d, '@')), '|').
       ')-rev.txt$@',
       // This is just to appease ShipItFilterSanityCheckPhase
       '@^'.FBCodeBuilder::DEST_GITHUB_HASHES.'shipit_test_file.txt$@',
-    };
+    ];
   }
 }
 
@@ -108,18 +103,17 @@ trait FBCodeBuilderTrait implements ISupportsFBCodeBuilder {
   }
   // Implement the same as you would write a vanilla getPathMappings()
   abstract public static function getPathMappingsNonFBCodeBuilder(
-  ): ImmMap<string, string>;
+  ): dict<string, string>;
   // Pick project names from fbcode/opensource/project_hashes/facebook.  If
   // your dependency isn't there, you need to enable TagIt for it.
   abstract protected static function getFBCodeBuilderDependencies(
-  ): ImmSet<string>;
+  ): keyset<string>;
 
   protected static function getFBCodeBuilderTravisConfig(): string {
     return FBCodeBuilder::SRC_FBCODE_BUILDER.'travis.yml';
   }
 
-  public static function getFBCodeBuilderPathMappings(
-  ): ImmMap<string, string> {
+  public static function getFBCodeBuilderPathMappings(): dict<string, string> {
     return FBCodeBuilder::getPathMappings(
       static::getFBCodeBuilderTravisConfig(),
     );
@@ -128,10 +122,10 @@ trait FBCodeBuilderTrait implements ISupportsFBCodeBuilder {
   // Adds fbcode_builder's path mappings to the per-project path mappings.
   // `projectFilterChangesetNonFBCodeBuilder` will `moveDirectories` for us.
   <<__Override>>
-  final public function getDefaultPathMappings(): ImmMap<string, string> {
-    return ImmMap::fromItems(
-      static::getPathMappingsNonFBCodeBuilder()->items()
-        ->concat(self::getFBCodeBuilderPathMappings()->items()),
+  final public function getDefaultPathMappings(): dict<string, string> {
+    return Dict\merge(
+      static::getPathMappingsNonFBCodeBuilder(),
+      self::getFBCodeBuilderPathMappings(),
     );
   }
 

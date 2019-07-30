@@ -17,9 +17,9 @@ final class BuckVerifyNoMoeOccurrencesPhase extends BuildAndTestPhase {
 
   <<__Override>>
   protected function build(ShipItBaseConfig $config): void {
-    $steps = ImmMap {
-      'clean' => ImmVector {'git', 'clean', '-xffd'},
-    };
+    $steps = dict[
+      'clean' => vec['git', 'clean', '-xffd'],
+    ];
 
     self::runExecutableSteps($config, $steps);
   }

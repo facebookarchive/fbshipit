@@ -71,8 +71,8 @@ You need to construct:
  - a pipeline of filters, assuming you are using the `ShipItSyncPhase`
 
 Filters are provided for common operations - the most frequent are:
- - `ShipItPathFilters::moveDirectories(string $changeset, ImmMap<string, string> $mapping)`: apply patches to a different directory in the destination repository
- - `ShipItPathFilters::stripPaths(string $changeset, ImmVector<string> $patterns, ImmVector<string> $exception_patterns = ImmVector { })`: remove any modifications to paths matching `$patterns`, unless they match something in `$exception_patterns`.
+ - `ShipItPathFilters::moveDirectories(string $changeset, dict<string, string> $mapping)`: apply patches to a different directory in the destination repository
+ - `ShipItPathFilters::stripPaths(string $changeset, vec<string> $patterns, vec<string> $exception_patterns = vec[])`: remove any modifications to paths matching `$patterns`, unless they match something in `$exception_patterns`.
 
 ## Example
 
@@ -84,10 +84,10 @@ namespace Facebook\ShipIt;
 class ShipMyProject
   implements \Facebook\ImportIt\ImportItPathMappings {
 
-  public static function getPathMappings(): ImmMap<string, string> {
-    return ImmMap {
+  public static function getPathMappings(): dict<string, string> {
+    return dict[
       'myproject/' => '',
-    };
+    ];
   }
 
   public static function filterChangeset(
@@ -96,11 +96,11 @@ class ShipMyProject
     return $changeset
       |> ShipItPathFilters::stripPaths(
           $$,
-          ImmVector {
+          vec[
             '@^(?!myproject/)@',
             '@^myproject(/[^/]+)*/MY_PRIVATE_STUFF$@',
             '@/non[-_]?public/@',
-          },
+          ],
         )
       |> ShipItPathFilters::moveDirectories(
           $$,
@@ -115,7 +115,7 @@ class ShipMyProject
       'dest_dir_name',
     );
 
-    $phases = ImmVector {
+    $phases = vec[
       new MySourceRepoInitPhase(/* ... */ ),
       new ShipItPullPhase(ShipItRepoSide::SOURCE),
       new ShipItGitHubInitPhase(
@@ -129,10 +129,10 @@ class ShipMyProject
       new ShipItPullPhase(ShipItRepoSide::DESTINATION),
       new ShipItSyncPhase(
         ($config, $changeset) ==> self::filterChangeset($changeset),
-        /* directories to run hg log/hg diff in: */ ImmSet { 'myproject/' },
+        /* directories to run hg log/hg diff in: */ keyset['myproject/'],
       ),
       new ShipItPushPhase(),
-    };
+    ];
 
     (new ShipItPhaseRunner($config, $phases))->run();
   }
@@ -188,7 +188,7 @@ class ImportMyProject {
         'source_dir_name',
         'dest_dir_name',
       ),
-      ImmVector {
+      vec[
         new MySourceRepoInitPhase(/* ... */ ),
         new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
         new ShipItPullPhase(ShipItRepoSide::DESTINATION),
@@ -211,7 +211,7 @@ class ImportMyProject {
           ShipItRepoSide::DESTINATION,
           $changeset ==> self::filterChangeset($changeset),
         ),
-      },
+      ],
     ))
       ->run();
   }

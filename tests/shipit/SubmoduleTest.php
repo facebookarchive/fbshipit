@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C, Vec};
 
 
 <<\Oncalls('open_source')>>
@@ -31,10 +31,12 @@ final class SubmoduleTest extends ShellTest {
       'third-party',
     );
 
-    \expect($changeset->getDiffs()->keys()->count())->toEqual(1);
+    \expect($changeset->getDiffs() |> Vec\keys($$) |> C\count($$))->toEqual(
+      1,
+    );
     $diff = $changeset->getDiffs()
-      ->filter($diff ==> $diff['path'] === 'third-party')
-      ->firstValue();
+      |> Vec\filter($$, $diff ==> $diff['path'] === 'third-party')
+      |> C\nfirst($$);
     $diff = \expect($diff)->toNotBeNull();
     $change = $diff['body'];
     \expect($change)->toNotBePHPEqual('');

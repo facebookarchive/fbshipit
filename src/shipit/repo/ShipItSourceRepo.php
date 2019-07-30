@@ -21,7 +21,7 @@ interface ShipItSourceRepo {
    */
   public function findNextCommit(
     string $commit,
-    ImmSet<string> $roots,
+    keyset<string> $roots,
   ): ?string;
 
   /**
@@ -61,7 +61,7 @@ interface ShipItSourceRepo {
    * Create a directory containing the specified paths.
    */
   public function export(
-    ImmSet<string> $roots,
+    keyset<string> $roots,
     ?string $rev = null, // defaults to the current revision
   ): shape('tempDir' => ShipItTempDir, 'revision' => string);
 }

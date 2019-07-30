@@ -26,7 +26,7 @@ final class ShipItPullPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
     $skip_arg = shape(
       'long_name' => 'skip-'.$this->side.'-pull',
       'description' => "Don't pull the ".$this->side." repository",
@@ -34,21 +34,21 @@ final class ShipItPullPhase extends ShipItPhase {
     );
 
     if ($this->side === ShipItRepoSide::SOURCE) {
-      return ImmVector {
+      return vec[
         $skip_arg,
         shape(
           'long_name' => 'skip-src-pull',
           'replacement' => 'skip-source-pull',
         ),
-      };
+      ];
     } else {
-      return ImmVector {
+      return vec[
         $skip_arg,
         shape(
           'long_name' => 'skip-dest-pull',
           'replacement' => 'skip-destination-pull',
         ),
-      };
+      ];
     }
   }
 

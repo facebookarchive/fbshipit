@@ -31,14 +31,14 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => $this->side.'-allow-nuke',
         'description' => 'Allow FBShipIt to delete the repository if corrupted',
         'write' => $_ ==> $this->unskip(),
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -98,10 +98,10 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
   }
 
   private function isCorruptedGitRepo(string $local_path): bool {
-    $commands = ImmVector {
-      ImmVector {'git', 'show', 'HEAD'},
-      ImmVector {'git', 'fsck'},
-    };
+    $commands = vec[
+      vec['git', 'show', 'HEAD'],
+      vec['git', 'fsck'],
+    ];
 
     foreach ($commands as $command) {
       $exit_code = (new ShipItShellCommand($local_path, ...$command))
@@ -137,7 +137,7 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
       )
     )
       ->setNoExceptions()
-      ->setEnvironmentVariables(ImmMap {'HGPLAIN' => '1'})
+      ->setEnvironmentVariables(dict['HGPLAIN' => '1'])
       ->runSynchronously();
 
     if ($result->getExitCode() !== 0) {

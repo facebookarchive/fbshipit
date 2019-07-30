@@ -23,7 +23,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     FBShipItCLIAction $action,
     FBShipItConfig $config_object,
     ?string $external_branch = null,
-  ): ImmVector<ShipItPhase> {
+  ): vec<ShipItPhase> {
     return FBShipItProjectRunner::getPhases(
       $action,
       $config_object,
@@ -43,7 +43,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toNotBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = $phase->getBranchConfigs();
-    \expect($branches->count())->toBePHPEqual(3);
+    \expect(C\count($branches))->toBePHPEqual(3);
   }
 
   public function testGetPhasesWithBranch(): void {
@@ -59,7 +59,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toNotBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = $phase->getBranchConfigs();
-    \expect($branches->count())->toBePHPEqual(1);
+    \expect(C\count($branches))->toBePHPEqual(1);
     \expect($branches[0]['internal'])->toBePHPEqual('side_branch');
   }
 
@@ -76,7 +76,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = $phase->getBranchConfigs();
-    \expect($branches->count())->toBePHPEqual(1);
+    \expect(C\count($branches))->toBePHPEqual(1);
     \expect($branches[0]['internal'])->toBePHPEqual('master');
   }
 

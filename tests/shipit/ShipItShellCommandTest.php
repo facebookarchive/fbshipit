@@ -50,13 +50,13 @@ final class ShipItShellCommandTest extends ShellTest {
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     $herp = \bin2hex(\random_bytes(16));
     $result = (new ShipItShellCommand('/', 'env'))
-      ->setEnvironmentVariables(ImmMap {'HERP' => $herp})
+      ->setEnvironmentVariables(dict['HERP' => $herp])
       ->runSynchronously();
     \expect($result->getStdOut())->toContainSubstring('HERP='.$herp);
   }
 
   public function testInheritingEnvironmentVariable(): void {
-    $to_try = ImmSet {
+    $to_try = keyset[
       // Need to keep SSH/Kerberos environment variables to be able to access
       // repositories
       'SSH_AUTH_SOCK',
@@ -67,10 +67,10 @@ final class ShipItShellCommandTest extends ShellTest {
       'EDITOR',
       'HISTFILE',
       'PATH',
-    };
+    ];
 
     $output = (new ShipItShellCommand('/', 'env'))
-      ->setEnvironmentVariables(ImmMap {})
+      ->setEnvironmentVariables(dict[])
       ->runSynchronously()
       ->getStdOut();
 
@@ -115,7 +115,7 @@ final class ShipItShellCommandTest extends ShellTest {
 
   public function testEscaping(): void {
     $output = (new ShipItShellCommand('/', 'echo', 'foo', '$FOO'))
-      ->setEnvironmentVariables(ImmMap {'FOO' => 'variable value'})
+      ->setEnvironmentVariables(dict['FOO' => 'variable value'])
       ->runSynchronously()
       ->getStdOut();
     \expect($output)->toEqual("foo \$FOO\n");

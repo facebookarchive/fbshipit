@@ -12,18 +12,18 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Keyset, C};
 
 abstract final class ShipItPathFilters {
   public static function stripPaths(
     ShipItChangeset $changeset,
-    ImmVector<string> $strip_patterns,
-    ImmVector<string> $strip_exception_patterns = ImmVector {},
+    vec<string> $strip_patterns,
+    vec<string> $strip_exception_patterns = vec[],
   ): ShipItChangeset {
-    if ($strip_patterns->count() === 0) {
+    if (C\is_empty($strip_patterns)) {
       return $changeset;
     }
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $path = $diff['path'];
 
@@ -52,7 +52,7 @@ abstract final class ShipItPathFilters {
       $diffs[] = $diff;
     }
 
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 
   /**
@@ -64,8 +64,8 @@ abstract final class ShipItPathFilters {
    */
   public static function moveDirectories(
     ShipItChangeset $changeset,
-    ImmMap<string, string> $mapping,
-    ImmVector<string> $skip_patterns = ImmVector {},
+    dict<string, string> $mapping,
+    vec<string> $skip_patterns = vec[],
   ): ShipItChangeset {
     return self::rewritePaths(
       $changeset,
@@ -91,7 +91,7 @@ abstract final class ShipItPathFilters {
     ShipItChangeset $changeset,
     (function(string): string) $path_rewrite_callback,
   ): ShipItChangeset {
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $old_path = $diff['path'];
       $new_path = $path_rewrite_callback($old_path);
@@ -124,17 +124,18 @@ abstract final class ShipItPathFilters {
         'body' => $body,
       );
     }
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 
   public static function stripExceptDirectories(
     ShipItChangeset $changeset,
-    ImmSet<string> $roots,
+    keyset<string> $roots,
   ): ShipItChangeset {
-    $roots = $roots->map(
+    $roots = Keyset\map(
+      $roots,
       $root ==> Str\slice($root, -1) === '/' ? $root : $root.'/',
     );
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $path = $diff['path'];
       $match = false;
@@ -155,6 +156,6 @@ abstract final class ShipItPathFilters {
         Str\join($roots, ', '),
       );
     }
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 }

@@ -25,7 +25,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
       ->withAuthor('yrahbar')
       ->withSubject('Test Commit')
       ->withMessage("Summary:\n Stuff")
-      ->withDiffs(ImmVector {
+      ->withDiffs(vec[
         shape(
           'path' => 'public/example.php',
           'body' => 'Testing events from GitHub author date\n',
@@ -34,7 +34,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
           'path' => 'facebook/filtered.txt',
           'body' => 'Testing events from GitHub author date\n',
         ),
-      });
+      ]);
   }
 
   public function testHandleChangeset(): void {
@@ -86,7 +86,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
   }
 
   public function testHandleRenames(): void {
-    $changeset = self::makeChangeset()->withDiffs(ImmVector {
+    $changeset = self::makeChangeset()->withDiffs(vec[
       shape(
         'path' =>
           'from flib/intern/opensource/shipit/src/shipit/fb-private/file.php',
@@ -96,7 +96,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
         'path' => 'flib/intern/opensource/shipit/src/shipit/file.php',
         'body' => '_',
       ),
-    });
+    ]);
     $patch = \file_get_contents(__DIR__.'/example_rename_git_diff.patch');
     $result = (new FBShipItPreview())
       ->handleChangeset('facebook-www', 'master', $changeset, $patch);

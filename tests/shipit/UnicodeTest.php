@@ -135,9 +135,9 @@ final class UnicodeTest extends ShellTest {
         '-m',
         "Subject\n\n".$this->getExpectedContent(),
       )
-    )->setEnvironmentVariables(ImmMap {
+    )->setEnvironmentVariables(dict[
       'LC_ALL' => 'en_US.UTF-8',
-    })
+    ])
       ->runSynchronously();
 
     $repo = new ShipItRepoGIT($tempdir->getPath(), 'master');
@@ -163,9 +163,9 @@ final class UnicodeTest extends ShellTest {
         '-Am',
         "Subject\n\n".$this->getExpectedContent(),
       )
-    )->setEnvironmentVariables(ImmMap {
+    )->setEnvironmentVariables(dict[
       'LC_ALL' => 'en_US.UTF-8',
-    })
+    ])
       ->runSynchronously();
 
     $repo = new ShipItRepoHG($tempdir->getPath(), 'master');

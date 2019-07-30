@@ -94,7 +94,7 @@ final class ShipItConditionalLinesFilter {
     string $pattern,
     string $replacement,
   ): ShipItChangeset {
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       /* HH_IGNORE_ERROR[2049] __PHPStdLib */
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
@@ -107,6 +107,6 @@ final class ShipItConditionalLinesFilter {
         |> Str\join($$, "\n");
       $diffs[] = $diff;
     }
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 }

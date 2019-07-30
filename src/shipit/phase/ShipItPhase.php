@@ -32,8 +32,8 @@ abstract class ShipItPhase {
    */
   abstract protected function isProjectSpecific(): bool;
 
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {};
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[];
   }
 
   final public function isSkipped(): bool {

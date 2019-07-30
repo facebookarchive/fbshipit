@@ -92,9 +92,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
   <<\DataProvider('exampleFacebookDirectories')>>
   public function testFacebookDirectories(string $dir, bool $private): void {
     $file = $dir.'/foo';
-    $changeset = (new ShipItChangeset())->withDiffs(ImmVector {
+    $changeset = (new ShipItChangeset())->withDiffs(vec[
       shape('path' => $file, 'body' => 'junk'),
-    });
+    ]);
     $changeset = FBCommonFilters::applyAll($changeset);
 
     if ($private) {
@@ -102,19 +102,19 @@ final class FBCommonFiltersTest extends FBBaseTest {
     } else {
       $expected = vec[$file];
     }
-    $actual = vec($changeset->getDiffs()->map($diff ==> $diff['path']));
+    $actual = Vec\map($changeset->getDiffs(), $diff ==> $diff['path']);
     \expect($actual)->toBePHPEqual($expected);
   }
 
   public function testPrivateFileInPublicFacebookDir(): void {
-    $changeset = (new ShipItChangeset())->withDiffs(ImmVector {
+    $changeset = (new ShipItChangeset())->withDiffs(vec[
       shape('path' => 'foo/com/facebook/TARGETS', 'body' => 'junk'),
       shape('path' => 'foo/com/facebook/BUILD_MODE.bzl', 'body' => 'junk'),
       shape('path' => 'foo/com/facebook/PLATFORM.bzl', 'body' => 'junk'),
       shape('path' => 'foo/com/facebook/something', 'body' => 'junk'),
-    });
+    ]);
     $changeset = FBCommonFilters::applyAll($changeset);
-    \expect(vec($changeset->getDiffs()->map($diff ==> $diff['path'])))
+    \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
       ->toBePHPEqual(vec['foo/com/facebook/something']);
   }
 
@@ -218,11 +218,11 @@ Test Plan: run all code paths',
       $changeset = (new ShipItChangeset())
         ->withMessage(Str\format("%s:\n some text", $section));
       \expect(
-        FBCommonFilters::filterMessageSections($changeset, ImmSet {})
+        FBCommonFilters::filterMessageSections($changeset, keyset[])
           ->getMessage(),
       )->toBePHPEqual('', "Strips section '".$section."'");
       \expect(
-        FBCommonFilters::filterMessageSections($changeset, ImmSet {$section})
+        FBCommonFilters::filterMessageSections($changeset, keyset[$section])
           ->getMessage(),
       )->toBePHPEqual(
         Str\format("%s: some text", Str\capitalize_words($section)),
@@ -240,26 +240,26 @@ Test Plan: run all code paths',
 
     // use default section names
     $keep = FBCommonFilters::getKeepSections($changeset);
-    \expect($keep->count())->toEqual(
-      1 + FBCommonFilters::getDefaultMessageSectionNames()->count(),
+    \expect(C\count($keep))->toEqual(
+      1 + C\count(FBCommonFilters::getDefaultMessageSectionNames()),
     );
-    \expect($keep->contains('test plan'))->toBeTrue();
+    \expect(C\contains($keep, 'test plan'))->toBeTrue();
 
     // use section names from configuration
     $keep = FBCommonFilters::getKeepSections(
       $changeset,
-      shape('filterMessageSections/keepFields' => ImmSet {}),
+      shape('filterMessageSections/keepFields' => keyset[]),
     );
-    \expect($keep->count())->toEqual(1);
-    \expect($keep->contains('test plan'))->toBeTrue();
+    \expect(C\count($keep))->toEqual(1);
+    \expect(C\contains($keep, 'test plan'))->toBeTrue();
 
     // duplicates ignored
     $keep = FBCommonFilters::getKeepSections(
       $changeset,
-      shape('filterMessageSections/keepFields' => ImmSet {'test plan'}),
+      shape('filterMessageSections/keepFields' => keyset[]),
     );
-    \expect($keep->count())->toEqual(1);
-    \expect($keep->contains('test plan'))->toBeTrue();
+    \expect(C\count($keep))->toEqual(1);
+    \expect(C\contains($keep, 'test plan'))->toBeTrue();
   }
 
   public function testGetKeepSectionsDoesNotAddTestPlanSection(): void {
@@ -267,26 +267,26 @@ Test Plan: run all code paths',
 
     // use default section names
     $keep = FBCommonFilters::getKeepSections($changeset);
-    \expect($keep->count())->toEqual(
-      FBCommonFilters::getDefaultMessageSectionNames()->count(),
+    \expect(C\count($keep))->toEqual(
+      C\count(FBCommonFilters::getDefaultMessageSectionNames()),
     );
-    \expect($keep->contains('test plan'))->toBeFalse();
+    \expect(C\contains($keep, 'test plan'))->toBeFalse();
 
     // use section names from configuration
     $keep = FBCommonFilters::getKeepSections(
       $changeset,
-      shape('filterMessageSections/keepFields' => ImmSet {'facebook'}),
+      shape('filterMessageSections/keepFields' => keyset['facebook']),
     );
-    \expect($keep->count())->toEqual(1);
-    \expect($keep->contains('facebook'))->toBeTrue();
+    \expect(C\count($keep))->toEqual(1);
+    \expect(C\contains($keep, 'facebook'))->toBeTrue();
 
     // existing 'test plan' section not removed
     $keep = FBCommonFilters::getKeepSections(
       $changeset,
-      shape('filterMessageSections/keepFields' => ImmSet {'test plan'}),
+      shape('filterMessageSections/keepFields' => keyset['test plan']),
     );
-    \expect($keep->count())->toEqual(1);
-    \expect($keep->contains('test plan'))->toBeTrue();
+    \expect(C\count($keep))->toEqual(1);
+    \expect(C\contains($keep, 'test plan'))->toBeTrue();
   }
 
   public function testClosingPullRequestReferencedInSubject(): void {
@@ -382,10 +382,10 @@ Name2';
     $original_message = '@allow-empty-commit';
     $changeset_1 = (new ShipItChangeset())
       ->withMessage($original_message)
-      ->withDiffs(ImmVector {
+      ->withDiffs(vec[
         shape('path' => 'foo/com/facebook/TARGETS', 'body' => 'junk'),
         shape('path' => 'foo/com/facebook/BUILD_MODE.bzl', 'body' => 'junk'),
-      });
+      ]);
     \expect(() ==> {
       FBCommonFilters::applyAll($changeset_1);
     })

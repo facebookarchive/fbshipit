@@ -36,8 +36,8 @@ final class ShipItGitHubInitPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-'.$this->side.'-init',
         'description' => "Don't initialize the GitHub checkout",
@@ -88,7 +88,7 @@ final class ShipItGitHubInitPhase extends ShipItPhase {
         'long_name' => $this->side.'-use-system-credentials',
         'replacement' => $this->side.'-use-anonymous-https',
       ),
-    };
+    ];
   }
 
   <<__Override>>

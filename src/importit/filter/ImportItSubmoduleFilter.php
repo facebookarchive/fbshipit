@@ -76,7 +76,7 @@ final class ImportItSubmoduleFilter {
     string $submodule_path,
     string $text_file_with_rev,
   ): ShipItChangeset {
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $path = $diff['path'];
       $body = $diff['body'];
@@ -118,6 +118,6 @@ final class ImportItSubmoduleFilter {
       );
     }
 
-    return $changeset->withDiffs($diffs->toImmVector());
+    return $changeset->withDiffs($diffs);
   }
 }

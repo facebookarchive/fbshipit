@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C};
 
 final class ShipItMentions {
   // Ignore things like email addresses, let them pass cleanly through
@@ -40,11 +40,11 @@ final class ShipItMentions {
    */
   public static function rewriteMentionsWithoutAt(
     ShipItChangeset $changeset,
-    ImmSet<string> $exceptions = ImmSet {},
+    keyset<string> $exceptions = keyset[],
   ): ShipItChangeset {
     return self::rewriteMentions(
       $changeset,
-      $it ==> ($exceptions->contains($it) || Str\slice($it, 0, 1) !== '@')
+      $it ==> (C\contains($exceptions, $it) || Str\slice($it, 0, 1) !== '@')
         ? $it
         : Str\slice($it, 1),
     );
@@ -52,7 +52,7 @@ final class ShipItMentions {
 
   public static function getMentions(
     ShipItChangeset $changeset,
-  ): ImmSet<string> {
+  ): keyset<string> {
     $matches = varray[];
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
@@ -64,13 +64,13 @@ final class ShipItMentions {
     );
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return (new ImmSet(\array_map($match ==> $match[1], $matches)));
+    return (keyset(\array_map($match ==> $match[1], $matches)));
   }
 
   public static function containsMention(
     ShipItChangeset $changeset,
     string $mention,
   ): bool {
-    return self::getMentions($changeset)->contains($mention);
+    return C\contains(self::getMentions($changeset), $mention);
   }
 }

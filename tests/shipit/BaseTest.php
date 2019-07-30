@@ -12,6 +12,8 @@
  */
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\{Vec};
+
 abstract class BaseTest extends \Facebook\HackTest\HackTest { // @oss-enable
 // @oss-disable: abstract class BaseTest extends \WWWTest {
 
@@ -29,10 +31,11 @@ abstract class BaseTest extends \Facebook\HackTest\HackTest { // @oss-enable
   } // @oss-enable
 
   protected static function diffsFromMap(
-    ImmMap<string, string> $diffs,
-  ): ImmVector<ShipItDiff> {
-    return $diffs
-      ->mapWithKey(($path, $body) ==> shape('path' => $path, 'body' => $body))
-      ->toImmVector();
+    dict<string, string> $diffs,
+  ): vec<ShipItDiff> {
+    return Vec\map_with_key(
+      $diffs,
+      ($path, $body) ==> shape('path' => $path, 'body' => $body),
+    );
   }
 }

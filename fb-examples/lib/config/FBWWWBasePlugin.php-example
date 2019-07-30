@@ -76,7 +76,7 @@ abstract class FBWWWBasePlugin extends FBShipItConfigeratorConfig {
     ShipItChangeset $changeset,
     (function(string): string) $renamer,
   ): ShipItChangeset {
-    $diffs = Vector {};
+    $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       $diff['body'] = $diff['body']
         /* HH_IGNORE_ERROR[2049] __PHPStdLib */
@@ -95,7 +95,7 @@ abstract class FBWWWBasePlugin extends FBShipItConfigeratorConfig {
         |> Str\join($$, "\n");
       $diffs[] = $diff;
     }
-    return $changeset->withDiffs($diffs->immutable());
+    return $changeset->withDiffs($diffs);
   }
 
   final public static function renameAsyncToGen(

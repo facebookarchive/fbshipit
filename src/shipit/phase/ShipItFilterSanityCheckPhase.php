@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C};
 
 final class ShipItFilterSanityCheckPhase extends ShipItPhase {
   const TEST_FILE_NAME = 'shipit_test_file.txt';
@@ -32,14 +32,14 @@ final class ShipItFilterSanityCheckPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-filter-sanity-check',
         'description' => 'Skip the filter sanity check.',
         'write' => $_ ==> $this->skip(),
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -48,18 +48,18 @@ final class ShipItFilterSanityCheckPhase extends ShipItPhase {
   }
 
   // Public for testing
-  public function assertValid(ImmSet<string> $source_roots): void {
+  public function assertValid(keyset<string> $source_roots): void {
     $filter = $this->filter;
     $allows_all = false;
     foreach ($source_roots as $root) {
       $test_file = $root.'/'.self::TEST_FILE_NAME;
       $test_file = Str\replace($test_file, '//', '/');
       $changeset = (new ShipItChangeset())
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape('path' => $test_file, 'body' => 'junk'),
-        });
+        ]);
       $changeset = $filter($changeset);
-      if ($changeset->getDiffs()->count() !== 1) {
+      if (C\count($changeset->getDiffs()) !== 1) {
         invariant_violation(
           "Source root '%s' specified, but is removed by filter; debug: %s\n",
           $root,
@@ -72,18 +72,18 @@ final class ShipItFilterSanityCheckPhase extends ShipItPhase {
       }
     }
 
-    if ($allows_all || $source_roots->count() === 0) {
+    if ($allows_all || C\is_empty($source_roots)) {
       return;
     }
 
     $path = '!!!shipit_test_file!!!';
     $changeset = (new ShipItChangeset())
-      ->withDiffs(ImmVector {
+      ->withDiffs(vec[
         shape('path' => $path, 'body' => 'junk'),
-      });
+      ]);
     $changeset = $filter($changeset);
     invariant(
-      $changeset->getDiffs()->count() === 0,
+      C\is_empty($changeset->getDiffs()),
       'Path "%s" is not in a sourceRoot, but passes filter',
       $path,
     );

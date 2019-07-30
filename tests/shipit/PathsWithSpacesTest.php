@@ -12,6 +12,8 @@
  */
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\Vec;
+
 
 <<\Oncalls('open_source')>>
 final class PathsWithSpacesTest extends ShellTest {
@@ -32,8 +34,8 @@ final class PathsWithSpacesTest extends ShellTest {
 
     $head = \expect($head)->toNotBeNull();
 
-    $paths = $head->getDiffs()->map($diff ==> $diff['path']);
-    \expect($paths)->toBePHPEqual(ImmVector {self::FILE_NAME});
+    $paths = Vec\map($head->getDiffs(), $diff ==> $diff['path']);
+    \expect($paths)->toBePHPEqual(vec[self::FILE_NAME]);
   }
 
   private function createGitExample(): ShipItTempDir {

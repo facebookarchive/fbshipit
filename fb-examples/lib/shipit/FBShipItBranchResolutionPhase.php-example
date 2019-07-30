@@ -19,7 +19,7 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
 
   const type TRepoMetadata = shape(
     'land_branch' => ?string,
-    'branches' => ImmVector<string>,
+    'branches' => vec<string>,
     'internal_repo' => string,
     'arcanist_project' => ?string,
   );
@@ -41,8 +41,8 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'external-branch::',
         'description' => 'Only run the config for one external branch',
@@ -59,7 +59,7 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
           return $this->repoMetadataFile;
         },
       ),
-    };
+    ];
   }
 
   public function getConfigObject(): FBShipItConfig {
@@ -76,20 +76,21 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
     );
   }
 
-  public function getBranchConfigs(): ImmVector<FBSourceBranchConfig> {
+  public function getBranchConfigs(): vec<FBSourceBranchConfig> {
     $config_object = $this->configObject;
     $branch_configs = $config_object->getBranchConfigs();
     if ($this->externalBranch !== null) {
-      $branch_configs = $branch_configs->filter(
+      $branch_configs = Vec\filter(
+        $branch_configs,
         $branch_config ==> $branch_config['external'] === $this->externalBranch,
       );
       invariant(
-        $branch_configs->count() > 0,
+        !C\is_empty($branch_configs),
         'No ShipIt configuration found for external branch: %s',
         $this->externalBranch,
       );
       invariant(
-        $branch_configs->count() === 1,
+        C\count($branch_configs) === 1,
         'Multiple internal configs found for external branch: %s',
         $this->externalBranch,
       );
@@ -102,8 +103,10 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
     $branch_configs = $this->getBranchConfigs();
     $internal_repo = $config_object->getStaticConfig()['internalRepo'];
     if (
-      RepoArcanistProject::getNotInArcanistExceptions()
-        ->contains($internal_repo)
+      C\contains(
+        RepoArcanistProject::getNotInArcanistExceptions(),
+        $internal_repo,
+      )
     ) {
       $arcanist_project = null;
     } else {
@@ -114,7 +117,7 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
     return shape(
       'land_branch' => $config_object->getLandBranch(),
       'branches' =>
-        $branch_configs->map($branch_config ==> $branch_config['external']),
+        Vec\map($branch_configs, $branch_config ==> $branch_config['external']),
       'internal_repo' => $internal_repo,
       'arcanist_project' => $arcanist_project,
     );

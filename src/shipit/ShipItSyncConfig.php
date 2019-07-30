@@ -18,19 +18,19 @@ final class ShipItSyncConfig {
     ShipItChangeset,
   ): ShipItChangeset);
   const type TPostFilterChangesetsFn = (function(
-    ImmVector<ShipItChangeset>,
+    vec<ShipItChangeset>,
     ShipItRepo,
-  ): ImmVector<ShipItChangeset>);
+  ): vec<ShipItChangeset>);
 
   private ?string $firstCommit = null;
-  private ImmSet<string> $skippedSourceCommits = ImmSet {};
+  private keyset<string> $skippedSourceCommits = keyset[];
   private ?string $patchesDirectory = null;
-  private ImmSet<string> $destinationRoots = ImmSet {};
+  private keyset<string> $destinationRoots = keyset[];
   private ?string $statsFilename = null;
   private ?bool $allowEmptyCommit = false;
 
   public function __construct(
-    private ImmSet<string> $sourceRoots,
+    private keyset<string> $sourceRoots,
     private self::TFilterFn $filter,
     private ?self::TPostFilterChangesetsFn $postFilterChangesets = null,
   ) {
@@ -50,11 +50,11 @@ final class ShipItSyncConfig {
     );
   }
 
-  public function getSkippedSourceCommits(): ImmSet<string> {
+  public function getSkippedSourceCommits(): keyset<string> {
     return $this->skippedSourceCommits;
   }
 
-  public function withSkippedSourceCommits(ImmSet<string> $commits): this {
+  public function withSkippedSourceCommits(keyset<string> $commits): this {
     return $this->modified(
       $ret ==> {
         $ret->skippedSourceCommits = $commits;
@@ -77,11 +77,11 @@ final class ShipItSyncConfig {
     );
   }
 
-  public function getDestinationRoots(): ImmSet<string> {
+  public function getDestinationRoots(): keyset<string> {
     return $this->destinationRoots;
   }
 
-  public function withDestinationRoots(ImmSet<string> $roots): this {
+  public function withDestinationRoots(keyset<string> $roots): this {
     return $this->modified(
       $ret ==> {
         $ret->destinationRoots = $roots;
@@ -90,7 +90,7 @@ final class ShipItSyncConfig {
     );
   }
 
-  public function getSourceRoots(): ImmSet<string> {
+  public function getSourceRoots(): keyset<string> {
     return $this->sourceRoots;
   }
 
@@ -100,9 +100,9 @@ final class ShipItSyncConfig {
   }
 
   public function postFilterChangesets(
-    ImmVector<ShipItChangeset> $changesets,
+    vec<ShipItChangeset> $changesets,
     ShipItRepo $dest,
-  ): ImmVector<ShipItChangeset> {
+  ): vec<ShipItChangeset> {
     $post_filter_changesets = $this->postFilterChangesets;
     if ($post_filter_changesets === null) {
       return $changesets;

@@ -112,7 +112,7 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
     if ($use_latest_base_revision) {
       $base_revision = null;
     } else {
-      $base_revision = $this->findLastSourceCommit(ImmSet {});
+      $base_revision = $this->findLastSourceCommit(keyset[]);
     }
     return tuple($changeset, $base_revision);
   }

@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Vec};
 
 
 <<\Oncalls('open_source')>>
@@ -20,27 +20,29 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
   public function testAllowsValidCombination(): void {
     $phase = new ShipItFilterSanityCheckPhase(
       $changeset ==> $changeset->withDiffs(
-        $changeset->getDiffs()
-          ->filter($diff ==> Str\slice($diff['path'], 0, 4) === 'foo/'),
+        Vec\filter(
+          $changeset->getDiffs(),
+          $diff ==> Str\slice($diff['path'], 0, 4) === 'foo/',
+        ),
       ),
     );
-    $phase->assertValid(ImmSet {'foo/'});
+    $phase->assertValid(keyset['foo/']);
     // no exception thrown :)
   }
 
   public static function exampleEmptyRoots(
-  ): dict<string, vec<ImmSet<string>>> {
+  ): dict<string, vec<keyset<string>>> {
     return dict[
-      'empty set' => vec[ImmSet {}],
-      'empty string' => vec[ImmSet {''}],
-      '.' => vec[ImmSet {'.'}],
-      './' => vec[ImmSet {'./'}],
+      'empty set' => vec[keyset[]],
+      'empty string' => vec[keyset['']],
+      '.' => vec[keyset['.']],
+      './' => vec[keyset['./']],
     ];
   }
 
   <<\DataProvider('exampleEmptyRoots')>>
   public function testAllowsIdentityFunctionForEmptyRoots(
-    ImmSet<string> $roots,
+    keyset<string> $roots,
   ): void {
     $phase = new ShipItFilterSanityCheckPhase($changeset ==> $changeset);
     $phase->assertValid($roots);
@@ -52,7 +54,7 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
       $phase = new ShipItFilterSanityCheckPhase(
         $changeset ==> $changeset, // stuff outside of 'foo' should be removed
       );
-      $phase->assertValid(ImmSet {'foo/'});
+      $phase->assertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(\HH\InvariantException::class); // @oss-enable
@@ -63,7 +65,7 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
       $phase = new ShipItFilterSanityCheckPhase(
         $_changeset ==> (new ShipItChangeset()),
       );
-      $phase->assertValid(ImmSet {'foo/'});
+      $phase->assertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(\HH\InvariantException::class); // @oss-enable
@@ -73,11 +75,13 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
     \expect(() ==> {
       $phase = new ShipItFilterSanityCheckPhase(
         $changeset ==> $changeset->withDiffs(
-          $changeset->getDiffs()
-            ->filter($diff ==> Str\slice($diff['path'], 0, 3) === 'foo'),
+          Vec\filter(
+            $changeset->getDiffs(),
+            $diff ==> Str\slice($diff['path'], 0, 3) === 'foo',
+          ),
         ),
       );
-      $phase->assertValid(ImmSet {'foo/', 'herp/'});
+      $phase->assertValid(keyset['foo/', 'herp/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(\HH\InvariantException::class); // @oss-enable

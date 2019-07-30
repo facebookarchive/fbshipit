@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Regex};
+use namespace HH\Lib\{Str, Regex, C, Vec};
 
 class ShipItException extends \Exception {}
 
@@ -39,11 +39,11 @@ final class ShipItSync {
     return $rev;
   }
 
-  private function getSourceChangesets(): ImmVector<ShipItChangeset> {
+  private function getSourceChangesets(): vec<ShipItChangeset> {
     $config = $this->syncConfig;
     $src = $this->getRepo(ShipItSourceRepo::class);
 
-    $changesets = Vector {};
+    $changesets = vec[];
     $rev = $this->getFirstSourceID();
     while ($rev !== null) {
       $changeset = $src->getChangesetFromID($rev);
@@ -55,15 +55,15 @@ final class ShipItSync {
       $changesets[] = $changeset;
       $rev = $src->findNextCommit($rev, $config->getSourceRoots());
     }
-    return $changesets->toImmVector();
+    return $changesets;
   }
 
-  private function getFilteredChangesets(): ImmVector<ShipItChangeset> {
+  private function getFilteredChangesets(): vec<ShipItChangeset> {
     $base_config = $this->baseConfig;
     $skipped_ids = $this->syncConfig->getSkippedSourceCommits();
     $filter = $this->syncConfig->getFilter();
 
-    $changesets = Vector {};
+    $changesets = vec[];
     foreach ($this->getSourceChangesets() as $changeset) {
       $skip_match = null;
       foreach ($skipped_ids as $skip_id) {
@@ -74,7 +74,7 @@ final class ShipItSync {
       }
       if ($skip_match !== null) {
         $changesets[] = $changeset
-          ->withDiffs(ImmVector {})
+          ->withDiffs(vec[])
           ->withDebugMessage(
             'USER SKIPPED COMMIT: id "%s" matches "%s"',
             $changeset->getID(),
@@ -92,14 +92,14 @@ final class ShipItSync {
         $changesets[] = self::addTrackingData($base_config, $changeset);
       }
     }
-    return $changesets->toImmVector();
+    return $changesets;
   }
 
   public function run(): void {
     $changesets = $this->getFilteredChangesets();
-    if ($changesets->isEmpty()) {
+    if (C\is_empty($changesets)) {
       print("  No new commits to sync.\n");
-      $this->maybeLogStats(Vector {}, Vector {});
+      $this->maybeLogStats(vec[], vec[]);
       return;
     }
 
@@ -117,8 +117,8 @@ final class ShipItSync {
 
     $changesets = $this->syncConfig->postFilterChangesets($changesets, $dest);
 
-    $changesets_applied = Vector {};
-    $changesets_skipped = Vector {};
+    $changesets_applied = vec[];
+    $changesets_skipped = vec[];
     foreach ($changesets as $changeset) {
       if ($patches_dir !== null) {
         $file = $patches_dir.
@@ -151,7 +151,7 @@ final class ShipItSync {
           $changeset->getShortID(),
           $changeset->getSubject(),
         );
-        $changesets_skipped->add($changeset);
+        $changesets_skipped[] = $changeset;
         continue;
       }
 
@@ -162,7 +162,7 @@ final class ShipItSync {
           $changeset->getShortID(),
           $changeset->getSubject(),
         );
-        $changesets_applied->add($changeset);
+        $changesets_applied[] = $changeset;
         continue;
       } catch (ShipItRepoException $e) {
         ShipItLogger::err(
@@ -184,8 +184,8 @@ final class ShipItSync {
    * @param $changesets_applied the changesets that were applied.
    */
   private function maybeLogStats(
-    Vector<ShipItChangeset> $changesets_applied,
-    Vector<ShipItChangeset> $changesets_skipped,
+    vec<ShipItChangeset> $changesets_applied,
+    vec<ShipItChangeset> $changesets_skipped,
   ): void {
     $filename = $this->syncConfig->getStatsFilename();
     if ($filename === null) {
@@ -225,12 +225,10 @@ final class ShipItSync {
           'timestamp' => $destination_changeset?->getTimestamp(),
           'branch' => $destination_branch,
         ],
-        'changesets' => $changesets_applied
-          ->map($changeset ==> $changeset->getID())
-          |> vec($$),
-        'skipped' => $changesets_skipped
-          ->map($changeset ==> $changeset->getID())
-          |> vec($$),
+        'changesets' =>
+          Vec\map($changesets_applied, $changeset ==> $changeset->getID()),
+        'skipped' =>
+          Vec\map($changesets_skipped, $changeset ==> $changeset->getID()),
       ]),
     );
   }

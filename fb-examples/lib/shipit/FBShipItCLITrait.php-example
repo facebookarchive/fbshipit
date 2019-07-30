@@ -79,10 +79,10 @@ trait FBShipItCLITrait {
     try {
       $runner->run();
     } catch (ShipItShellCommandException $e) {
-      $retry_causes = ImmSet {
+      $retry_causes = keyset[
         'abort: unknown compression type',
         'abort: abandoned transaction found!',
-      };
+      ];
       foreach ($retry_causes as $cause) {
         if (Str\search($e->getError(), $cause) !== null) {
           // Recover by restarting; the init phase will detect the bad state

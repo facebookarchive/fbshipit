@@ -51,7 +51,7 @@ final class SyncTrackingTest extends ShellTest {
   }
 
   private function getBaseConfig(): ShipItBaseConfig {
-    return (new ShipItBaseConfig('/var/tmp/fbshipit', '', '', ImmSet {}))
+    return (new ShipItBaseConfig('/var/tmp/fbshipit', '', '', keyset[]))
       ->withCommitMarkerPrefix(true);
   }
 
@@ -82,7 +82,7 @@ final class SyncTrackingTest extends ShellTest {
     )->getMessage();
     \expect($message)->toContainSubstring('fbshipit');
     $repo = $this->getGITRepoWithCommit($message);
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 
   public function testLastSourceCommitWithMercurial(): void {
@@ -107,7 +107,7 @@ final class SyncTrackingTest extends ShellTest {
     )->runSynchronously();
 
     $repo = new ShipItRepoHG($path, 'master');
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 
   public function testLastSourceCommitMultipleMarkers(): void {
@@ -126,7 +126,7 @@ final class SyncTrackingTest extends ShellTest {
       (new ShipItChangeset())->withID($fake_commit_id_2),
     )->getMessage();
     $repo = $this->getGITRepoWithCommit($message_1."\n\n".$message_2);
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id_2);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id_2);
   }
 
   public function testLastSourceCommitWithWhitespace(): void {
@@ -138,7 +138,7 @@ final class SyncTrackingTest extends ShellTest {
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     $repo = $this->getGITRepoWithCommit($message." ");
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 
   public function testLastSourceCommitMissingWhitespace(): void {
@@ -147,7 +147,7 @@ final class SyncTrackingTest extends ShellTest {
     $fake_commit_id = \bin2hex(\random_bytes(16));
     $message = "fbshipit-source-id:".$fake_commit_id;
     $repo = $this->getGITRepoWithCommit($message);
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 
   public function testLastSourceCommitWithoutPrefix(): void {
@@ -160,7 +160,7 @@ final class SyncTrackingTest extends ShellTest {
     )->getMessage();
     \expect($message)->toNotContainSubstring('fbshipit');
     $repo = $this->getGITRepoWithCommit($message);
-    \expect($repo->findLastSourceCommit(ImmSet {}))->toEqual($fake_commit_id);
+    \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 
   public function testCoAuthorLines(): void {

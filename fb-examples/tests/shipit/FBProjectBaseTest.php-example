@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Dict};
 
 
 abstract class FBProjectBaseTest extends FBBaseTest {
@@ -33,7 +33,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
    *   destination repository.
    */
   public static abstract function getExamplePathMappings(
-  ): ImmMap<string, ?string>;
+  ): dict<string, ?string>;
 
   protected abstract static function map(
     ShipItChangeset $changeset,
@@ -190,9 +190,9 @@ abstract class FBProjectBaseTest extends FBBaseTest {
     $in = (new ShipItChangeset())
       ->withMessage('herp derp')
       ->withDiffs(
-        ImmVector {
+        vec[
           shape('path' => static::getExamplePublicPath(), 'body' => 'herp'),
-        },
+        ],
       );
     $out = static::map($in);
     \expect($out->isValid())->toBeTrue('Diff was preserved');
@@ -202,9 +202,9 @@ abstract class FBProjectBaseTest extends FBBaseTest {
     $in = (new ShipItChangeset())
       ->withMessage('herp derp @already-on-github')
       ->withDiffs(
-        ImmVector {
+        vec[
           shape('path' => static::getExamplePublicPath(), 'body' => 'herp'),
-        },
+        ],
       );
     $out = static::map($in);
 
@@ -214,7 +214,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
   public static function exampleBadwordChangesets(
   ): dict<string, vec<ShipItChangeset>> {
     $bw = FBConfidentialFilter::EXAMPLE_BAD_WORD;
-    $out = Map {
+    $out = dict[
       'subject' => (new ShipItChangeset())->withSubject($bw),
       'subject lowercase' => (new ShipItChangeset())
         ->withSubject(Str\lowercase($bw)),
@@ -227,40 +227,40 @@ abstract class FBProjectBaseTest extends FBBaseTest {
       'message line' => (new ShipItChangeset())
         ->withMessage("Summary: @public Foo\n".$bw."\nBar"),
       'code' => (new ShipItChangeset())
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape(
             'path' => static::getExamplePublicPath(),
             'body' => $bw.'_SOME_CONST',
           ),
-        }),
+        ]),
       'path' => (new ShipItChangeset())
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape(
             'path' => static::getExamplePublicPath().'/'.$bw.'/',
             'body' => 'junk',
           ),
-        }),
+        ]),
       'the badwords list itself' => (new ShipItChangeset())
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape(
             'path' => static::getExamplePublicPath().
               '/FBConfiden'.
               'tialFilter.php', // split to avoid triggering filter
             'body' => 'junk',
           ),
-        }),
-    };
+        ]),
+    ];
     foreach ($out as $k => $v) {
       if (!$v->isValid()) {
-        $out[$k] = $v->withDiffs(ImmVector {
+        $out[$k] = $v->withDiffs(vec[
           shape(
             'path' => static::getExamplePublicPath(),
             'body' => 'junk',
           ),
-        });
+        ]);
       }
     }
-    return $out->mapWithKey(($k, $v) ==> vec[$v->withID($k)]) |> dict($$);
+    return Dict\map_with_key($out, ($k, $v) ==> vec[$v->withID($k)]);
   }
 
   <<\DataProvider('exampleBadwordChangesets')>>
@@ -278,12 +278,12 @@ abstract class FBProjectBaseTest extends FBBaseTest {
       "GIT binary patch\n".
       $changeset->getDiffs()[0]['body'];
     $changeset = $changeset->withDiffs(
-      ImmVector {
+      vec[
         shape(
           'path' => $changeset->getDiffs()[0]['path'],
           'body' => $binary_file_body,
         ),
-      },
+      ],
     );
     static::map($changeset);
     // no expected exception
@@ -291,9 +291,10 @@ abstract class FBProjectBaseTest extends FBBaseTest {
 
   final public static function examplePathMappings(
   ): dict<string, (string, ?string)> {
-    return static::getExamplePathMappings()
-      ->mapWithKey(($k, $v) ==> tuple($k, $v))
-      |> dict($$);
+    return Dict\map_with_key(
+      static::getExamplePathMappings(),
+      ($k, $v) ==> tuple($k, $v),
+    );
   }
 
   <<\DataProvider('examplePathMappings')>>
@@ -301,7 +302,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
     string $path_in,
     ?string $path_expected,
   ): void {
-    $diffs = ImmVector {shape('path' => $path_in, 'body' => 'junk')};
+    $diffs = vec[shape('path' => $path_in, 'body' => 'junk')];
     $changeset = (new ShipItChangeset())->withDiffs($diffs);
     $this->pathMappingCheck($changeset, $path_in, $path_expected);
   }
@@ -327,7 +328,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
         $path_expected,
       );
     }
-    \expect(vec($changeset->getDiffs()->map($diff ==> $diff['path'])))
+    \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
       ->toBePHPEqual(
         $expected_paths,
         Str\format(
@@ -341,8 +342,8 @@ abstract class FBProjectBaseTest extends FBBaseTest {
   // TODO(T22473111) remove after Buck is migrated
   public function testPathMappingsHaveExamples(): void {
     $shipit_class = static::getShipItClass();
-    $examples = static::getExamplePathMappings()->keys();
-    foreach ($shipit_class::getPathMappings()->keys() as $source_path) {
+    $examples = Vec\keys(static::getExamplePathMappings());
+    foreach ($shipit_class::getPathMappings() as $source_path => $_) {
       $found = false;
       foreach ($examples as $example) {
         /* HH_IGNORE_ERROR[2049] __PHPStdLib */

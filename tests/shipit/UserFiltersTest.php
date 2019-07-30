@@ -34,19 +34,19 @@ final class UserInfoTestImplementation extends ShipItUserInfo {
 <<\Oncalls('open_source')>>
 final class UserFiltersTest extends BaseTest {
   public static function examplesForGetMentions(
-  ): vec<(string, ImmSet<string>)> {
+  ): vec<(string, keyset<string>)> {
     return vec[
-      tuple('@foo', ImmSet {'@foo'}),
-      tuple('@foo @bar', ImmSet {'@foo', '@bar'}),
-      tuple('@foo foo@example.com', ImmSet {'@foo'}),
-      tuple("\n@foo\n", ImmSet {'@foo'}),
+      tuple('@foo', keyset['@foo']),
+      tuple('@foo @bar', keyset['@foo', '@bar']),
+      tuple('@foo foo@example.com', keyset['@foo']),
+      tuple("\n@foo\n", keyset['@foo']),
     ];
   }
 
   <<\DataProvider('examplesForGetMentions')>>
   public function testGetMentions(
     string $message,
-    ImmSet<string> $expected,
+    keyset<string> $expected,
   ): void {
     $changeset = (new ShipItChangeset())->withMessage($message);
     \expect(ShipItMentions::getMentions($changeset))->toBePHPEqual($expected);

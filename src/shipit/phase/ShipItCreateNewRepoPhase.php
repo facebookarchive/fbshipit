@@ -34,8 +34,8 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'create-new-repo',
         'description' =>
@@ -66,7 +66,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
         'long_name' => 'special-create-new-repo',
         'replacement' => 'create-new-repo',
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -107,11 +107,11 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   ): void {
     self::execSteps(
       $path,
-      ImmVector {
-        ImmVector {'git', 'init'},
-        ImmVector {'git', 'config', 'user.name', $committer['name']},
-        ImmVector {'git', 'config', 'user.email', $committer['email']},
-      },
+      vec[
+        vec['git', 'init'],
+        vec['git', 'config', 'user.name', $committer['name']],
+        vec['git', 'config', 'user.email', $committer['email']],
+      ],
     );
   }
 
@@ -187,15 +187,15 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     self::initGitRepo($export_dir->getPath(), $committer);
     self::execSteps(
       $export_dir->getPath(),
-      ImmVector {
-        ImmVector {'git', 'add', '.', '-f'},
-        ImmVector {
+      vec[
+        vec['git', 'add', '.', '-f'],
+        vec[
           'git',
           'commit',
           '-m',
           'initial unfiltered commit',
-        },
-      },
+        ],
+      ],
     );
 
     print("  Filtering...\n");
@@ -241,7 +241,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
 
   private static function execSteps(
     string $path,
-    ImmVector<ImmVector<string>> $steps,
+    vec<vec<string>> $steps,
   ): void {
     foreach ($steps as $step) {
       /* HH_FIXME[4128] Use ShipItShellCommand */

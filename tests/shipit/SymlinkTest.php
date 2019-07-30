@@ -12,6 +12,8 @@
  */
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\{C, Vec};
+
 
 enum SymlinkTestOperation: string {
   DELETE_FILE = 'deleted file mode 100644';
@@ -25,7 +27,7 @@ final class SymlinkTest extends ShellTest {
   public static function getFileToFromSymlinkExamples(
   ): dict<string, (
     classname<ShipItSourceRepo>,
-    ImmVector<ImmVector<string>>,
+    vec<vec<string>>,
     SymlinkTestOperation,
     SymlinkTestOperation,
     string,
@@ -33,60 +35,60 @@ final class SymlinkTest extends ShellTest {
     return dict[
       'git file to symlink' => tuple(
         ShipItRepoGIT::class,
-        ImmVector {
-          ImmVector {'git', 'init'},
-          ImmVector {'touch', 'foo'},
-          ImmVector {'git', 'add', 'foo'},
-          ImmVector {'git', 'commit', '-m', 'add file'},
-          ImmVector {'git', 'rm', 'foo'},
-          ImmVector {'ln', '-s', 'bar', 'foo'},
-          ImmVector {'git', 'add', 'foo'},
-          ImmVector {'git', 'commit', '-m', 'add symlink'},
-        },
+        vec[
+          vec['git', 'init'],
+          vec['touch', 'foo'],
+          vec['git', 'add', 'foo'],
+          vec['git', 'commit', '-m', 'add file'],
+          vec['git', 'rm', 'foo'],
+          vec['ln', '-s', 'bar', 'foo'],
+          vec['git', 'add', 'foo'],
+          vec['git', 'commit', '-m', 'add symlink'],
+        ],
         SymlinkTestOperation::DELETE_FILE,
         SymlinkTestOperation::CREATE_SYMLINK,
         'HEAD',
       ),
       'hg file to symlink' => tuple(
         ShipItRepoHG::class,
-        ImmVector {
-          ImmVector {'hg', 'init'},
-          ImmVector {'touch', 'foo'},
-          ImmVector {'hg', 'commit', '-Am', 'add file'},
-          ImmVector {'hg', 'rm', 'foo'},
-          ImmVector {'ln', '-s', 'bar', 'foo'},
-          ImmVector {'hg', 'commit', '-Am', 'add symlink'},
-        },
+        vec[
+          vec['hg', 'init'],
+          vec['touch', 'foo'],
+          vec['hg', 'commit', '-Am', 'add file'],
+          vec['hg', 'rm', 'foo'],
+          vec['ln', '-s', 'bar', 'foo'],
+          vec['hg', 'commit', '-Am', 'add symlink'],
+        ],
         SymlinkTestOperation::DELETE_FILE,
         SymlinkTestOperation::CREATE_SYMLINK,
         '.',
       ),
       'git symlink to file' => tuple(
         ShipItRepoGIT::class,
-        ImmVector {
-          ImmVector {'git', 'init'},
-          ImmVector {'ln', '-s', 'bar', 'foo'},
-          ImmVector {'git', 'add', 'foo'},
-          ImmVector {'git', 'commit', '-m', 'add symlink'},
-          ImmVector {'git', 'rm', 'foo'},
-          ImmVector {'touch', 'foo'},
-          ImmVector {'git', 'add', 'foo'},
-          ImmVector {'git', 'commit', '-m', 'add file'},
-        },
+        vec[
+          vec['git', 'init'],
+          vec['ln', '-s', 'bar', 'foo'],
+          vec['git', 'add', 'foo'],
+          vec['git', 'commit', '-m', 'add symlink'],
+          vec['git', 'rm', 'foo'],
+          vec['touch', 'foo'],
+          vec['git', 'add', 'foo'],
+          vec['git', 'commit', '-m', 'add file'],
+        ],
         SymlinkTestOperation::DELETE_SYMLINK,
         SymlinkTestOperation::CREATE_FILE,
         '.',
       ),
       'hg symlink to file' => tuple(
         ShipItRepoHG::class,
-        ImmVector {
-          ImmVector {'hg', 'init'},
-          ImmVector {'ln', '-s', 'bar', 'foo'},
-          ImmVector {'hg', 'commit', '-Am', 'add symlink'},
-          ImmVector {'hg', 'rm', 'foo'},
-          ImmVector {'touch', 'foo'},
-          ImmVector {'hg', 'commit', '-Am', 'add file'},
-        },
+        vec[
+          vec['hg', 'init'],
+          vec['ln', '-s', 'bar', 'foo'],
+          vec['hg', 'commit', '-Am', 'add symlink'],
+          vec['hg', 'rm', 'foo'],
+          vec['touch', 'foo'],
+          vec['hg', 'commit', '-Am', 'add file'],
+        ],
         SymlinkTestOperation::DELETE_SYMLINK,
         SymlinkTestOperation::CREATE_FILE,
         '.',
@@ -104,7 +106,7 @@ final class SymlinkTest extends ShellTest {
   <<\DataProvider('getFileToFromSymlinkExamples')>>
   public function testFileToFromSymlink(
     classname<ShipItSourceRepo> $repo_type,
-    ImmVector<ImmVector<string>> $steps,
+    vec<vec<string>> $steps,
     SymlinkTestOperation $first_op,
     SymlinkTestOperation $second_op,
     string $rev,
@@ -116,7 +118,7 @@ final class SymlinkTest extends ShellTest {
     $temp_dir = new ShipItTempDir('symlink-test');
     foreach ($steps as $step) {
       (new ShipItShellCommand($temp_dir->getPath(), ...$step))
-        ->setEnvironmentVariables(ImmMap {
+        ->setEnvironmentVariables(dict[
           'HG_PLAIN' => '1',
           'GIT_CONFIG_NOSYSTEM' => '1',
           'HOME' => $home_dir->getPath(),
@@ -125,7 +127,7 @@ final class SymlinkTest extends ShellTest {
           'GIT_COMMITTER_NAME' => $name,
           'GIT_COMMITTER_EMAIL' => $email,
           'HGUSER' => $name.' <'.$email.'>',
-        })
+        ])
         ->runSynchronously();
     }
 
@@ -135,15 +137,16 @@ final class SymlinkTest extends ShellTest {
     $changeset = \expect($changeset)->toNotBeNull();
     \expect($changeset->isValid())->toBeTrue();
 
-    \expect($changeset->getDiffs()->count())->toBePHPEqual(
+    \expect(C\count($changeset->getDiffs()))->toBePHPEqual(
       2,
       'Expected a deletion chunk and a separate creation chunk',
     );
 
-    \expect($changeset->getDiffs()->map($diff ==> $diff['path']))->toBePHPEqual(
-      ImmVector {'foo', 'foo'},
-      'Expected chunks to affect the same file',
-    );
+    \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
+      ->toBePHPEqual(
+        vec['foo', 'foo'],
+        'Expected chunks to affect the same file',
+      );
 
     // Order is important: the old thing needs to be deleted before the new one
     // is created.

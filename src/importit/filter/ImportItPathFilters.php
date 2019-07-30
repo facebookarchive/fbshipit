@@ -12,7 +12,7 @@
  */
 namespace Facebook\ImportIt;
 
-use namespace HH\Lib\Dict;
+use namespace HH\Lib\{Dict, C};
 
 abstract final class ImportItPathFilters {
   /**
@@ -26,8 +26,8 @@ abstract final class ImportItPathFilters {
    */
   public static function moveDirectories(
     \Facebook\ShipIt\ShipItChangeset $changeset,
-    ImmMap<string, string> $shipit_mapping,
-    ImmVector<string> $skip_patterns = ImmVector {},
+    dict<string, string> $shipit_mapping,
+    vec<string> $skip_patterns = vec[],
   ): \Facebook\ShipIt\ShipItChangeset {
     $mapping = self::invertShipIt($shipit_mapping);
     return \Facebook\ShipIt\ShipItPathFilters::moveDirectories(
@@ -43,12 +43,12 @@ abstract final class ImportItPathFilters {
    * @param $shipit_mapping the mapping to invert
    */
   public static function invertShipIt(
-    ImmMap<string, string> $shipit_mapping,
-  ): ImmMap<string, string> {
-    $reverse_mapping = Map {};
+    dict<string, string> $shipit_mapping,
+  ): dict<string, string> {
+    $reverse_mapping = dict[];
     foreach ($shipit_mapping as $dest_path => $src_path) {
       invariant(
-        !$reverse_mapping->containsKey($src_path),
+        !C\contains_key($reverse_mapping, $src_path),
         'Mulitiple paths map from "%s" ("%s" and "%s")!',
         $src_path,
         $dest_path,
@@ -61,7 +61,6 @@ abstract final class ImportItPathFilters {
     // the other, the prefix always appears last.  This ensures that mappings
     // for subdirectories always take precedence over less-specific mappings.
     return Dict\sort_by_key($reverse_mapping)
-      |> Dict\reverse($$)
-      |> new ImmMap($$);
+      |> Dict\reverse($$);
   }
 }

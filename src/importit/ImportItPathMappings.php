@@ -21,5 +21,5 @@ interface ImportItPathMappings {
    * A map from directory paths in the source repository to paths in the
    * destination repository. The first matching mapping is used.
    */
-  public static function getPathMappings(): ImmMap<string, string>;
+  public static function getPathMappings(): dict<string, string>;
 }

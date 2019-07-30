@@ -26,14 +26,14 @@ final class ShipItCleanPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  final public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-'.$this->side.'-clean',
         'description' => 'Do not clean the '.$this->side.' repository',
         'write' => $_ ==> $this->skip(),
       ),
-    };
+    ];
   }
 
   <<__Override>>

@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C};
 
 type ShipItDiff = shape(
   'path' => string,
@@ -37,8 +37,8 @@ final class ShipItChangeset {
   private string $author = "";
   private string $subject = "";
   private string $message = "";
-  private ImmVector<ShipItDiff> $diffs = ImmVector {};
-  private ImmVector<string> $debugMessages = ImmVector {};
+  private vec<ShipItDiff> $diffs = vec[];
+  private vec<string> $debugMessages = vec[];
   private bool $isTaggedEmptyCommit = false;
   private string $coAuthorLines = "";
 
@@ -46,7 +46,7 @@ final class ShipItChangeset {
     return !$this->isEmptyChange();
   }
   public function isEmptyChange(): bool {
-    return $this->diffs->count() === 0;
+    return C\is_empty($this->diffs);
   }
 
   public function getID(): string {
@@ -114,17 +114,17 @@ final class ShipItChangeset {
     return $out;
   }
 
-  public function getDiffs(): ImmVector<ShipItDiff> {
+  public function getDiffs(): vec<ShipItDiff> {
     return $this->diffs;
   }
 
-  public function withDiffs(ImmVector<ShipItDiff> $diffs): ShipItChangeset {
+  public function withDiffs(vec<ShipItDiff> $diffs): ShipItChangeset {
     $out = clone $this;
     $out->diffs = $diffs;
     return $out;
   }
 
-  public function getDebugMessages(): ImmVector<string> {
+  public function getDebugMessages(): vec<string> {
     return $this->debugMessages;
   }
 
@@ -132,12 +132,12 @@ final class ShipItChangeset {
     Str\SprintfFormatString $format_string,
     mixed ...$args
   ): ShipItChangeset {
-    $messages = $this->getDebugMessages()->toVector();
+    $messages = $this->getDebugMessages();
     /* HH_FIXME[4027]: cannot be a literal string */
     $messages[] = Str\format($format_string, ...$args);
 
     $out = clone $this;
-    $out->debugMessages = $messages->toImmVector();
+    $out->debugMessages = $messages;
     return $out;
   }
 
@@ -198,6 +198,6 @@ final class ShipItChangeset {
       ->withAuthor($shape['author'])
       ->withSubject($shape['subject'])
       ->withMessage($shape['message'])
-      ->withDiffs(new ImmVector($shape['diffs']));
+      ->withDiffs($shape['diffs']);
   }
 }

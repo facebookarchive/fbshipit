@@ -57,8 +57,8 @@ final class UnusualContentTest extends BaseTest {
 
     $changeset = ShipItRepoGIT::getChangesetFromExportedPatch($header, $patch);
     $changeset = \expect($changeset)->toNotBeNull();
-    \expect($changeset->getDiffs()->count())->toEqual(1);
-    $hunk = $changeset->getDiffs()->at(0)['body'];
+    \expect(C\count($changeset->getDiffs()))->toEqual(1);
+    $hunk = $changeset->getDiffs()[0]['body'];
     \expect($hunk)->toContainSubstring($pre);
     \expect($hunk)->toContainSubstring($special);
     \expect($hunk)->toContainSubstring($post);
@@ -74,7 +74,7 @@ final class UnusualContentTest extends BaseTest {
     $changeset = ShipItRepoGIT::getChangesetFromExportedPatch($header, $patch);
     $changeset = \expect($changeset)->toNotBeNull();
 
-    $hunk = $changeset->getDiffs()->at(0)['body'];
+    $hunk = $changeset->getDiffs()[0]['body'];
     \expect($hunk)->toContainSubstring('foo');
     \expect($hunk)->toContainSubstring("\n\\ No newline at");
     \expect($hunk)->toNotContainSubstring($git_version);
@@ -88,7 +88,7 @@ final class UnusualContentTest extends BaseTest {
     $changeset = ShipItRepoGIT::getChangesetFromExportedPatch($header, $patch);
     $changeset = \expect($changeset)->toNotBeNull();
 
-    $hunk = $changeset->getDiffs()->at(0)['body'];
+    $hunk = $changeset->getDiffs()[0]['body'];
     \expect($hunk)->toContainSubstring(' foo');
     \expect($hunk)->toContainSubstring('-bar');
     \expect($hunk)->toContainSubstring('+bar');

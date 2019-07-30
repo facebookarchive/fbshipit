@@ -63,8 +63,8 @@ abstract class FBImportItCLI
         $$,
         $shipit_class::getPathMappings(),
         $shipit_class::getSubmoduleMappings()
-          ->keys()
-          ->map($path ==> '@^'.$path.'$@'),
+          |> Vec\keys($$)
+          |> Vec\map($$, $path ==> '@^'.$path.'$@'),
       );
   }
 
@@ -89,7 +89,7 @@ abstract class FBImportItCLI
           $static_config['githubProject'],
         /* dest_dir = */ $static_config['internalRepo'],
         // We assume the entire GitHub repository is being imported.
-        /* source_roots = */ ImmSet {},
+        /* source_roots = */ keyset[],
       )
     )
       ->withSourceBranch($shipit_base_config->getDestinationBranch())
@@ -111,9 +111,9 @@ abstract class FBImportItCLI
   }
 
   <<__Override>>
-  public static function getPhases(): ImmVector<\Facebook\ShipIt\ShipItPhase> {
+  public static function getPhases(): vec<\Facebook\ShipIt\ShipItPhase> {
     $static_config = static::getStaticConfig();
-    return ImmVector {
+    return vec[
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::SOURCE),
       new ShipItDeleteCorruptedRepoPhase(ShipItRepoSide::DESTINATION),
       new \Facebook\ShipIt\ShipItGitHubInitPhase(
@@ -136,7 +136,7 @@ abstract class FBImportItCLI
       new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
       new ShipItPullPhase(ShipItRepoSide::DESTINATION),
       new ImportItSyncPhase($changeset ==> self::filterChangeset($changeset)),
-    };
+    ];
   }
 
   final public static function getShipItClass(

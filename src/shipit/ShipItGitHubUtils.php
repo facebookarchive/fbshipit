@@ -148,18 +148,19 @@ abstract class ShipItGitHubUtils {
   final public static async function makeAPIRequest(
     ShipItGitHubCredentials $credentials,
     string $path,
-  ): Awaitable<ImmVector<string>> {
-    $results = Vector {};
-    $request_headers = Vector {
+  ): Awaitable<vec<string>> {
+    $results = vec[];
+    $request_headers = vec[
       'Accept: application/vnd.github.v3.patch',
-    };
+    ];
 
     $access_token = $credentials['access_token'];
     $use_oauth = $access_token !== null;
 
     if ($use_oauth) {
-      $request_headers->add(
-        Str\format('Authorization: token %s', $access_token ?? 'null'),
+      $request_headers[] = Str\format(
+        'Authorization: token %s',
+        $access_token ?? 'null',
       );
     }
 
@@ -222,6 +223,6 @@ abstract class ShipItGitHubUtils {
         }
       }
     }
-    return $results->toImmVector();
+    return $results;
   }
 }

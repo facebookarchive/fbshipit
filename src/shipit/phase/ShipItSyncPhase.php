@@ -16,13 +16,13 @@ use namespace HH\Lib\Str;
 
 final class ShipItSyncPhase extends ShipItPhase {
   private ?string $firstCommit = null;
-  private ImmSet<string> $skippedSourceCommits = ImmSet {};
+  private keyset<string> $skippedSourceCommits = keyset[];
   private ?string $patchesDirectory = null;
   private ?string $statsFilename = null;
 
   public function __construct(
     private ShipItSyncConfig::TFilterFn $filter,
-    private ImmSet<string> $destinationRoots = ImmSet {},
+    private keyset<string> $destinationRoots = keyset[],
     private ?ShipItSyncConfig::TPostFilterChangesetsFn $postFilterChangesets =
       null,
     private ?bool $allowEmptyCommit = false,
@@ -39,8 +39,8 @@ final class ShipItSyncPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-sync-commits',
         'description' => "Don't copy any commits. Handy for testing.\n",
@@ -69,7 +69,7 @@ final class ShipItSyncPhase extends ShipItPhase {
         'write' => $x ==> {
           /* HH_IGNORE_ERROR[2049] __PHPStdLib */
             /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-            $this->skippedSourceCommits = new ImmSet(\explode(',', $x));
+            $this->skippedSourceCommits = keyset(\explode(',', $x));
           foreach ($this->skippedSourceCommits as $commit) {
             // 7 happens to be the usual output
             if (Str\length($commit) < ShipItUtil::SHORT_REV_LENGTH) {
@@ -103,7 +103,7 @@ final class ShipItSyncPhase extends ShipItPhase {
           return $this->postFilterChangesets;
         },
       ),
-    };
+    ];
   }
 
   <<__Override>>

@@ -23,7 +23,7 @@ final class FBImportItBranchResolutionPhase
   extends FBShipItBranchResolutionPhase {
 
   <<__Override>>
-  public function getBranchConfigs(): ImmVector<FBSourceBranchConfig> {
+  public function getBranchConfigs(): vec<FBSourceBranchConfig> {
     invariant(
       $this->externalBranch !== null,
       'ImportIt must always run on a single external branch',

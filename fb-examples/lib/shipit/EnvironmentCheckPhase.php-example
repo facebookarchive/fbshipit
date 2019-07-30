@@ -24,13 +24,13 @@ abstract class EnvironmentCheckPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  final public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-environment-check',
         'description' => "Don't check the build environment",
         'write' => $_ ==> $this->skip(),
       ),
-    };
+    ];
   }
 }

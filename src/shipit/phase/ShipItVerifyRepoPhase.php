@@ -36,8 +36,8 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'verify',
         'description' =>
@@ -71,7 +71,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
           return $this->useLatestSourceCommit;
         },
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -89,7 +89,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
         $config->getDestinationPath(),
         $config->getDestinationBranch(),
       );
-      $this->verifySourceCommit = $repo->findLastSourceCommit(ImmSet {});
+      $this->verifySourceCommit = $repo->findLastSourceCommit(keyset[]);
     }
     $clean_dir = ShipItCreateNewRepoPhase::createNewGitRepo(
       $config,

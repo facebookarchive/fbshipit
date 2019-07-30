@@ -69,10 +69,11 @@ final class FBShipItPreview {
       // Assume phabricator patch was exported in git format
       $diffs = ShipItRepoGIT::getDiffsFromPatch($patch);
       $no_renames = $diffs
-        ->filter(
+        |> Vec\filter(
+          $$,
           $diff ==> \Regex::isMatch('/^(rename|copy) from /', $diff['body']),
         )
-        ->isEmpty();
+        |> C\is_empty($$);
       if ($no_renames) {
         $changeset = $changeset->withDiffs($diffs);
       } else {
@@ -89,8 +90,8 @@ order to preview the full patch.';
       $repo_config = $config_object->getStaticConfig();
       // Does the repo match this open source project?
       if ($repo === $repo_config['internalRepo']) {
-        $branch_configs = $config_object->getBranchConfigs()
-          ->filter(
+        $branch_configs = Vec\filter(
+            $config_object->getBranchConfigs(),
             $branch_config ==> $branch_config['internal'] === $internal_branch,
           );
         foreach ($branch_configs as $branch_config) {

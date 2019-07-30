@@ -12,6 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\Keyset;
 
 <<\Oncalls('open_source')>>
 final class RenameFileTest extends ShellTest {
@@ -31,15 +32,15 @@ final class RenameFileTest extends ShellTest {
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     \file_put_contents($temp_dir->getPath().'/initial.txt', 'my content here');
 
-    $this->execSteps($temp_dir->getPath(), ImmVector {'hg', 'init'});
+    $this->execSteps($temp_dir->getPath(), vec['hg', 'init']);
     $this->configureHg($temp_dir);
 
     $this->execSteps(
       $temp_dir->getPath(),
-      ImmVector {'hg', 'commit', '-Am', 'initial commit'},
-      ImmVector {'hg', 'mv', 'initial.txt', 'moved.txt'},
-      ImmVector {'chmod', '755', 'moved.txt'},
-      ImmVector {'hg', 'commit', '-Am', 'moved file'},
+      vec['hg', 'commit', '-Am', 'initial commit'],
+      vec['hg', 'mv', 'initial.txt', 'moved.txt'],
+      vec['chmod', '755', 'moved.txt'],
+      vec['hg', 'commit', '-Am', 'moved file'],
     );
 
     $repo = new ShipItRepoHG($temp_dir->getPath(), 'master');
@@ -51,13 +52,13 @@ final class RenameFileTest extends ShellTest {
 
     \expect($changeset->getSubject())->toEqual('moved file');
 
-    $diffs = Map {};
+    $diffs = dict[];
     foreach ($changeset->getDiffs() as $diff) {
       $diffs[$diff['path']] = $diff['body'];
     }
-    $wanted_files = ImmSet {'initial.txt', 'moved.txt'};
+    $wanted_files = keyset['initial.txt', 'moved.txt'];
     foreach ($wanted_files as $file) {
-      \expect($diffs->keys())->toContain($file);
+      \expect(Keyset\keys($diffs))->toContain($file);
       $diff = $diffs[$file];
       \expect($diff)->toContainSubstring('my content here');
     }

@@ -26,14 +26,14 @@ final class BuckUpdateInternalMirrorPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  final public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-sync-internal',
         'description' => "Don't ".Str\lowercase($this->getReadableName()),
         'write' => $_ ==> $this->skip(),
       ),
-    };
+    ];
   }
 
   <<__Override>>

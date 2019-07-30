@@ -17,13 +17,13 @@ namespace Facebook\ShipIt;
 final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
 
   private static function getSubmodulesChangeset(
-    ?ImmVector<ShipItDiff> $diffs = null,
+    ?vec<ShipItDiff> $diffs = null,
   ): ShipItChangeset {
     if ($diffs === null) {
-      $diffs = ImmVector {
+      $diffs = vec[
         shape('path' => 'dep_a.txt', 'body' => '0'),
         shape('path' => 'dep_b.txt', 'body' => '0'),
-      };
+      ];
     }
     return (new ShipItChangeset())
       ->withAuthor(FBShipItConfig::UPDATE_SUBMODULE_AUTHOR)
@@ -32,46 +32,46 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
   }
 
   public function testMergeSubmoduleChangesets(): void {
-    $changesets = ImmVector {
+    $changesets = vec[
       // Two Updating Submodules commits in a row
       self::getSubmodulesChangeset(
-        ImmVector {
+        vec[
           shape('path' => 'dep_a.txt', 'body' => '0'),
           shape('path' => 'dep_b.txt', 'body' => '0'),
-        },
+        ],
       ),
       self::getSubmodulesChangeset(
-        ImmVector {
+        vec[
           shape('path' => 'dep_b.txt', 'body' => '1'),
           shape('path' => 'dep_c.txt', 'body' => '1'),
-        },
+        ],
       ),
       // Missing required subject -- not considered
       self::getSubmodulesChangeset(
-        ImmVector {
+        vec[
           shape('path' => 'dep_a.txt', 'body' => '9'),
           shape('path' => 'dep_b.txt', 'body' => '9'),
-        },
+        ],
       )->withSubject(''),
       // Missing required author -- not considered
       self::getSubmodulesChangeset(
-        ImmVector {
+        vec[
           shape('path' => 'dep_a.txt', 'body' => '9'),
           shape('path' => 'dep_b.txt', 'body' => '9'),
-        },
+        ],
       )->withAuthor(''),
       // One more Updating Submodules commit
       self::getSubmodulesChangeset(
-        ImmVector {
+        vec[
           shape('path' => 'dep_b.txt', 'body' => '2'),
           shape('path' => 'dep_c.txt', 'body' => '2'),
-        },
+        ],
       ),
-    };
+    ];
     $config_object = static::getConfigObject();
     // The first two commits get merged together.
     $merged_changesets = $config_object->mergeSubmoduleChangesets($changesets);
-    \expect($merged_changesets->count())->toBePHPEqual(4);
+    \expect(C\count($merged_changesets))->toBePHPEqual(4);
     \expect($merged_changesets[0]->getAuthor())->toBePHPEqual(
       FBShipItConfig::UPDATE_SUBMODULE_AUTHOR,
     );
@@ -79,11 +79,11 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
     );
     \expect($merged_changesets[0]->getDiffs())->toBePHPEqual(
-      ImmVector {
+      vec[
         shape('path' => 'dep_a.txt', 'body' => '0'),
         shape('path' => 'dep_b.txt', 'body' => '01'),
         shape('path' => 'dep_c.txt', 'body' => '1'),
-      },
+      ],
     );
     \expect($merged_changesets[1])->toBePHPEqual($changesets[2]);
     \expect($merged_changesets[2])->toBePHPEqual($changesets[3]);
@@ -94,28 +94,28 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
     );
     \expect($merged_changesets[3]->getDiffs())->toBePHPEqual(
-      ImmVector {
+      vec[
         shape('path' => 'dep_b.txt', 'body' => '2'),
         shape('path' => 'dep_c.txt', 'body' => '2'),
-      },
+      ],
     );
   }
 
   public function testMergeSubmoduleChangesetsNoMerge(): void {
-    $changesets = ImmVector {
+    $changesets = vec[
       (new ShipItChangeset())
         ->withAuthor(FBShipItConfig::UPDATE_SUBMODULE_AUTHOR)
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape('path' => 'dep_a.txt', 'body' => '9'),
           shape('path' => 'dep_b.txt', 'body' => '9'),
-        }),
+        ]),
       (new ShipItChangeset())
         ->withSubject(FBShipItConfig::UPDATE_SUBMODULE_SUBJECT)
-        ->withDiffs(ImmVector {
+        ->withDiffs(vec[
           shape('path' => 'dep_a.txt', 'body' => '9'),
           shape('path' => 'dep_b.txt', 'body' => '9'),
-        }),
-    };
+        ]),
+    ];
     $config_object = static::getConfigObject();
     $merged_changesets = $config_object->mergeSubmoduleChangesets($changesets);
     \expect($merged_changesets)->toBePHPEqual($changesets);
@@ -127,7 +127,7 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       ->withTimestamp(\time());
     $repo = new FakeShipItRepo($dest_head);
-    $changesets = ImmVector {self::getSubmodulesChangeset()};
+    $changesets = vec[self::getSubmodulesChangeset()];
     $config_object = static::getConfigObject();
     \expect($config_object->shouldSkipUpdateSubmodules($changesets, $repo))
       ->toBeTrue();
@@ -140,10 +140,10 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       ->withTimestamp(\time());
     $repo = new FakeShipItRepo($dest_head);
     // intern has a non-submodule commit
-    $changesets = ImmVector {
+    $changesets = vec[
       self::getSubmodulesChangeset(),
       self::getSubmodulesChangeset()->withAuthor(''),
-    };
+    ];
     $config_object = static::getConfigObject();
     \expect($config_object->shouldSkipUpdateSubmodules($changesets, $repo))
       ->toBeFalse();
@@ -157,7 +157,7 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       // destination head is not a submodule update
       ->withAuthor('');
     $repo = new FakeShipItRepo($dest_head);
-    $changesets = ImmVector {self::getSubmodulesChangeset()};
+    $changesets = vec[self::getSubmodulesChangeset()];
     $config_object = static::getConfigObject();
     \expect($config_object->shouldSkipUpdateSubmodules($changesets, $repo))
       ->toBeFalse();
@@ -170,7 +170,7 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       ->withTimestamp(\time() - (60 * 60 * 24 * 7));
     $repo = new FakeShipItRepo($dest_head);
-    $changesets = ImmVector {self::getSubmodulesChangeset()};
+    $changesets = vec[self::getSubmodulesChangeset()];
     $config_object = static::getConfigObject();
     \expect($config_object->shouldSkipUpdateSubmodules($changesets, $repo))
       ->toBeFalse();
@@ -182,10 +182,10 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       ->withTimestamp(\time());
     $repo = new FakeShipItRepo($dest_head);
-    $changesets = ImmVector {self::getSubmodulesChangeset()};
+    $changesets = vec[self::getSubmodulesChangeset()];
     $config_object = static::getConfigObject();
     \expect($config_object->postFilterChangesets($changesets, $repo))
-      ->toBePHPEqual(ImmVector {});
+      ->toBePHPEqual(vec[]);
   }
 
   private static function getConfigObject(): FBShipItConfig {

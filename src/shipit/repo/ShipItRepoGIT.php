@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, C, Dict, Regex};
+use namespace HH\Lib\{Str, C, Dict, Regex, Vec};
 
 final class ShipItRepoGITException extends ShipItRepoException {}
 
@@ -67,7 +67,7 @@ class ShipItRepoGIT
     return $this->getChangesetFromID($rev);
   }
 
-  public function findLastSourceCommit(ImmSet<string> $roots): ?string {
+  public function findLastSourceCommit(keyset<string> $roots): ?string {
     $log = $this->gitCommand(
       'log',
       '-1',
@@ -89,7 +89,7 @@ class ShipItRepoGIT
 
   public function findNextCommit(
     string $revision,
-    ImmSet<string> $roots,
+    keyset<string> $roots,
   ): ?string {
     $log = $this->gitCommand(
       'log',
@@ -209,17 +209,15 @@ class ShipItRepoGIT
   }
 
   <<__Override>>
-  public static function getDiffsFromPatch(
-    string $patch,
-  ): ImmVector<ShipItDiff> {
-    $diffs = Vector {};
+  public static function getDiffsFromPatch(string $patch): vec<ShipItDiff> {
+    $diffs = vec[];
     foreach (ShipItUtil::parsePatch($patch) as $hunk) {
       $diff = self::parseDiffHunk($hunk);
       if ($diff !== null) {
         $diffs[] = $diff;
       }
     }
-    return $diffs->toImmVector();
+    return $diffs;
   }
 
   public static function getChangesetFromExportedPatch(
@@ -274,7 +272,7 @@ class ShipItRepoGIT
    * Commit a standardized patch to the repo
    */
   public function commitPatch(ShipItChangeset $patch): string {
-    if ($patch->getDiffs()->count() === 0) {
+    if (C\is_empty($patch->getDiffs())) {
       // This is an empty commit, which `git am` does not handle properly.
       $this->gitCommand(
         'commit',
@@ -360,13 +358,13 @@ class ShipItRepoGIT
     }
 
     $command = (new ShipItShellCommand($this->path, 'git', ...$args))
-      ->setEnvironmentVariables(ImmMap {
+      ->setEnvironmentVariables(dict[
         'GIT_CONFIG_NOSYSTEM' => '1',
         // GIT_CONFIG_NOGLOBAL was dropped because it was possible to use
         // HOME instead - see commit 8f323c00dd3c9b396b01a1aeea74f7dfd061bb7f in
         // git itself.
         'HOME' => $this->fakeHome->getPath(),
-      });
+      ]);
     if ($stdin !== null) {
       $command->setStdIn($stdin);
     }
@@ -461,19 +459,19 @@ class ShipItRepoGIT
   }
 
   public function export(
-    ImmSet<string> $roots,
+    keyset<string> $roots,
     ?string $rev = null,
   ): shape('tempDir' => ShipItTempDir, 'revision' => string) {
     if ($rev === null) {
       $rev = Str\trim($this->gitCommand('rev-parse', 'HEAD'));
     }
 
-    $command = Vector {
+    $command = vec[
       'archive',
       '--format=tar',
       $rev,
-    };
-    $command->addAll($roots);
+    ];
+    $command = Vec\concat($command, $roots);
     $tar = $this->gitCommand(...$command);
 
     $dest = new ShipItTempDir('git-export');
@@ -508,42 +506,43 @@ class ShipItRepoGIT
   }
 
   private function getSubmodules(
-    ?ImmSet<string> $roots = null,
-  ): ImmVector<self::TSubmoduleSpec> {
+    ?keyset<string> $roots = null,
+  ): vec<self::TSubmoduleSpec> {
     // The gitmodules file is in the repo root, so if this application is for
     // a set of source roots that does not contain the entire repository then
     // there are no relevant submodules.
-    if ($roots !== null && $roots->count() > 0 && !$roots->contains('')) {
-      return ImmVector {};
+    if ($roots !== null && !C\is_empty($roots) && !C\contains($roots, '')) {
+      return vec[];
     }
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     if (!\file_exists($this->getPath().'/.gitmodules')) {
-      return ImmVector {};
+      return vec[];
     }
     $configs = $this->gitCommand('config', '-f', '.gitmodules', '--list');
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    $configs = (new Map(\parse_ini_string($configs)))
-      ->filterWithKey(($key, $_) ==> {
+    $configs = dict(\parse_ini_string($configs))
+      |> Dict\filter_keys($$, ($key) ==> {
         return Str\slice($key, 0, 10) === 'submodule.' &&
           (Str\slice($key, -5) === '.path' || Str\slice($key, -4) === '.url');
       });
-    $names = $configs->keys()
-      ->filter($key ==> Str\slice($key, -4) === '.url')
-      ->map($key ==> Str\slice($key, 10, Str\length($key) - 10 - 4))
-      ->toImmSet();
-    return $names->values()
-      ->map(
+    return Vec\keys($configs)
+      |> Vec\filter($$, $key ==> Str\slice($key, -4) === '.url')
+      |> Vec\map($$, $key ==> Str\slice($key, 10, Str\length($key) - 10 - 4))
+      |> Vec\map(
+        $$,
         $name ==> shape(
           'name' => $name,
           'path' => $configs['submodule.'.$name.'.path'],
           'url' => $configs['submodule.'.$name.'.url'],
         ),
       )
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      ->filter($config ==> \file_exists($this->getPath().'/'.$config['path']))
-      ->toImmVector();
+      |> Vec\filter(
+        $$,
+        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+        $config ==> \file_exists($this->getPath().'/'.$config['path']),
+      );
   }
 }

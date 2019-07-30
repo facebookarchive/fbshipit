@@ -18,11 +18,18 @@ final class FBCommonFilters {
 
   const NOT_A_TEST_PLAN = 'Imported from GitHub, without a `Test Plan:` line.';
 
+  const keyset<string> DEFAULT_MESSAGE_SECTION_NAMES = keyset[
+    'summary',
+    'reviewed by',
+    'differential revision',
+    'pulled by',
+  ];
+
   public static function applyAll(
     ShipItChangeset $changeset,
     shape(
-      ?'stripCommonFiles/exceptions' => ImmVector<string>,
-      ?'filterMessageSections/keepFields' => ImmSet<string>,
+      ?'stripCommonFiles/exceptions' => vec<string>,
+      ?'filterMessageSections/keepFields' => keyset<string>,
     ) $config = shape(),
   ): ShipItChangeset {
 
@@ -31,7 +38,7 @@ final class FBCommonFilters {
       |> self::skipIfAlreadyOnGitHub($$)
       |> self::stripCommonFiles(
         $$,
-        $config['stripCommonFiles/exceptions'] ?? ImmVector {},
+        $config['stripCommonFiles/exceptions'] ?? vec[],
       )
       |> self::stripSubjectMergePrefix($$)
       |> self::stripSubjectTags($$)
@@ -57,14 +64,14 @@ final class FBCommonFilters {
     ShipItChangeset $changeset,
   ): ShipItChangeset {
     $mentions = ShipItMentions::getMentions($changeset);
-    if ($mentions->contains('@public')) {
+    if (C\contains($mentions, '@public')) {
       return ShipItMentions::rewriteMentions(
         $changeset,
         $mention ==> $mention === '@public' ? '' : $mention,
       );
     }
 
-    if ($mentions->contains('@already-on-github')) {
+    if (C\contains($mentions, '@already-on-github')) {
       return $changeset;
     }
 
@@ -73,14 +80,14 @@ final class FBCommonFilters {
       self::getSupportedMessageSectionNames(),
     );
 
-    if ($sections->containsKey('github author')) {
+    if (C\contains_key($sections, 'github author')) {
       return $changeset;
     }
 
-    $sections->removeKey('summary');
+    unset($sections['summary']);
 
     return $changeset->withMessage(
-      ShipItMessageSections::buildMessage($sections->toImmMap()),
+      ShipItMessageSections::buildMessage($sections),
     );
   }
 
@@ -103,7 +110,7 @@ final class FBCommonFilters {
   ): ShipItChangeset {
     if (ShipItMentions::containsMention($changeset, '@already-on-github')) {
       $changeset = $changeset
-        ->withDiffs(ImmVector {})
+        ->withDiffs(vec[])
         ->withDebugMessage('SKIP COMMIT: @already-on-github');
       invariant(!$changeset->isValid(), '@already-on-github diff still valid');
     }
@@ -126,11 +133,11 @@ final class FBCommonFilters {
 
   public static function stripCommonFiles(
     ShipItChangeset $changeset,
-    ImmVector<string> $exception_patterns = ImmVector {},
+    vec<string> $exception_patterns = vec[],
   ): ShipItChangeset {
     return ShipItPathFilters::stripPaths(
       $changeset,
-      ImmVector {
+      vec[
         '@^([^/]+/)*(?:(?!com/)([^/]+/))facebook(/|$)@',
         '@^facebook[/|$]@',
         '@(^|/)\.patternlint(/|$)@',
@@ -148,12 +155,12 @@ final class FBCommonFilters {
         '@pull_request_metadata_DO_NOT_COMMIT_THIS_FILE_OR_YOU_WILL_BE_FIRED\.json@',
         '@/\.pyre_configuration\.local$@',
         '@re_worker_requirements$@',
-      },
-      $exception_patterns->concat(ImmVector {
+      ],
+      Vec\concat($exception_patterns, vec[
         // Various Facebook projects depend on this project hashes to update
         // submodules in GitHub.
         '@^fbcode/opensource/project_hashes/.*$@',
-      }),
+      ]),
     );
   }
 
@@ -198,11 +205,11 @@ final class FBCommonFilters {
 
     // If No test plan, remove "test plan" from Summary
     if (($sections['test plan'] ?? null) === self::NOT_A_TEST_PLAN) {
-      $sections->removeKey('test plan');
+      unset($sections['test plan']);
     }
 
     return $changeset->withMessage(
-      ShipItMessageSections::buildMessage($sections->toImmMap()),
+      ShipItMessageSections::buildMessage($sections),
     );
   }
 
@@ -267,23 +274,23 @@ final class FBCommonFilters {
       $changeset,
       self::getSupportedMessageSectionNames(),
     );
-    $sections->removeKey('summary');
+    unset($sections['summary']);
     return $changeset->withMessage(
-      ShipItMessageSections::buildMessage($sections->toImmMap()),
+      ShipItMessageSections::buildMessage($sections),
     );
   }
 
-  public static function getDefaultMessageSectionNames(): ImmSet<string> {
-    return ImmSet {
+  public static function getDefaultMessageSectionNames(): keyset<string> {
+    return keyset[
       'summary',
       'reviewed by',
       'differential revision',
       'pulled by',
-    };
+    ];
   }
 
-  public static function getSupportedMessageSectionNames(): ImmSet<string> {
-    return ImmSet {
+  public static function getSupportedMessageSectionNames(): keyset<string> {
+    return keyset[
       'summary',
       'facebook',
       'github author',
@@ -300,34 +307,35 @@ final class FBCommonFilters {
       'signature',
       'committer',
       'pulled by',
-    };
+    ];
   }
 
   public static function getKeepSections(
     ShipItChangeset $changeset,
     shape(
-      ?'filterMessageSections/keepFields' => ImmSet<string>,
+      ?'filterMessageSections/keepFields' => keyset<string>,
       ...
     ) $config = shape(),
-  ): ImmSet<string> {
+  ): keyset<string> {
     $keep = $config['filterMessageSections/keepFields'] ??
-      self::getDefaultMessageSectionNames();
+      self::DEFAULT_MESSAGE_SECTION_NAMES;
     if (self::importedFromPullRequest($changeset)) {
-      $keep = $keep->toSet()->add('test plan')->toImmSet();
+      $keep[] = 'test plan';
     }
     return $keep;
   }
 
   public static function filterMessageSections(
     ShipItChangeset $changeset,
-    ImmSet<string> $keep = self::getDefaultMessageSectionNames(),
+    keyset<string> $keep = self::DEFAULT_MESSAGE_SECTION_NAMES,
   ): ShipItChangeset {
     $sections = ShipItMessageSections::getSections(
       $changeset,
       self::getSupportedMessageSectionNames(),
-    )->filterWithKey(($k, $_) ==> $keep->contains($k));
+    )
+      |> Dict\filter_keys($$, ($k) ==> C\contains($keep, $k));
     return $changeset->withMessage(
-      ShipItMessageSections::buildMessage($sections->toImmMap()),
+      ShipItMessageSections::buildMessage($sections),
     );
   }
 
@@ -341,11 +349,11 @@ final class FBCommonFilters {
     );
     $changeset = ShipItMentions::rewriteMentionsWithoutAt(
       $changeset,
-      /* exceptions = */ ImmSet {
+      /* exceptions = */ keyset[
         '@override-unit-failures',
         '@already-on-github',
         '@public',
-      },
+      ],
     );
     return $changeset;
   }
@@ -363,12 +371,13 @@ final class FBCommonFilters {
   }
 
   private static function isBotUser(string $user): bool {
-    return (
-      ImmSet {
+    return C\contains(
+      keyset[
         'androidtrunkagent',
         'svcscm',
-      }
-    )->contains($user);
+      ],
+      $user,
+    );
   }
 
   public static function restoreGitHubAuthor(
@@ -390,7 +399,7 @@ final class FBCommonFilters {
         $changeset,
         self::getSupportedMessageSectionNames(),
       );
-      if ($sections->containsKey('reviewed by')) {
+      if (C\contains_key($sections, 'reviewed by')) {
         $names = (new Vector(Str\split($sections['reviewed by'], ', ')));
         if (C\count($names) === 1) {
           $pulled_by_unixname = $names[0];
@@ -421,7 +430,7 @@ final class FBCommonFilters {
       $changeset,
       self::getSupportedMessageSectionNames(),
     );
-    if (!$sections->containsKey('reviewed by')) {
+    if (!C\contains_key($sections, 'reviewed by')) {
       return $changeset;
     }
     $names = (new Vector(Str\split($sections['reviewed by'], ', ')))
@@ -437,7 +446,7 @@ final class FBCommonFilters {
     $names = Vec\filter_nulls($names);
     $sections['reviewed by'] = Str\join($names, ', ');
     return $changeset->withMessage(
-      ShipItMessageSections::buildMessage($sections->toImmMap()),
+      ShipItMessageSections::buildMessage($sections),
     );
   }
 

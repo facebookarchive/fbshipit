@@ -20,7 +20,7 @@ interface ShipItDestinationRepo {
    *
    * @param $roots list of paths that contain synced commits.
    */
-  public function findLastSourceCommit(ImmSet<string> $roots): ?string;
+  public function findLastSourceCommit(keyset<string> $roots): ?string;
 
   /**
    * Generate a text patch ready for committing

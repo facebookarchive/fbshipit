@@ -44,7 +44,7 @@ final class FBShipItPublicizeSyncScriptsPhase extends ShipItPhase {
       $config->getDestinationBranch(),
     );
 
-    $src_rev = $dest->findLastSourceCommit(ImmSet {});
+    $src_rev = $dest->findLastSourceCommit(keyset[]);
     if ($src_rev === null) {
       return;
     }
@@ -62,19 +62,19 @@ final class FBShipItPublicizeSyncScriptsPhase extends ShipItPhase {
     $export_root = \realpath($export->getPath());
     $dest_root = \realpath($config->getDestinationPath());
 
-    $globs = ImmSet {
+    $globs = keyset[
       '/fb-examples/bin/importit_*.php-example',
       '/fb-examples/bin/shipit_*.php-example',
       '/fb-examples/tests/importit/projects/*.php-example',
       '/fb-examples/tests/shipit/projects/*.php-example',
-    };
-    $files = Set {};
+    ];
+    $files = keyset[];
     foreach ($globs as $glob) {
       /* HH_IGNORE_ERROR[2049] __PHPStdLib */
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      $files->addAll(\glob($export_root.$glob));
+      $files = Keyset\union($files, \glob($export_root.$glob));
     }
-    $files = $files->map($file ==> \realpath($file))->toImmSet();
+    $files = Keyset\map($files, $file ==> \realpath($file));
 
     foreach ($files as $file) {
       invariant(

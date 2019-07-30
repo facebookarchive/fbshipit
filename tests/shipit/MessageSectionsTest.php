@@ -16,59 +16,59 @@ namespace Facebook\ShipIt;
 <<\Oncalls('open_source')>>
 final class MessageSectionsTest extends BaseTest {
   public static function examplesForGetSections(
-  ): vec<(string, ?ImmSet<string>, ImmMap<string, string>)> {
+  ): vec<(string, ?keyset<string>, dict<string, string>)> {
     return vec[
       tuple(
         "Summary: Foo\nFor example: bar",
-        ImmSet {'summary'},
-        ImmMap {
+        keyset['summary'],
+        dict[
           'summary' => "Foo\nFor example: bar",
-        },
+        ],
       ),
       tuple(
         "Summary: Foo\nTest plan: bar",
-        ImmSet {'summary', 'test plan'},
-        ImmMap {
+        keyset['summary', 'test plan'],
+        dict[
           'summary' => 'Foo',
           'test plan' => 'bar',
-        },
+        ],
       ),
-      tuple('Foo: bar', null, ImmMap {'foo' => 'bar'}),
-      tuple('Foo: Bar: baz', ImmSet {'foo'}, ImmMap {'foo' => 'Bar: baz'}),
-      tuple('Foo: Bar: baz', ImmSet {'bar'}, ImmMap {'' => 'Foo: Bar: baz'}),
-      tuple('Foo: Bar: baz', ImmSet {'foo', 'bar'}, ImmMap {'bar' => 'baz'}),
+      tuple('Foo: bar', null, dict['foo' => 'bar']),
+      tuple('Foo: Bar: baz', keyset['foo'], dict['foo' => 'Bar: baz']),
+      tuple('Foo: Bar: baz', keyset['bar'], dict['' => 'Foo: Bar: baz']),
+      tuple('Foo: Bar: baz', keyset['foo', 'bar'], dict['bar' => 'baz']),
     ];
   }
 
   <<\DataProvider('examplesForGetSections')>>
   public function testGetSections(
     string $message,
-    ?ImmSet<string> $valid,
-    ImmMap<string, string> $expected,
+    ?keyset<string> $valid,
+    dict<string, string> $expected,
   ): void {
     $in = (new ShipItChangeset())->withMessage($message);
     $out = ShipItMessageSections::getSections($in, $valid);
-    \expect($out->toImmMap())->toBePHPEqual($expected);
+    \expect($out)->toBePHPEqual($expected);
   }
 
   public static function examplesForBuildMessage(
-  ): vec<(ImmMap<string, string>, string)> {
+  ): vec<(dict<string, string>, string)> {
     return vec[
-      tuple(ImmMap {'foo' => 'bar'}, 'Foo: bar'),
-      tuple(ImmMap {'foo' => "bar\nbaz"}, "Foo:\nbar\nbaz"),
-      tuple(ImmMap {'foo bar' => 'herp derp'}, 'Foo Bar: herp derp'),
-      tuple(ImmMap {'foo' => ''}, ''),
+      tuple(dict['foo' => 'bar'], 'Foo: bar'),
+      tuple(dict['foo' => "bar\nbaz"], "Foo:\nbar\nbaz"),
+      tuple(dict['foo bar' => 'herp derp'], 'Foo Bar: herp derp'),
+      tuple(dict['foo' => ''], ''),
       tuple(
-        ImmMap {'foo' => 'bar', 'herp' => 'derp'},
+        dict['foo' => 'bar', 'herp' => 'derp'],
         "Foo: bar\n\nHerp: derp",
       ),
-      tuple(ImmMap {'foo' => '', 'herp' => 'derp'}, "Herp: derp"),
+      tuple(dict['foo' => '', 'herp' => 'derp'], "Herp: derp"),
     ];
   }
 
   <<\DataProvider('examplesForBuildMessage')>>
   public function testBuildMessage(
-    ImmMap<string, string> $sections,
+    dict<string, string> $sections,
     string $expected,
   ): void {
     \expect(ShipItMessageSections::buildMessage($sections))->toEqual($expected);
@@ -88,8 +88,8 @@ final class MessageSectionsTest extends BaseTest {
   public function testWhitespaceEndToEnd(string $in, string $expected): void {
     $message = (new ShipItChangeset())
       ->withMessage($in)
-      |> ShipItMessageSections::getSections($$, ImmSet {'summary'})
-      |> ShipItMessageSections::buildMessage($$->toImmMap());
+      |> ShipItMessageSections::getSections($$, keyset['summary'])
+      |> ShipItMessageSections::buildMessage($$);
     \expect($message)->toEqual($expected);
   }
 }

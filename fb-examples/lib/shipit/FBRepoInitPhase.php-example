@@ -40,8 +40,8 @@ final class FBRepoInitPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function getCLIArguments(): ImmVector<ShipItCLIArgument> {
-    return ImmVector {
+  public function getCLIArguments(): vec<ShipItCLIArgument> {
+    return vec[
       shape(
         'long_name' => 'skip-'.$this->side.'-init',
         'description' => "Don't initialize the repository",
@@ -53,7 +53,7 @@ final class FBRepoInitPhase extends ShipItPhase {
       shape( // Removed; specified in code instead.
         'long_name' => 'src-repo::',
       ),
-    };
+    ];
   }
 
   <<__Override>>
@@ -117,152 +117,152 @@ final class FBRepoInitPhase extends ShipItPhase {
       ->runSynchronously();
   }
 
-  public static function getCloneCommand(string $name): ImmVector<string> {
+  public static function getCloneCommand(string $name): vec<string> {
     switch ($name) {
       case 'fbsource':
-        return ImmVector {
+        return vec[
           '/usr/local/bin/hg-clone-fbsource',
           '--no-working-dir',
           '--simple',
           '--no-cloud-rejoin',
-        };
+        ];
       case 'www':
-        return ImmVector {
+        return vec[
           '/usr/local/bin/hg-clone-www',
           '--no-working-dir',
           '--simple',
           '--no-cloud-rejoin',
-        };
+        ];
       case 'pse-demos':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/pse-demos',
           'pse-demos',
-        };
+        ];
       case 'opsfiles':
-        return ImmVector {
+        return vec[
           '/usr/local/bin/hg-clone-opsfiles',
           '--no-working-dir',
           '--simple',
           '--no-cloud-rejoin',
-        };
+        ];
       case 'connectivity-lab':
-        return ImmVector {
+        return vec[
           '/usr/local/bin/hg-clone-connectivity-lab',
           '--no-working-dir',
           '--simple',
-        };
+        ];
       case 'infer-fb':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/infer',
           'infer-fb',
-        };
+        ];
         break;
       case 'buck_internal':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git.vip.facebook.com/data/gitrepos/buck.git',
           'buck_internal',
-        };
+        ];
       case 'llvm-bolt':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           '-b',
           'facebook/bolt',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/llvm/llvm.git',
           'llvm-bolt',
-        };
+        ];
       case 'meta-openbmc':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           '-b',
           'fido',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/yocto/meta-openbmc.git',
           'meta-openbmc',
-        };
+        ];
       case 'meta-terragraph':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/yocto/meta-terragraph.git',
           'meta-terragraph',
-        };
+        ];
       case 'mysql-fb':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           '-b',
           'fb-mysql-5.6.35',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/mysql-5.6.git',
           'mysql-fb',
-        };
+        ];
         break;
       case 'si_sigma':
-        return ImmVector {
+        return vec[
           '/usr/local/bin/hg-clone-si_sigma',
           '--no-working-dir',
           '--simple',
           '--no-cloud-rejoin',
-        };
+        ];
       case 'phabtest1_git':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/phabtest1_git.git',
           'phabtest1_git',
-        };
+        ];
         break;
       case 'phabtest1_hg':
-        return ImmVector {
+        return vec[
           '/usr/bin/hg',
           'clone',
           'ssh://hg.vip.facebook.com/data/scm/phabtest1_hg',
           'phabtest1_hg',
-        };
+        ];
         break;
       case 'business-sdk':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://git.vip.facebook.com/data/gitrepos/business-sdk.git',
           'business-sdk',
-        };
+        ];
         break;
       case 'facebook-spaces':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://projects.git-ro.vip.facebook.com/data/gitrepos/spaces.git',
           'facebook-spaces',
-        };
+        ];
         break;
       case 'fbwin-gameroom':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://git.vip.facebook.com/data/gitrepos/fbwin-gameroom.git',
           'fbwin-gameroom',
-        };
+        ];
       case 'fb-vscode':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://git-ro.vip.facebook.com/data/gitrepos/fb-vscode.git',
           'fb-vscode',
-        };
+        ];
       case 'WABIZ':
-        return ImmVector {
+        return vec[
           '/usr/bin/git',
           'clone',
           'ssh://git.vip.facebook.com/data/gitrepos/whatsapp/biz.git',
           'WABIZ',
-        };
+        ];
         break;
     }
     $config = FBRepoCloneCommand::get($name);

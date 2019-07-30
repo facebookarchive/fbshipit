@@ -24,7 +24,7 @@ final class FBDumpShipItMetadata {
     ),
     'source' => shape(
       'branch' => string,
-      'roots' => ImmSet<string>,
+      'roots' => keyset<string>,
     ),
     'is_land_branch' => bool,
     'internal_repo' => string,

@@ -52,7 +52,7 @@ final class FakeShipItRepo extends ShipItRepo {
   <<__Override>>
   public static function getDiffsFromPatch(
     string $_patch,
-  ): ImmVector<ShipItDiff> {
-    return ImmVector {};
+  ): vec<ShipItDiff> {
+    return vec[];
   }
 }

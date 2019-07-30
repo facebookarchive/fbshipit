@@ -76,7 +76,7 @@ final class NewlinesTest extends ShellTest {
   private function assertContainsCorrectNewLines(
     ShipItChangeset $changeset,
   ): void {
-    $map = Map {};
+    $map = dict[];
     foreach ($changeset->getDiffs() as $diff) {
       $map[$diff['path']] = $diff['body'];
     }
@@ -102,10 +102,10 @@ final class NewlinesTest extends ShellTest {
     $this->initGitRepo($git_dir);
     $hg_dir = new ShipItTempDir('newline-output-test-hg');
     $this->initMercurialRepo($hg_dir);
-    $repos = ImmVector {
+    $repos = vec[
       new ShipItRepoGIT($git_dir->getPath(), '--orphan=master'),
       new ShipItRepoHG($hg_dir->getPath(), 'master'),
-    };
+    ];
 
     foreach ($repos as $repo) {
       $repo->commitPatch($changeset);

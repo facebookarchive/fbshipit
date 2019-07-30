@@ -13,7 +13,7 @@
 namespace Facebook\ImportIt;
 
 abstract final class ImportItRustPathFilters {
-  private static ImmVector<string> $ossConfigFiles = ImmVector {'rustfmt.toml'};
+  private static vec<string> $ossConfigFiles = vec['rustfmt.toml'];
 
   const RUST_OSS_CONFIGS = 'tools/rust/ossconfigs/';
 
@@ -23,26 +23,25 @@ abstract final class ImportItRustPathFilters {
    */
   public static function moveDirectories(
     \Facebook\ShipIt\ShipItChangeset $changeset,
-    ImmMap<string, string> $shipit_mapping,
-    ImmVector<string> $skip_patterns = ImmVector {},
+    dict<string, string> $shipit_mapping,
+    vec<string> $skip_patterns = vec[],
   ): \Facebook\ShipIt\ShipItChangeset {
-    $shipit_mapping = $shipit_mapping->toMap();
-    $shipit_mapping->remove(self::RUST_OSS_CONFIGS);
+    unset($shipit_mapping['self::RUST_OSS_CONFIGS']);
 
-    $mapping = ImportItPathFilters::invertShipIt($shipit_mapping->toImmMap());
+    $mapping = ImportItPathFilters::invertShipIt($shipit_mapping);
 
     // Now add mappings for $oss_configs back. The order is important here --
     // these mappings must come first -- and we unfortunately can't insert to
     // the beginning of a map in PHP/Hack, so create a new map.
-    $rust_mapping = Map {};
+    $rust_mapping = dict[];
     foreach (self::$ossConfigFiles as $filename) {
       $rust_mapping[$filename] = self::RUST_OSS_CONFIGS.$filename;
     }
-    $rust_mapping->setAll($mapping);
+    $rust_mapping = Dict\merge($rust_mapping, $mapping);
 
     return \Facebook\ShipIt\ShipItPathFilters::moveDirectories(
       $changeset,
-      $rust_mapping->toImmMap(),
+      $rust_mapping,
       $skip_patterns,
     );
   }
