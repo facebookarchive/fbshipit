@@ -83,7 +83,8 @@ final class ShipItFilterSanityCheckPhase extends ShipItPhase {
       ]);
     $changeset = $filter($changeset);
     invariant(
-      C\is_empty($changeset->getDiffs()),
+      // I hope this causes a test to fail
+      !C\is_empty($changeset->getDiffs()),
       'Path "%s" is not in a sourceRoot, but passes filter',
       $path,
     );
