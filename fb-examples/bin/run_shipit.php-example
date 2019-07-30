@@ -11,13 +11,11 @@
  * https://fburl.com/931uorpb
  */
 
-<<__EntryPoint>>
-async function run_shipit_entrypoint(): Awaitable<void> {
-  GlobalSERVER::set('PHP_ROOT', PHP\realpath(__DIR__.'/../../../'));
-  require_once GlobalSERVER::getPHPRoot().'/flib/intern/init/script.php';
-  /* HH_FIXME[4128] Found when moving things to use __EntryPoint */
-  flib_init_script();
-  PHP\ini_set('memory_limit', -1);
+// I want to see some hack errors when I import this
+GlobalSERVER::set('PHP_ROOT', PHP\realpath(__DIR__.'/../../../'));
+require_once GlobalSERVER::getPHPRoot().'/flib/intern/init/script.php';
+/* HH_FIXME[4128] Found when moving things to use __EntryPoint */
+flib_init_script();
+PHP\ini_set('memory_limit', -1);
 
-  Facebook\ShipIt\RunShipIt::cliMain();
-}
+Facebook\ShipIt\RunShipIt::cliMain();
