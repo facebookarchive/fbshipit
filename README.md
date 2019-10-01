@@ -138,7 +138,7 @@ class ShipMyProject
 
 <<__EntryPoint>>
 async function main(): Awaitable<void> {
-  ShipMyProject::cliMain()
+  ShipMyProject::cliMain();
 }
 ```
 
@@ -215,7 +215,7 @@ class ImportMyProject {
 
 <<__EntryPoint>>
 async function main(): Awaitable<void> {
-  ImportMyProject::cliMain()
+  ImportMyProject::cliMain();
 }
 ```
 
