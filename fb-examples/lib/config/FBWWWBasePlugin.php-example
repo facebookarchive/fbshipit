@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt\Config;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Regex, Str};
 use type Facebook\ShipIt\{
   FBSourceBranchConfig,
   FBShipItConfigeratorConfig,
@@ -50,16 +50,12 @@ abstract class FBWWWBasePlugin extends FBShipItConfigeratorConfig {
         if ($name === 'testGen') {
           return 'testFromAsync';
         }
-        if (Str\search($name, 'generate') === 0) {
-          // edge case -- don't output "erate{...}Async"
-          return $name;
-        }
         if (Str\search($name, 'gen_') === 0) {
           // function
           return Str\slice($name, 4).'_async';
         }
-        if (Str\search($name, 'gen') === 0) {
-          // method
+        if (Regex\matches($name, re"/^gen[A-Z]/")) {
+          // checking for [A-Z] so we don't output things like "erate{...}Async"
           $name = Str\slice($name, 3);
           $name[0] = Str\lowercase($name[0]);
           return $name.'Async';
