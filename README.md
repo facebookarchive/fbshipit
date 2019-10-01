@@ -36,7 +36,7 @@ particular, it does not understand merge commits.
 ## Installing
 
 ```
-$ hhvm /path/to/composer require facebook/fbshipit
+$ composer require facebook/fbshipit
 ```
 
 ## How FBShipIt Works
@@ -76,9 +76,7 @@ Filters are provided for common operations - the most frequent are:
 
 ## Example
 
-```Hack
-<?hh
-
+```hack
 namespace Facebook\ShipIt;
 
 class ShipMyProject
@@ -138,15 +136,13 @@ class ShipMyProject
   }
 }
 
-// Allow require() from unit test
-if (isset($argv) && idx($argv, 0) === realpath(__FILE__)) {
-  ShipMyProject::cliMain();
+<<__EntryPoint>>
+async function main(): Awaitable<void> {
+  ShipMyProject::cliMain()
 }
 ```
 
-```Hack
-<?hh
-
+```hack
 namespace Facebook\ImportIt;
 
 use type Facebook\ShipIt\ {
@@ -217,9 +213,9 @@ class ImportMyProject {
   }
 }
 
-// Allow require() from unit test
-if (isset($argv) && idx($argv, 0) === realpath(__FILE__)) {
-  ImportMyProject::cliMain();
+<<__EntryPoint>>
+async function main(): Awaitable<void> {
+  ImportMyProject::cliMain()
 }
 ```
 
@@ -235,7 +231,7 @@ Add `ShipItCreateNewRepoPhase` to your phase list (after source init and pull
 phases), then run:
 
 ```
-hhvm my_script.php --create-new-repo
+hhvm my_script.hack --create-new-repo
 ```
 
 This will give you the path to a git repository with a single commit; you can then push it to your destination.
@@ -245,7 +241,7 @@ This will give you the path to a git repository with a single commit; you can th
 When there is at least one relevant commit in the source repostitory that is not in the destination repository, run:
 
 ```
-hhvm my_script.php --first-commit=FIRST_UNSYNCED_COMMIT_ID_GOES_HERE
+hhvm my_script.hack --first-commit=FIRST_UNSYNCED_COMMIT_ID_GOES_HERE
 ```
 
 ## Future Runs
