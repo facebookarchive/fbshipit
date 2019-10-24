@@ -390,7 +390,7 @@ Name2';
       FBCommonFilters::applyAll($changeset_1);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
     $changeset_2 = (new ShipItChangeset())
       ->withMessage($original_message);
     $changeset_2 = FBCommonFilters::applyAll($changeset_2);

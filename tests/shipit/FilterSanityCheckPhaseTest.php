@@ -57,7 +57,7 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
       $phase->assertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
   }
 
   public function testThrowsForEmptyChangeset(): void {
@@ -68,7 +68,7 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
       $phase->assertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
   }
 
   public function testThrowsForPartialMatch(): void {
@@ -84,6 +84,6 @@ final class FilterSanityCheckPhaseTest extends BaseTest {
       $phase->assertValid(keyset['foo/', 'herp/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
   }
 }

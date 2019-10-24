@@ -269,7 +269,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
       static::map($changeset);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
   }
 
   public function testBadwordsBinaryFile(): void {

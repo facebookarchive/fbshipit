@@ -93,7 +93,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     \expect($phase)->toBeInstanceOf(FBImportItBranchResolutionPhase::class);
     \expect(() ==> $phase->getBranchConfigs())
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
-    ->toThrow(\HH\InvariantException::class); // @oss-enable
+    ->toThrow(InvariantException::class); // @oss-enable
   }
 
   private static function getConfigObject(): FBShipItConfig {

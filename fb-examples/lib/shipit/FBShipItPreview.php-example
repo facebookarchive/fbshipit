@@ -55,7 +55,7 @@ final class FBShipItPreview {
     try {
       $repo = RepoArcanistProject::getRepo($arcanist_project);
     // @oss-disable: } catch (\InvariantViolationException $_e) {
-      } catch (\HH\InvariantException $e) { // @oss-enable
+      } catch (InvariantException $e) { // @oss-enable
       // If we don't recognize the arcanist project,
       // assume it will ship no commits.
       return vec[];
