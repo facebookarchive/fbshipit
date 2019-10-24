@@ -18,14 +18,6 @@ class ShimExpectObj<T> extends Facebook\FBExpect\ExpectObj<T> {
     parent::__construct($varShim);
   }
 
-  public function toContainSubstring(string $needle, string $msg = '', ...): void {
-    $this->toContain($needle, $msg);
-  }
-
-  public function toNotContainSubstring(string $needle, string $msg = '', ...): void {
-    $this->toNotContain($needle, $msg);
-  }
-
   public function toMatchRegex(string $expected, string $msg = '', mixed ...$args): void {
     $msg = \vsprintf($msg, $args);
     $this->assertRegExp($expected, (string) $this->varShim, $msg);
