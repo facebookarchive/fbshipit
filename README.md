@@ -222,8 +222,8 @@ async function main(): Awaitable<void> {
 This will require two additional classes:
 
  - `MySourceRepoInitPhase` - clone and checkout the source repository.
-   See [`ShipItGitHubInitPhase`](https://github.com/facebook/fbshipit/blob/master/src/phase/ShipItGitHubInitPhase.php)) for an example.
- - `MyGitHubUtils` - subclass of [`ShipItGitHubUtils`](https://github.com/facebook/fbshipit/blob/master/src/ShipItGitHubUtils.php) which implements `getCredentialsForProject(string $organization, string $project)`
+   See [`ShipItGitHubInitPhase`](https://github.com/facebook/fbshipit/blob/master/src/shipit/phase/ShipItGitHubInitPhase.php)) for an example.
+ - `MyGitHubUtils` - subclass of [`ShipItGitHubUtils`](https://github.com/facebook/fbshipit/blob/master/src/shipit/ShipItGitHubUtils.php) which implements `getCredentialsForProject(string $organization, string $project)`
 
 ## Using With An Empty Destination Repository
 
