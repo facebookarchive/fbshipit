@@ -1,13 +1,13 @@
 # Running The Automatic tests
 
  - run `hh_client` to make sure there are no Hack errors.
- - run `vendor/bin/phpunit` from FBShipIt's directory to run FBShipIt's own tests.
+ - run `vendor/bin/hacktest tests` from FBShipIt's directory to run FBShipIt's own tests.
 
 # Automated Tests For Your Project
 
  - run `hh_client` to make sure there are no Hack errors.
    Add an empty `.hhconfig` file to your project root if necessary.
- - look at [fb-examples/tests/](https://github.com/facebook/fbshipit/tree/master/fb-examples/tests) for examples of automated tests with PHPUnit.
+ - look at [fb-examples/tests/](https://github.com/facebook/fbshipit/tree/master/fb-examples/tests) for examples of automated tests with [HackTest](https://github.com/hhvm/hacktest).
 
 # Manual Testing
 
@@ -16,7 +16,7 @@ The easiest way to manually test is to re-run FBShipIt over commits that have al
  - Clone your destination repository
  - Rewind it (eg `git reset --hard origin/master^^^`) so there are revisions that are not in the branch
  - Run with `--skip-push --source-repo-dir=/path/to/your/new/clone --skip-destination-pull'
- - 
+
 For example:
 
 ```
