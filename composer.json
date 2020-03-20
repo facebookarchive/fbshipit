@@ -7,11 +7,11 @@
     "hhvm": "~4.8",
     "hhvm/hsl": "~4.0",
     "hhvm/hsl-experimental": "~4.0",
-    "hhvm/hhvm-autoload": "~2.0",
+    "hhvm/hhvm-autoload": "~3.0",
     "facebook/hh-clilib": "~2.1"
   },
   "require-dev": {
-    "hhvm/hacktest": "~1.5",
+    "hhvm/hacktest": "~2.0",
     "facebook/fbexpect": "^2.6.1"
   },
   "autoload": {
