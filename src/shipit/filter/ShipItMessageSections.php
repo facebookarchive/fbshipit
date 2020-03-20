@@ -37,9 +37,7 @@ final class ShipItMessageSections {
   ): dict<string, string> {
     $sections = dict['' => ''];
     $section = '';
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    foreach (\explode("\n", $changeset->getMessage()) as $line) {
+    foreach (Str\split($changeset->getMessage(), "\n") as $line) {
       $line = Str\trim_right($line);
       /* HH_IGNORE_ERROR[2049] __PHPStdLib */
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
@@ -101,9 +99,7 @@ final class ShipItMessageSections {
   }
 
   private static function hasMoreThanOneNonEmptyLine(string $str): bool {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    $lines = \explode("\n", $str);
+    $lines = Str\split($str, "\n");
     $cn = 0;
     foreach ($lines as $line) {
       /* HH_IGNORE_ERROR[2049] __PHPStdLib */

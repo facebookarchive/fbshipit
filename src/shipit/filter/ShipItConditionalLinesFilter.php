@@ -96,9 +96,7 @@ final class ShipItConditionalLinesFilter {
   ): ShipItChangeset {
     $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      $diff['body'] = (new ImmVector(\explode("\n", $diff['body'])))
+      $diff['body'] = (new ImmVector(Str\split($diff['body'], "\n")))
         ->map(
           /* HH_IGNORE_ERROR[2049] __PHPStdLib */
           /* HH_IGNORE_ERROR[4107] __PHPStdLib */

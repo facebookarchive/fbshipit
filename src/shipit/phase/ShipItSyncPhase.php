@@ -67,9 +67,7 @@ final class ShipItSyncPhase extends ShipItPhase {
         'long_name' => 'skip-source-commits::',
         'description' => "Comma-separate list of source commit IDs to skip.",
         'write' => $x ==> {
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-            /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-            $this->skippedSourceCommits = keyset(\explode(',', $x));
+          $this->skippedSourceCommits = keyset(Str\split($x, ','));
           foreach ($this->skippedSourceCommits as $commit) {
             // 7 happens to be the usual output
             if (Str\length($commit) < ShipItUtil::SHORT_REV_LENGTH) {
