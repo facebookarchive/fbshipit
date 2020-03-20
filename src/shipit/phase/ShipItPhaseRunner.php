@@ -242,14 +242,7 @@ class ShipItPhaseRunner {
       Vec\map($config, $opt ==> $opt['long_name']),
     )
       |> dict($$);
-    if (
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \array_key_exists('h', $raw_opts) ||
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        \array_key_exists('help', $raw_opts)
-    ) {
+    if (C\contains_key($raw_opts, 'h') || C\contains_key($raw_opts, 'help')) {
       self::printHelp($config);
       exit(0);
     }

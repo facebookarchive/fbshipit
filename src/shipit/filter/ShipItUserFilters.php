@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, C};
 
 final class ShipItUserFilters {
   /** Rewrite authors that match a certain pattern.
@@ -29,9 +29,7 @@ final class ShipItUserFilters {
       /* HH_IGNORE_ERROR[2049] __PHPStdLib */
       /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       \preg_match_with_matches($pattern, $changeset->getAuthor(), inout $matches) &&
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \array_key_exists('user', $matches)
+      C\contains_key($matches, 'user')
     ) {
       // @oss-disable: $author = \Asio::awaitSynchronously(
         $author = \HH\Asio\join( // @oss-enable

@@ -196,9 +196,7 @@ final class FBShipItProjectRunner extends ShipItPhaseRunner {
       $this->parseOptions($project_config, self::getRawOpts($project_config));
     }
     if (
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \array_key_exists('h', $raw_opts) || \array_key_exists('help', $raw_opts)
+      C\contains_key($raw_opts, 'h') || C\contains_key($raw_opts, 'help')
     ) {
       // hacky coupling with FBShipItBranchResolutionPhase
       // render the project's help message
