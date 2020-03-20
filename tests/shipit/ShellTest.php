@@ -25,7 +25,7 @@ abstract class ShellTest extends \Facebook\HackTest\HackTest { // @oss-enable
 
   <<__Override>> // @oss-enable
   public async function afterEachTestAsync(): Awaitable<void> { // @oss-enable
-    await $this->tearDown(); // @oss-enable
+    await $this->tearDownAsync(); // @oss-enable
   } // @oss-enable
 
   protected function execSteps(string $cwd, Container<string> ...$steps): void {

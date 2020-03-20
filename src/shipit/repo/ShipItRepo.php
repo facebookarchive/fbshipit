@@ -170,9 +170,7 @@ abstract class ShipItRepo {
    * Convert a hunk to a ShipItDiff shape
    */
   protected static function parseDiffHunk(string $hunk): ?ShipItDiff {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    list($header, $body) = \explode("\n", $hunk, 2);
+    list($header, $body) = Str\split($hunk, "\n", 2);
     $matches = varray[];
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
