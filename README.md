@@ -252,16 +252,12 @@ commits it creates, so will automatically sync any new commits.
 ## Reducing Common Code With Multiple Projects
 
 We recommend splitting out common filters and phase setup to separate classes,
-and for these to be re-used between your projects. For examples from Facebook's
-usage, see:
-
- - [FBLuaLib's sync script](fb-examples/bin/shipit_fblualib.php-example)
- - [FBCommonFilters](fb-examples/lib/shipit/FBCommonFilters.php-example)
- - [FBShipItCLI](fb-examples/lib/shipit/FBShipItCLI.php-example)
+and for these to be re-used between your projects. For an example from Facebook's
+usage, see [FBCommonFilters](fb-examples/lib/shipit/FBCommonFilters.php-example)
 
 ## Further Examples
 
-The code for all public Facebook projects that use FBShipit is available in
+Some other code that might be useful for configuring FBShipIt can be found in
 [fb-examples/](https://github.com/facebook/fbshipit/tree/master/fb-examples).
 
 ## License
