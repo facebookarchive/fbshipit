@@ -46,8 +46,7 @@ class ShipItRepoGIT
 
   <<__Override>>
   public function updateBranchTo(string $base_rev): void {
-    /* HH_FIXME[4276] truthiness test on string */
-    if (!$this->branch) {
+    if (Str\is_empty($this->branch)) {
       throw new ShipItRepoGITException(
         $this,
         'setBranch must be called first.',
