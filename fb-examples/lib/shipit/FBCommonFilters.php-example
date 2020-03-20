@@ -421,7 +421,7 @@ final class FBCommonFilters {
         self::getSupportedMessageSectionNames(),
       );
       if (C\contains_key($sections, 'reviewed by')) {
-        $names = (new Vector(Str\split($sections['reviewed by'], ', ')));
+        $names = Str\split($sections['reviewed by'], ', ');
         if (C\count($names) === 1) {
           $pulled_by_unixname = $names[0];
         }
@@ -454,10 +454,11 @@ final class FBCommonFilters {
     if (!C\contains_key($sections, 'reviewed by')) {
       return $changeset;
     }
-    $names = (new Vector(Str\split($sections['reviewed by'], ', ')))
+    $names = Str\split($sections['reviewed by'], ', ')
       // No project reviewers e.g., #WDT in D2407623
-      ->filter($name ==> Str\slice(Str\trim($name), 0, 1) !== '#')
-      ->map(
+      |> Vec\filter($$, $name ==> Str\slice(Str\trim($name), 0, 1) !== '#')
+      |> Vec\map_async(
+        $$,
         async $name ==>
           await FBToGitHubUserInfo::getDestinationUserFromLocalUser($name),
       );

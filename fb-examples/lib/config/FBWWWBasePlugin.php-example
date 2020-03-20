@@ -76,7 +76,8 @@ abstract class FBWWWBasePlugin extends FBShipItConfigeratorConfig {
     foreach ($changeset->getDiffs() as $diff) {
       $diff['body'] = $diff['body']
         |> Str\split($$, "\n")
-        |> (new ImmVector($$))->map(
+        |> Vec\map(
+          $$,
           $line ==> {
             $_count = null;
             /* HH_IGNORE_ERROR[2049] __PHPStdLib */

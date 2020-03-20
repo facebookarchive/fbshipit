@@ -282,10 +282,10 @@ class ShipItPhaseRunner {
 
       $rows[$long] = tuple($left, $description);
     }
-    $rows = Dict\sort_by_key($rows) |> new Map($$);
+    $rows = Dict\sort_by_key($rows);
 
     $help = $rows['help'];
-    $rows->removeKey('help');
+    unset($rows['help']);
     $rows = Dict\merge(dict['help' => $help], $rows);
 
     $opt_help = Str\join(

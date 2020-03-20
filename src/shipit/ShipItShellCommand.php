@@ -116,7 +116,7 @@ final class ShipItShellCommand {
       unset($fds[0]);
     }
     /* HH_FIXME[2050] undefined $_ENV */
-    $env_vars = (new Map($_ENV))->setAll($this->environmentVariables);
+    $env_vars = Dict\merge($_ENV, $this->environmentVariables);
 
     $command = $this->getCommandAsString();
     $pipes = varray[];
