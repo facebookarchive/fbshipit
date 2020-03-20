@@ -202,9 +202,7 @@ abstract class FBShipItConfig {
       // already computed, we do not need to add this as it would be redundant.
       $root_match = false;
       foreach ($roots as $root) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        $root_match = $root_match || \strncmp($path, $root, Str\length($root)) === 0;
+        $root_match = $root_match || Str\starts_with($path, $root);
       }
       if ($root_match) {
         continue;

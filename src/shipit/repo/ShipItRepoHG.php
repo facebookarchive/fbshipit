@@ -232,13 +232,9 @@ class ShipItRepoHG
         continue;
       }
       if ($line[0] === '#' && !$past_separator) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        if (!\strncasecmp($line, '# User ', 7)) {
+        if (Str\starts_with_ci($line, '# User ')) {
           $changeset = $changeset->withAuthor(Str\slice($line, 7));
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        } else if (!\strncasecmp($line, '# Date ', 7)) {
+        } else if (Str\starts_with_ci($line, '# Date ')) {
           $changeset = $changeset->withTimestamp((int)Str\slice($line, 7));
         }
         // Ignore anything else in the envelope

@@ -93,13 +93,9 @@ index %s..0000000
       $new_rev = null;
       $old_rev = null;
       foreach (Str\split($body, "\n") as $line) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        if (!\strncmp('-Subproject commit ', $line, 19)) {
+        if (Str\starts_with($line, '-Subproject commit ')) {
           $old_rev = Str\trim(Str\slice($line, 19));
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        } else if (!\strncmp('+Subproject commit ', $line, 19)) {
+        } else if (Str\starts_with($line, '+Subproject commit ')) {
           $new_rev = Str\trim(Str\slice($line, 19));
         }
       }

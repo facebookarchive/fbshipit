@@ -136,9 +136,7 @@ class ShipItRepoGIT
           $changeset = $changeset->withAuthor($value);
           break;
         case 'subject':
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          if (!\strncasecmp($value, '[PATCH] ', 8)) {
+          if (Str\starts_with_ci($value, '[PATCH] ')) {
             $value = Str\trim(Str\slice($value, 8));
           }
           $changeset = $changeset->withSubject($value);

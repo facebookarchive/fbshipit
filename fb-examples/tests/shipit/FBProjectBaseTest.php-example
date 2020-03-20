@@ -346,9 +346,7 @@ abstract class FBProjectBaseTest extends FBBaseTest {
     foreach ($shipit_class::getPathMappings() as $source_path => $_) {
       $found = false;
       foreach ($examples as $example) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        if (\strncmp($example, $source_path, Str\length($source_path)) === 0) {
+        if (C\starts_with($example, $source_path)) {
           $found = true;
           break;
         }

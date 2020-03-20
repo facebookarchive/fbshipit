@@ -84,9 +84,7 @@ abstract final class ShipItPathFilters {
           return $path;
         }
         foreach ($mapping as $src => $dest) {
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          if (\strncmp($path, $src, Str\length($src)) !== 0) {
+          if (!Str\starts_with($path, $src)) {
             continue;
           }
           return $dest.Str\slice($path, Str\length($src));
