@@ -1,6 +1,7 @@
 {
   "roots": [
     "src",
-    "tests"
+    "tests",
+    "demo"
   ]
 }
