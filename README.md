@@ -10,8 +10,7 @@ For example, Facebook uses it to:
  - copy commits from our monolithic Mercurial repository to
    project-specific GitHub repositories
  - populate Buck's gh-pages branch with the contents of
-  [the docs folder](https://github.com/facebook/buck/tree/master/docs)
-   in the master branch.
+   [the docs folder](docs) in the master branch.
 
 ## Major Features
 
@@ -222,8 +221,8 @@ async function main(): Awaitable<void> {
 This will require two additional classes:
 
  - `MySourceRepoInitPhase` - clone and checkout the source repository.
-   See [`ShipItGitHubInitPhase`](https://github.com/facebook/fbshipit/blob/master/src/shipit/phase/ShipItGitHubInitPhase.php)) for an example.
- - `MyGitHubUtils` - subclass of [`ShipItGitHubUtils`](https://github.com/facebook/fbshipit/blob/master/src/shipit/ShipItGitHubUtils.php) which implements `getCredentialsForProject(string $organization, string $project)`
+   See [`ShipItGitHubInitPhase`](src/shipit/phase/ShipItGitHubInitPhase.php)) for an example.
+ - `MyGitHubUtils` - subclass of [`ShipItGitHubUtils`](src/shipit/ShipItGitHubUtils.php) which implements `getCredentialsForProject(string $organization, string $project)`
 
 ## Using With An Empty Destination Repository
 
