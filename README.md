@@ -10,7 +10,8 @@ For example, Facebook uses it to:
  - copy commits from our monolithic Mercurial repository to
    project-specific GitHub repositories
  - populate Buck's gh-pages branch with the contents of
-   [the docs folder](docs) in the master branch.
+   [the docs folder](https://github.com/facebook/buck/tree/master/docs)
+    in the master branch.
 
 ## Major Features
 
