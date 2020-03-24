@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -ex
 
 add-apt-repository ppa:git-core/ppa
@@ -23,7 +23,7 @@ hhvm --version
 curl https://getcomposer.org/installer | php -- /dev/stdin --install-dir=/usr/local/bin --filename=composer
 
 cd /var/source
-php /usr/local/bin/composer update
+php /usr/local/bin/composer install
 
 hh_server --check $(pwd)
 vendor/bin/hacktest tests/
