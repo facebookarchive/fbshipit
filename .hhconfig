@@ -2,3 +2,4 @@ assume_php = false
 safe_array = true
 safe_vector_array = true
 version = 3.0.0
+ignored_paths = [ "^vendor/.*/tests?/" ]
