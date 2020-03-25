@@ -1,3 +1,11 @@
+<?hh // strict
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 namespace Facebook\ImportIt;
 
 use type Facebook\ShipIt\{
@@ -66,5 +74,7 @@ class ImportDemoProject {
 
 <<__EntryPoint>>
 async function main(): Awaitable<void> {
+  require_once(\dirname(__DIR__).'/vendor/autoload.hack'); // @oss-enable
+  \Facebook\AutoloadMap\initialize(); // @oss-enable
   ImportDemoProject::cliMain();
 }
