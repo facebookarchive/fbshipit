@@ -69,9 +69,11 @@ final class DemoSourceRepoInitPhase extends ShipItPhase {
         )->runSynchronously(),
       )
       ->runSynchronously();
+
+    $sh_lock->release();
   }
 
-  public static function isMonorepo(string $name): bool {
+  public static function isMonorepo(string $_name): bool {
     return true;
   }
 }

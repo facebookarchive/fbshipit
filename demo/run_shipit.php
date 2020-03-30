@@ -8,7 +8,7 @@
 
 namespace Facebook\ShipIt;
 
-class ShipDemoProject {
+final class ShipDemoProject {
   public static function getPathMappings(): dict<string, string> {
     return dict[
       'fb-examples' => 'examples',
@@ -54,7 +54,7 @@ class ShipDemoProject {
       new DemoSourceRepoInitPhase(),
       new ShipItPullPhase(ShipItRepoSide::SOURCE),
       new ShipItGitHubInitPhase(
-        DemoGitHubUtils::$committer_user,
+        DemoGitHubUtils::$committerUser,
         'fbshipit-demo',
         ShipItRepoSide::DESTINATION,
         ShipItTransport::SSH,
@@ -63,8 +63,8 @@ class ShipDemoProject {
       new ShipItCreateNewRepoPhase(
         ($changeset) ==> self::filterChangeset($changeset),
         shape(
-          'name' => DemoGitHubUtils::$committer_name,
-          'email' => DemoGitHubUtils::$committer_email,
+          'name' => DemoGitHubUtils::$committerName,
+          'email' => DemoGitHubUtils::$committerEmail,
         ),
       ),
       new ShipItPullPhase(ShipItRepoSide::DESTINATION),
@@ -79,7 +79,7 @@ class ShipDemoProject {
 }
 
 <<__EntryPoint>>
-async function main(): Awaitable<void> {
+async function mainAsync(): Awaitable<void> {
   require_once(\dirname(__DIR__).'/vendor/autoload.hack'); // @oss-enable
   \Facebook\AutoloadMap\initialize(); // @oss-enable
   ShipDemoProject::cliMain();

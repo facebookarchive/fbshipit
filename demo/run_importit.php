@@ -22,7 +22,7 @@ use type Facebook\ShipIt\{
   ShipItTransport,
 };
 
-class ImportDemoProject {
+final class ImportDemoProject {
 
   public static function filterChangeset(
     ShipItChangeset $changeset,
@@ -35,45 +35,35 @@ class ImportDemoProject {
   }
 
   public static function cliMain(): void {
-    // The repository state will be updated and modified, so we need to use a
-    // consistent destination repository for all ImportIt phases.
-    $source_repo_getter = (ShipItBaseConfig $c) ==> {
-      return new ImportItRepoGIT($c->getSourcePath(), $c->getSourceBranch());
-    };
+    $config = new ShipItBaseConfig(
+      /* default working dir = */ '/var/tmp/shipit',
+      /* source repo name */ 'fbshipit-target',
+      /* destination repo name */ 'fbshipit',
+      /* source roots = */ keyset['.'],
+    );
 
-    (
-      new ShipItPhaseRunner(
-        new ShipItBaseConfig(
-          /* default working dir = */ '/var/tmp/shipit',
-          'fbshipit-target',
-          'fbshipit',
-          /* source roots = */ keyset['.'],
-        ),
-        vec[
-          new DemoSourceRepoInitPhase(),
-          new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
-          new ShipItPullPhase(ShipItRepoSide::DESTINATION),
-          new ShipItGitHubInitPhase(
-            'facebook',
-            'fbshipit',
-            ShipItRepoSide::SOURCE,
-            ShipItTransport::HTTPS,
-            DemoGitHubUtils::class,
-          ),
-          new ShipItCleanPhase(ShipItRepoSide::SOURCE),
-          new ShipItPullPhase(ShipItRepoSide::SOURCE),
-          new ImportItSyncPhase(
-            $changeset ==> self::filterChangeset($changeset),
-          ),
-        ],
-      )
-    )
-      ->run();
+    $phases = vec[
+      new DemoSourceRepoInitPhase(),
+      new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
+      new ShipItPullPhase(ShipItRepoSide::DESTINATION),
+      new ShipItGitHubInitPhase(
+        'facebook',
+        'fbshipit',
+        ShipItRepoSide::SOURCE,
+        ShipItTransport::HTTPS,
+        DemoGitHubUtils::class,
+      ),
+      new ShipItCleanPhase(ShipItRepoSide::SOURCE),
+      new ShipItPullPhase(ShipItRepoSide::SOURCE),
+      new ImportItSyncPhase($changeset ==> self::filterChangeset($changeset)),
+    ];
+
+    (new ShipItPhaseRunner($config, $phases))->run();
   }
 }
 
 <<__EntryPoint>>
-async function main(): Awaitable<void> {
+async function mainAsync(): Awaitable<void> {
   require_once(\dirname(__DIR__).'/vendor/autoload.hack'); // @oss-enable
   \Facebook\AutoloadMap\initialize(); // @oss-enable
   ImportDemoProject::cliMain();
