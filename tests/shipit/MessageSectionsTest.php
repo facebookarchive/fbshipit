@@ -12,6 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
+use type Facebook\HackTest\DataProvider;
 
 <<\Oncalls('open_source')>>
 final class MessageSectionsTest extends BaseTest {
@@ -40,7 +41,7 @@ final class MessageSectionsTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('examplesForGetSections')>>
+  <<DataProvider('examplesForGetSections')>>
   public function testGetSections(
     string $message,
     ?keyset<string> $valid,
@@ -66,7 +67,7 @@ final class MessageSectionsTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('examplesForBuildMessage')>>
+  <<DataProvider('examplesForBuildMessage')>>
   public function testBuildMessage(
     dict<string, string> $sections,
     string $expected,
@@ -84,7 +85,7 @@ final class MessageSectionsTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('getExamplesForWhitespaceEndToEnd')>>
+  <<DataProvider('getExamplesForWhitespaceEndToEnd')>>
   public function testWhitespaceEndToEnd(string $in, string $expected): void {
     $message = (new ShipItChangeset())
       ->withMessage($in)

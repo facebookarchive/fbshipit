@@ -13,6 +13,7 @@
 namespace Facebook\ImportIt;
 
 use namespace HH\Lib\{Keyset, Vec};
+use type Facebook\HackTest\DataProvider;
 
 <<\Oncalls('open_source')>>
 final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
@@ -49,7 +50,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
     ];
   }
 
-  <<\DataProvider('examplesForMoveDirectories')>>
+  <<DataProvider('examplesForMoveDirectories')>>
   public function testMoveDirectories(
     dict<string, string> $map,
     vec<string> $in,

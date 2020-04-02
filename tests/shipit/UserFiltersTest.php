@@ -13,6 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\Str;
+use type Facebook\HackTest\DataProvider;
 
 final class UserInfoTestImplementation extends ShipItUserInfo {
   <<__Override>>
@@ -43,7 +44,7 @@ final class UserFiltersTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('examplesForGetMentions')>>
+  <<DataProvider('examplesForGetMentions')>>
   public function testGetMentions(
     string $message,
     keyset<string> $expected,
@@ -78,7 +79,7 @@ final class UserFiltersTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('rewriteMentionsExamples')>>
+  <<DataProvider('rewriteMentionsExamples')>>
   public function testRewriteMentions(
     string $message,
     (function(string): string) $callback,
@@ -105,7 +106,7 @@ final class UserFiltersTest extends BaseTest {
     ];
   }
 
-  <<\DataProvider('examplesForSVNUserMapping')>>
+  <<DataProvider('examplesForSVNUserMapping')>>
   public function testSVNUserMapping(string $in, string $expected): void {
     $changeset = (new ShipItChangeset())->withAuthor($in)
       |> ShipItUserFilters::rewriteSVNAuthor(

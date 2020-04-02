@@ -13,6 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\{Str, C, Vec};
+use type Facebook\HackTest\DataProvider;
 
 <<\Oncalls('open_source')>>
 final class UnusualContentTest extends BaseTest {
@@ -42,7 +43,7 @@ final class UnusualContentTest extends BaseTest {
    * an invalid patch.
    *
    */
-  <<\DataProvider('examplesForRemovingFile')>>
+  <<DataProvider('examplesForRemovingFile')>>
   public function testRemovingFile(
     string $header_file,
     string $patch_file,
