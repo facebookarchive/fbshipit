@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use type Facebook\HackTest\DataProvider;
+use type Facebook\HackTest\DataProvider; // @oss-enable
 
 <<\Oncalls('open_source')>>
 final class MessageSectionsTest extends BaseTest {

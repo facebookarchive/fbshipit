@@ -13,7 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\{Keyset, Vec};
-use type Facebook\HackTest\DataProvider;
+use type Facebook\HackTest\DataProvider; // @oss-enable
 
 <<\Oncalls('open_source')>>
 final class PathFiltersTest extends BaseTest {

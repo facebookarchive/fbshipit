@@ -13,7 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\Str;
-use type Facebook\HackTest\DataProvider;
+use type Facebook\HackTest\DataProvider;// @oss-enable
 
 final class UserInfoTestImplementation extends ShipItUserInfo {
   <<__Override>>

@@ -13,7 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\{C};
-use type Facebook\HackTest\DataProvider;
+use type Facebook\HackTest\DataProvider; // @oss-enable
 
 <<\Oncalls('open_source')>>
 final class ConditionalLinesFilterTest extends BaseTest {

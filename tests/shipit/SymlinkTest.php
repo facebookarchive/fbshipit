@@ -13,7 +13,7 @@
 namespace Facebook\ShipIt;
 
 use namespace HH\Lib\{C, Vec};
-use type Facebook\HackTest\DataProvider;
+use type Facebook\HackTest\DataProvider; // @oss-enable
 
 
 enum SymlinkTestOperation: string {
