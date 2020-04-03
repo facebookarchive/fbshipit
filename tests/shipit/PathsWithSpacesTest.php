@@ -14,6 +14,7 @@ namespace Facebook\ShipIt;
 
 use namespace HH\Lib\Vec;
 use type Facebook\HackTest\DataProvider; // @oss-enable
+// @oss-disable: use type DataProvider;
 
 
 <<\Oncalls('open_source')>>

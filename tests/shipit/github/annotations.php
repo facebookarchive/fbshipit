@@ -13,11 +13,6 @@ class Oncalls implements HH\ClassAttribute, HH\MethodAttribute, HH\TypeAliasAttr
   public function __construct(mixed ...$args) {}
 }
 
-class DataProvider implements HH\ClassAttribute, HH\MethodAttribute, HH\TypeAliasAttribute,
-    HH\EnumAttribute, HH\FunctionAttribute {
-  public function __construct(mixed ...$args) {}
-}
-
 class TestsBypassVisibility implements HH\ClassAttribute, HH\MethodAttribute, HH\TypeAliasAttribute,
     HH\EnumAttribute, HH\FunctionAttribute {
   public function __construct(mixed ...$args) {}
