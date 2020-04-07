@@ -42,7 +42,9 @@ final class ShipDemoProject {
       |> ShipItPathFilters::moveDirectories($$, self::getPathMappings());
   }
 
-  public static function cliMain(): void {
+  public static function cliMain(
+    IShipItArgumentParser $arg_parser = new ShipItCLIArgumentParser(),
+  ): void {
     $config = new ShipItBaseConfig(
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit',
@@ -74,7 +76,7 @@ final class ShipDemoProject {
       new ShipItPushPhase(),
     ];
 
-    (new ShipItPhaseRunner($config, $phases))->run();
+    (new ShipItPhaseRunner($config, $phases, $arg_parser))->run();
   }
 }
 

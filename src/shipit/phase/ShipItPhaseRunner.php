@@ -18,6 +18,7 @@ class ShipItPhaseRunner {
   public function __construct(
     protected ShipItBaseConfig $config,
     protected vec<ShipItPhase> $phases,
+    protected IShipItArgumentParser $arg_parser = new ShipItCLIArgumentParser(),
   ) {}
 
   public function run(): void {
@@ -131,7 +132,7 @@ class ShipItPhaseRunner {
     ];
   }
 
-  final protected function getCLIArguments(): vec<ShipItCLIArgument> {
+  final public function getCLIArguments(): vec<ShipItCLIArgument> {
     $args = $this->getBasicCLIArguments();
     foreach ($this->phases as $phase) {
       $args = Vec\concat($args, $phase->getCLIArguments());
@@ -234,14 +235,7 @@ class ShipItPhaseRunner {
 
   protected function parseCLIArguments(): void {
     $config = $this->getCLIArguments();
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    $raw_opts = \getopt(
-      Vec\map($config, $opt ==> Shapes::idx($opt, 'short_name', ''))
-        |> Str\join($$, ''),
-      Vec\map($config, $opt ==> $opt['long_name']),
-    )
-      |> dict($$);
+    $raw_opts = $this->arg_parser->parseArgs($config);
     if (C\contains_key($raw_opts, 'h') || C\contains_key($raw_opts, 'help')) {
       self::printHelp($config);
       exit(0);

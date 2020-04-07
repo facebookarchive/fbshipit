@@ -8,7 +8,8 @@
     "hhvm/hsl": "~4.0",
     "hhvm/hsl-experimental": "~4.0",
     "hhvm/hhvm-autoload": "~3.0",
-    "facebook/hh-clilib": "~2.1"
+    "facebook/hh-clilib": "~2.1",
+    "facebook/hack-codegen": "^4.3"
   },
   "require-dev": {
     "hhvm/hacktest": "~2.0",
