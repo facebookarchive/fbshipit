@@ -16,20 +16,6 @@ interface IShipItArgumentParser {
   ): dict<string, mixed>;
 }
 
-class ShipItInvocation implements IShipItArgumentParser {
-  use ShipItArgumentsTrait;
-
-  public function parseArgs(
-    vec<ShipItCLIArgument> $config,
-  ): dict<string, mixed> {
-    return $this->getArgs();
-  }
-
-  public function run(): void {
-    ShipDemoProject::cliMain($this);
-  }
-}
-
 class ShipItCLIArgumentParser implements IShipItArgumentParser {
   public function parseArgs(
     vec<ShipItCLIArgument> $config,
