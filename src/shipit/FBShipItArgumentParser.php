@@ -8,6 +8,8 @@
 
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\{Vec, Str};
+
 interface IFBShipItArgumentParser {
   public function parseArgs(
     vec<ShipItCLIArgument> $config,
