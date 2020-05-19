@@ -157,7 +157,10 @@ abstract class FBShipItConfig {
     bool $use_confidential_filter = true,
   ): ShipItChangeset {
     $changeset = $changeset
-      |> $this->stripExceptSourceRoots($$, $branch_config)
+      |> ShipItPathFilters::stripExceptSourceRoots(
+        $$,
+        $this->getBaseConfig($branch_config)->getSourceRoots(),
+      )
       |> $this->filterSubmodules($$)
       |> (
         $this->getProjectFilterChangesetFn($branch_config)
@@ -231,21 +234,6 @@ abstract class FBShipItConfig {
       ->withSourceBranch($branch_config['internal'])
       ->withDestinationBranch($branch_config['external'])
       ->withCommitMarkerPrefix(true);
-  }
-
-  final protected function stripExceptSourceRoots(
-    ShipItChangeset $changeset,
-    FBSourceBranchConfig $branch_config,
-  ): ShipItChangeset {
-    $roots = Keyset\filter(
-      $this->getBaseConfig($branch_config)->getSourceRoots(),
-      $root ==> $root !== '',
-    );
-    if (C\is_empty($roots)) {
-      return $changeset;
-    }
-
-    return ShipItPathFilters::stripExceptDirectories($changeset, $roots);
   }
 
   final protected function filterSubmodules(
@@ -476,7 +464,8 @@ abstract class FBShipItConfig {
       new ShipItCleanPhase(ShipItRepoSide::DESTINATION),
       new ShipItPullPhase(ShipItRepoSide::DESTINATION),
       new ImportItSyncPhase(
-        $changeset ==> $this->projectImportChangeset($changeset, $branch_config),
+        $changeset ==>
+          $this->projectImportChangeset($changeset, $branch_config),
       ),
     ];
   }
@@ -694,12 +683,8 @@ abstract class FBShipItConfig {
     ShipItChangeset $old_changeset,
     ShipItChangeset $new_changeset,
   ): string {
-    $old_parsed = self::getSubmoduleCommitLinks(
-      $old_changeset->getMessage(),
-    );
-    $new_parsed = self::getSubmoduleCommitLinks(
-      $new_changeset->getMessage(),
-    );
+    $old_parsed = self::getSubmoduleCommitLinks($old_changeset->getMessage());
+    $new_parsed = self::getSubmoduleCommitLinks($new_changeset->getMessage());
     $prefix = null;
     $suffix = null;
     if ($old_parsed !== null) {

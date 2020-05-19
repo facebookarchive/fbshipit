@@ -168,4 +168,16 @@ abstract final class ShipItPathFilters {
     }
     return $changeset->withDiffs($diffs);
   }
+
+  public static function stripExceptSourceRoots(
+    ShipItChangeset $changeset,
+    keyset<string> $source_roots,
+  ): ShipItChangeset {
+    $roots = Keyset\filter($source_roots, $root ==> $root !== '');
+    if (C\is_empty($roots)) {
+      return $changeset;
+    }
+
+    return self::stripExceptDirectories($changeset, $roots);
+  }
 }

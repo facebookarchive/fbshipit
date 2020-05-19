@@ -9,9 +9,11 @@
 namespace Facebook\ShipIt;
 
 final class ShipDemoProject {
+  private static string $sourceRoot = "fb-examples";
+
   public static function getPathMappings(): dict<string, string> {
     return dict[
-      'fb-examples' => 'examples',
+      self::$sourceRoot => 'examples',
     ];
   }
 
@@ -19,25 +21,9 @@ final class ShipDemoProject {
     ShipItChangeset $changeset,
   ): ShipItChangeset {
     return $changeset
-      |> ShipItPathFilters::stripPaths(
+      |> ShipItPathFilters::stripExceptSourceRoots(
         $$,
-        vec[
-          "/^src/",
-          "/^tests/",
-          "/^\.gitignore$/",
-          "/^\.hhconfig$/",
-          "/^\.travis\.sh$/",
-          "/^\.travis\.yml$/",
-          "/^CODE_OF_CONDUCT\.md$/",
-          "/^CONTRIBUTING\.md$/",
-          "/^DEBUGGING\.md$/",
-          "/^README\.md$/",
-          "/^TESTING\.md$/",
-          "/^composer\.json$/",
-          "/^composer\.lock$/",
-          "/^hh_autoload\.json$/",
-          "/^phpunit\.xml$/",
-        ],
+        keyset[self::$sourceRoot]
       )
       |> ShipItPathFilters::moveDirectories($$, self::getPathMappings());
   }
@@ -47,7 +33,7 @@ final class ShipDemoProject {
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit',
       /* destination repo name */ 'fbshipit-target',
-      /* source roots */ keyset['.'],
+      /* source roots */ keyset[self::$sourceRoot],
     );
 
     $phases = vec[
