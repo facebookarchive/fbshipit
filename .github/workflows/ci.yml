@@ -26,4 +26,8 @@ jobs:
       - name: Run tests
         run: vendor/bin/hacktest tests/
       - name: Run ShipIt Demo
-        run: hhvm demo/run_shipit.php --create-new-repo
+        run: hhvm demo/run_shipit.php \
+               --create-new-repo \
+               --skip-destination-init \
+               --skip-destination-clean \
+               --skip-destination-pull
