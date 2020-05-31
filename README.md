@@ -1,6 +1,6 @@
 # FBShipIt
 
-[![Build Status](https://travis-ci.org/facebook/fbshipit.svg?branch=master)](https://travis-ci.org/facebook/fbshipit)
+![CI](https://github.com/facebook/fbshipit/workflows/CI/badge.svg)
 
 FBShipIt is a library written in [Hack](http://hacklang.org) for
 copying commits from one repository to another.
