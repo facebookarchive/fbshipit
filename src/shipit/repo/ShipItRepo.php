@@ -69,7 +69,8 @@ abstract class ShipItRepo {
   public function maybeReleaseLock(): void {
     try {
       $this->lock->release();
-    } catch (\InvariantViolationException $_) {
+    // @oss-disable: } catch (\InvariantViolationException $_e) {
+      } catch (InvariantException $e) { // @oss-enable
       // ignore
     }
   }
