@@ -40,14 +40,16 @@ final class ShipItCleanPhase extends ShipItPhase {
   final protected function runImpl(ShipItBaseConfig $config): void {
     switch ($this->side) {
       case ShipItRepoSide::SOURCE:
+        $lock = $config->getSourceSharedLock();
         $local_path = $config->getSourcePath();
         $branch = $config->getSourceBranch();
         break;
       case ShipItRepoSide::DESTINATION:
+        $lock = $config->getDestinationSharedLock();
         $local_path = $config->getDestinationPath();
         $branch = $config->getDestinationBranch();
         break;
     }
-    ShipItRepo::open($local_path, $branch)->clean();
+    ShipItRepo::open($lock, $local_path, $branch)->clean();
   }
 }

@@ -95,7 +95,11 @@ final class UnicodeTest extends ShellTest {
     $tempdir = new ShipItTempDir('unicode-test-git');
     $this->initGitRepo($tempdir);
 
-    $repo = new ShipItRepoGIT($tempdir->getPath(), 'master');
+    $repo = new ShipItRepoGIT(
+      new ShipItDummyLock(),
+      $tempdir->getPath(),
+      'master',
+    );
     $repo->commitPatch($changeset);
 
     \expect(\file_get_contents($tempdir->getPath().'/unicode-example.txt'))
@@ -112,7 +116,11 @@ final class UnicodeTest extends ShellTest {
     $tempdir = new ShipItTempDir('unicode-test-hg');
     $this->initMercurialRepo($tempdir);
 
-    $repo = new ShipItRepoHG($tempdir->getPath(), 'master');
+    $repo = new ShipItRepoHG(
+      new ShipItDummyLock(),
+      $tempdir->getPath(),
+      'master',
+    );
     $repo->commitPatch($changeset);
 
     \expect(\file_get_contents($tempdir->getPath().'/unicode-example.txt'))
@@ -142,7 +150,11 @@ final class UnicodeTest extends ShellTest {
     ])
       ->runSynchronously();
 
-    $repo = new ShipItRepoGIT($tempdir->getPath(), 'master');
+    $repo = new ShipItRepoGIT(
+      new ShipItDummyLock(),
+      $tempdir->getPath(),
+      'master',
+    );
     $changeset = $repo->getChangesetFromID('HEAD');
     \expect($changeset->getMessage())
       ->toEqual(Str\trim($this->getExpectedContent()));
@@ -170,7 +182,11 @@ final class UnicodeTest extends ShellTest {
     ])
       ->runSynchronously();
 
-    $repo = new ShipItRepoHG($tempdir->getPath(), 'master');
+    $repo = new ShipItRepoHG(
+      new ShipItDummyLock(),
+      $tempdir->getPath(),
+      'master',
+    );
     $changeset = $repo->getChangesetFromID('.');
     \expect($changeset?->getMessage())->toEqual(
       Str\trim($this->getExpectedContent()),

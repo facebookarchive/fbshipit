@@ -86,6 +86,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       }
       $repo = ShipItRepo::typedOpen(
         ShipItDestinationRepo::class,
+        $config->getDestinationSharedLock(),
         $config->getDestinationPath(),
         $config->getDestinationBranch(),
       );
@@ -175,6 +176,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
     if ($source_sync_id === null) {
       $repo = ShipItRepo::typedOpen(
         ShipItSourceRepo::class,
+        $config->getSourceSharedLock(),
         $config->getSourcePath(),
         $config->getSourceBranch(),
       );

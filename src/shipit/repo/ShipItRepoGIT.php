@@ -32,9 +32,9 @@ class ShipItRepoGIT
   private string $branch = 'master';
   private ShipItTempDir $fakeHome;
 
-  public function __construct(string $path, string $branch) {
+  public function __construct(IShipItLock $lock, string $path, string $branch) {
     $this->fakeHome = new ShipItTempDir('fake_home_for_git');
-    parent::__construct($path, $branch);
+    parent::__construct($lock, $path, $branch);
   }
 
   <<__Override>>

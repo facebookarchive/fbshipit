@@ -120,6 +120,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
       );
     }
     $source_repo = new ImportItRepoGIT(
+      $config->getSourceSharedLock(),
       $config->getSourcePath(),
       $config->getSourceBranch(),
     );
@@ -137,6 +138,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
     ?string $base_rev,
   ): void {
     $destination_repo = ImportItRepo::open(
+      $config->getDestinationSharedLock(),
       $config->getDestinationPath(),
       $config->getDestinationBranch(),
     );

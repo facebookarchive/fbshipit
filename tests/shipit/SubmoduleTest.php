@@ -31,9 +31,7 @@ final class SubmoduleTest extends ShellTest {
       'third-party',
     );
 
-    \expect($changeset->getDiffs() |> Vec\keys($$) |> C\count($$))->toEqual(
-      1,
-    );
+    \expect($changeset->getDiffs() |> Vec\keys($$) |> C\count($$))->toEqual(1);
     $diff = $changeset->getDiffs()
       |> Vec\filter($$, $diff ==> $diff['path'] === 'third-party')
       |> C\nfirst($$);
@@ -78,7 +76,11 @@ final class SubmoduleTest extends ShellTest {
       )
     )
       ->runSynchronously();
-    $submodule_id = ShipItRepo::open($submodule_dir->getPath(), 'master')
+    $submodule_id = ShipItRepo::open(
+      new ShipItDummyLock(),
+      $submodule_dir->getPath(),
+      'master',
+    )
       ->getHeadChangeset()
       ?->getID();
     invariant($submodule_id !== null, 'impossible');
@@ -123,8 +125,9 @@ final class SubmoduleTest extends ShellTest {
       )
     )
       ->runSynchronously();
-    $changeset = ShipItRepo::open($source_dir->getPath(), 'master')
-      ->getHeadChangeset();
+    $changeset =
+      ShipItRepo::open(new ShipItDummyLock(), $source_dir->getPath(), 'master')
+        ->getHeadChangeset();
     invariant($changeset !== null, 'impossible');
     $changeset = ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile(
       $changeset,
@@ -150,6 +153,7 @@ final class SubmoduleTest extends ShellTest {
       ->runSynchronously();
     $repo = ShipItRepoGIT::typedOpen(
       ShipItRepoGIT::class,
+      new ShipItDummyLock(),
       $dest_dir->getPath(),
       'master',
     );
@@ -186,7 +190,11 @@ final class SubmoduleTest extends ShellTest {
       )
     )
       ->runSynchronously();
-    $submodule_id = ShipItRepo::open($submodule_dir->getPath(), 'master')
+    $submodule_id = ShipItRepo::open(
+      new ShipItDummyLock(),
+      $submodule_dir->getPath(),
+      'master',
+    )
       ->getHeadChangeset()
       ?->getID();
     invariant($submodule_id !== null, 'impossible');
@@ -208,8 +216,9 @@ final class SubmoduleTest extends ShellTest {
       )
     )
       ->runSynchronously();
-    $changeset = ShipItRepo::open($source_dir->getPath(), 'master')
-      ->getHeadChangeset();
+    $changeset =
+      ShipItRepo::open(new ShipItDummyLock(), $source_dir->getPath(), 'master')
+        ->getHeadChangeset();
     invariant($changeset !== null, 'impossible');
     $changeset = ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile(
       $changeset,
@@ -252,8 +261,9 @@ final class SubmoduleTest extends ShellTest {
       )
     )
       ->runSynchronously();
-    $changeset = ShipItRepo::open($source_dir->getPath(), 'master')
-      ->getHeadChangeset();
+    $changeset =
+      ShipItRepo::open(new ShipItDummyLock(), $source_dir->getPath(), 'master')
+        ->getHeadChangeset();
     invariant($changeset !== null, 'impossible');
     $changeset = ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile(
       $changeset,

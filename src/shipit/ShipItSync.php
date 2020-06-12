@@ -276,6 +276,7 @@ final class ShipItSync {
     if ($class === ShipItSourceRepo::class) {
       return ShipItRepo::typedOpen(
         $class,
+        $config->getSourceSharedLock(),
         $config->getSourcePath(),
         $config->getSourceBranch(),
       );
@@ -284,6 +285,7 @@ final class ShipItSync {
     if ($class === ShipItDestinationRepo::class) {
       return ShipItRepo::typedOpen(
         $class,
+        $config->getDestinationSharedLock(),
         $config->getDestinationPath(),
         $config->getDestinationBranch(),
       );

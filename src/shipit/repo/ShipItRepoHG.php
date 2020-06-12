@@ -25,8 +25,12 @@ class ShipItRepoHG
   private ?string $branch;
   const string COMMIT_SEPARATOR = '-~-~-~';
 
-  public function __construct(string $path, string $branch): void {
-    parent::__construct($path, $branch);
+  public function __construct(
+    IShipItLock $lock,
+    string $path,
+    string $branch,
+  ): void {
+    parent::__construct($lock, $path, $branch);
 
     try {
       // $this->path will be set by here as it is the first thing to

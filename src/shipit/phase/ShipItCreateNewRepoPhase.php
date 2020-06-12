@@ -175,6 +175,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
 
     $source = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
+      $config->getSourceSharedLock(),
       $config->getSourcePath(),
       $config->getSourceBranch(),
     );
@@ -200,11 +201,19 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     );
 
     $logger->out("  Filtering...");
-    $exported_repo = ShipItRepo::typedOpen(
-      ShipItSourceRepo::class,
-      $export_dir->getPath(),
-      'master',
+    $export_lock = ShipItScopedFlock::createShared(
+      ShipItScopedFlock::getLockFilePathForRepoPath($export_dir->getPath()),
     );
+    try {
+      $exported_repo = ShipItRepo::typedOpen(
+        ShipItSourceRepo::class,
+        $export_lock,
+        $export_dir->getPath(),
+        'master',
+      );
+    } finally {
+      $export_lock->release();
+    }
     $changeset = $exported_repo->getChangesetFromID('HEAD');
     invariant($changeset !== null, 'got a null changeset :/');
     $changeset = $changeset->withID($rev);
@@ -217,26 +226,20 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
 
     $logger->out("  Creating new repo...");
     self::initGitRepo($output_dir, $committer);
-    $filtered_repo = ShipItRepo::typedOpen(
-      ShipItDestinationRepo::class,
-      $output_dir,
-      '--orphan='.$config->getDestinationBranch(),
+    $output_lock = ShipItScopedFlock::createShared(
+      ShipItScopedFlock::getLockFilePathForRepoPath($output_dir),
     );
-    $filtered_repo->commitPatch($changeset);
-
-    $logger->out("  Cleaning up...");
-    // As we're done with these and nothing else has the random paths, the lock
-    // files aren't needed
-    foreach (vec[$export_dir->getPath(), $output_dir] as $repo) {
-      $lock_file = ShipItRepo::getLockFilePathForRepoPath($repo);
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      if (\file_exists($lock_file)) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        \unlink($lock_file);
-      }
+    try {
+      $filtered_repo = ShipItRepo::typedOpen(
+        ShipItDestinationRepo::class,
+        $output_lock,
+        $output_dir,
+        '--orphan='.$config->getDestinationBranch(),
+      );
+    } finally {
+      $output_lock->release();
     }
+    $filtered_repo->commitPatch($changeset);
   }
 
   private static function execSteps(

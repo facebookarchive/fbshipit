@@ -56,10 +56,6 @@ final class FBRepoInitPhase extends \Facebook\ShipIt\ShipItPhase {
       ? $config->getSourcePath()
       : $config->getDestinationPath();
 
-    $sh_lock = \Facebook\ShipIt\ShipItRepo::createSharedLockForPath(
-      $local_path,
-    );
-
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     if (\is_dir($local_path)) {

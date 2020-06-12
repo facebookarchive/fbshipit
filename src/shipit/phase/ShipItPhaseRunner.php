@@ -27,8 +27,13 @@ class ShipItPhaseRunner {
 
   public function run(): void {
     $this->parseCLIArguments();
-    foreach ($this->phases as $phase) {
-      $phase->run($this->config);
+    try {
+      foreach ($this->phases as $phase) {
+        $phase->run($this->config);
+      }
+    } finally {
+      $this->config->getSourceSharedLock()->release();
+      $this->config->getDestinationSharedLock()->release();
     }
   }
 

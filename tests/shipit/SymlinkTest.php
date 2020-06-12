@@ -133,7 +133,12 @@ final class SymlinkTest extends ShellTest {
         ->runSynchronously();
     }
 
-    $repo = ShipItRepo::typedOpen($repo_type, $temp_dir->getPath(), 'master');
+    $repo = ShipItRepo::typedOpen(
+      $repo_type,
+      new ShipItDummyLock(),
+      $temp_dir->getPath(),
+      'master',
+    );
 
     $changeset = $repo->getChangesetFromID($rev);
     $changeset = \expect($changeset)->toNotBeNull();

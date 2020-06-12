@@ -37,6 +37,7 @@ final class ShipItPushPhase extends ShipItPhase {
   <<__Override>>
   final protected function runImpl(ShipItBaseConfig $config): void {
     $repo = ShipItRepo::open(
+      $config->getDestinationSharedLock(),
       $config->getDestinationPath(),
       $config->getDestinationBranch(),
     );

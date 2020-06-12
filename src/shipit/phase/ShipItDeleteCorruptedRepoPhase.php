@@ -53,8 +53,6 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
       return;
     }
 
-    $lock_sh = ShipItRepo::createSharedLockForPath($local_path);
-
     if (!$this->isCorrupted($local_path)) {
       return;
     }

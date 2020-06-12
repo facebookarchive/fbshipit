@@ -69,7 +69,7 @@ final class SyncTrackingTest extends ShellTest {
         $message,
       )
     )->runSynchronously();
-    return new ShipItRepoGIT($path, 'master');
+    return new ShipItRepoGIT(new ShipItDummyLock(), $path, 'master');
   }
 
   public function testLastSourceCommitWithGit(): void {
@@ -106,7 +106,7 @@ final class SyncTrackingTest extends ShellTest {
       new ShipItShellCommand($path, 'hg', 'commit', '-A', '-m', $message)
     )->runSynchronously();
 
-    $repo = new ShipItRepoHG($path, 'master');
+    $repo = new ShipItRepoHG(new ShipItDummyLock(), $path, 'master');
     \expect($repo->findLastSourceCommit(keyset[]))->toEqual($fake_commit_id);
   }
 

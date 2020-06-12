@@ -21,6 +21,7 @@ use type Facebook\ShipIt\{
   ShipItShellCommand,
   ShipItSubmoduleFilter,
   ShipItTempDir,
+  ShipItDummyLock,
 };
 
 <<\Oncalls('open_source')>>
@@ -86,7 +87,11 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
       )
     )
       ->runSynchronously();
-    $submodule_first_id = ShipItRepo::open($submodule_dir->getPath(), 'master')
+    $submodule_first_id = ShipItRepo::open(
+      new ShipItDummyLock(),
+      $submodule_dir->getPath(),
+      'master',
+    )
       ->getHeadChangeset()
       ?->getID();
     invariant($submodule_first_id !== null, 'impossible');
@@ -110,7 +115,11 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
       )
     )
       ->runSynchronously();
-    $submodule_second_id = ShipItRepo::open($submodule_dir->getPath(), 'master')
+    $submodule_second_id = ShipItRepo::open(
+      new ShipItDummyLock(),
+      $submodule_dir->getPath(),
+      'master',
+    )
       ->getHeadChangeset()
       ?->getID();
     invariant($submodule_second_id !== null, 'impossible');
@@ -205,11 +214,13 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
       )
     )
       ->runSynchronously();
-    $changeset = ShipItRepo::open($source_dir->getPath(), 'master')
-      ->getHeadChangeset();
+    $changeset =
+      ShipItRepo::open(new ShipItDummyLock(), $source_dir->getPath(), 'master')
+        ->getHeadChangeset();
     invariant($changeset !== null, 'impossible');
     ShipItRepoGIT::typedOpen(
       ShipItRepoGIT::class,
+      new ShipItDummyLock(),
       $dest_dir->getPath(),
       'master',
     )

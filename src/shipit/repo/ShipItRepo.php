@@ -28,17 +28,14 @@ class ShipItRepoException extends \Exception {
  * For agnostic communication with git, hg, etc...
  */
 abstract class ShipItRepo {
-  private IShipItLock $lock;
-
   /**
    * @param $path the path to the repository
    */
-  public function __construct(protected string $path, string $branch) {
-    if (self::useRepositoryLock()) {
-      $this->lock = self::createSharedLockForPath($path);
-    } else {
-      $this->lock = new ShipItDummyLock();
-    }
+  public function __construct(
+    private IShipItLock $lock,
+    protected string $path,
+    string $branch,
+  ) {
     $this->setBranch($branch);
   }
 
@@ -46,21 +43,6 @@ abstract class ShipItRepo {
    * Get the ShipItChangeset of the HEAD revision in the current branch.
    */
   public abstract function getHeadChangeset(): ?ShipItChangeset;
-
-  <<__Memoize>>
-  private static function useRepositoryLock(): bool {
-    $env = ShipItEnv::getEnvVar('NO_REPO_LOCK');
-    if (
-      (!$env is string) ||
-      $env === '' ||
-      $env === '0' ||
-      Str\lowercase($env) === 'false'
-    ) {
-      return true;
-    }
-    ShipItLogger::out("(Repository locks disabled)\n");
-    return false;
-  }
 
   protected function getSharedLock(): IShipItLock {
     return $this->lock;
@@ -81,20 +63,6 @@ abstract class ShipItRepo {
 
   public function getPath(): string {
     return $this->path;
-  }
-
-  public static function createSharedLockForPath(
-    string $repo_path,
-  ): ShipItScopedFlock {
-    return ShipItScopedFlock::createShared(
-      self::getLockFilePathForRepoPath($repo_path),
-    );
-  }
-
-  public static function getLockFilePathForRepoPath(string $repo_path): string {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return \dirname($repo_path).'/'.\basename($repo_path).'.fbshipit-lock';
   }
 
   /**
@@ -129,10 +97,11 @@ abstract class ShipItRepo {
 
   public static function typedOpen<Trepo as ShipItRepo>(
     classname<Trepo> $interface,
+    IShipItLock $lock,
     string $path,
     string $branch,
   ): Trepo {
-    $repo = ShipItRepo::open($path, $branch);
+    $repo = ShipItRepo::open($lock, $path, $branch);
     invariant(
       \is_a($repo, $interface),
       '%s is a %s, needed a %s',
@@ -147,16 +116,20 @@ abstract class ShipItRepo {
   /**
    * Factory
    */
-  public static function open(string $path, string $branch): ShipItRepo {
+  public static function open(
+    IShipItLock $lock,
+    string $path,
+    string $branch,
+  ): ShipItRepo {
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     if (\file_exists($path.'/.git')) {
-      return new ShipItRepoGIT($path, $branch);
+      return new ShipItRepoGIT($lock, $path, $branch);
     }
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     if (\file_exists($path.'/.hg')) {
-      return new ShipItRepoHG($path, $branch);
+      return new ShipItRepoHG($lock, $path, $branch);
     }
     throw new ShipItRepoException(
       null,

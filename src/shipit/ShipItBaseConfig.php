@@ -12,8 +12,9 @@
  */
 namespace Facebook\ShipIt;
 
-final class ShipItBaseConfig {
+use namespace HH\Lib\Str;
 
+final class ShipItBaseConfig {
   public function __construct(
     private string $baseDirectoryPath,
     private string $defaultSourceDirectoryName,
@@ -144,6 +145,51 @@ final class ShipItBaseConfig {
       $ret->commitMarkerPrefix = $bool;
       return $ret->commitMarkerPrefix;
     });
+  }
+
+  private ?IShipItLock $sourceLock = null;
+  public function getSourceSharedLock(): IShipItLock {
+    if ($this->sourceLock is null) {
+      if (self::useRepositoryLock()) {
+        $this->sourceLock = ShipItScopedFlock::createShared(
+          ShipItScopedFlock::getLockFilePathForRepoPath($this->getSourcePath()),
+        );
+      } else {
+        $this->sourceLock = new ShipItDummyLock();
+      }
+    }
+    return $this->sourceLock;
+  }
+
+  private ?IShipItLock $destinationLock = null;
+  public function getDestinationSharedLock(): IShipItLock {
+    if ($this->destinationLock is null) {
+      if (self::useRepositoryLock()) {
+        $this->destinationLock = ShipItScopedFlock::createShared(
+          ShipItScopedFlock::getLockFilePathForRepoPath(
+            $this->getDestinationPath(),
+          ),
+        );
+      } else {
+        $this->destinationLock = new ShipItDummyLock();
+      }
+    }
+    return $this->destinationLock;
+  }
+
+  <<__Memoize>>
+  private static function useRepositoryLock(): bool {
+    $env = ShipItEnv::getEnvVar('NO_REPO_LOCK');
+    if (
+      (!$env is string) ||
+      $env === '' ||
+      $env === '0' ||
+      Str\lowercase($env) === 'false'
+    ) {
+      return true;
+    }
+    ShipItLogger::out("(Repository locks disabled)\n");
+    return false;
   }
 
   private function modified<Tignored>(

@@ -37,8 +37,6 @@ final class DemoSourceRepoInitPhase extends ShipItPhase {
   public function runImpl(ShipItBaseConfig $config): void {
     $local_path = $config->getSourcePath();
 
-    $sh_lock = ShipItRepo::createSharedLockForPath($local_path);
-
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     if (\is_dir($local_path)) {
@@ -69,8 +67,6 @@ final class DemoSourceRepoInitPhase extends ShipItPhase {
         )->runSynchronously(),
       )
       ->runSynchronously();
-
-    $sh_lock->release();
   }
 
   public static function isMonorepo(string $_name): bool {

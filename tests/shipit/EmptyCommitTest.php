@@ -21,6 +21,7 @@ final class EmptyCommitTest extends ShellTest {
     list($source_dir, $rev) = $this->getSourceGitRepoAndRev();
     $source_repo = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
+      new ShipItDummyLock(),
       $source_dir->getPath(),
       'master',
     );
@@ -41,6 +42,7 @@ final class EmptyCommitTest extends ShellTest {
     $this->initGitRepo($dest_path);
     $dest_repo = ShipItRepo::typedOpen(
       ShipItDestinationRepo::class,
+      new ShipItDummyLock(),
       $dest_path->getPath(),
       'master',
     );
@@ -56,6 +58,7 @@ final class EmptyCommitTest extends ShellTest {
     list($source_dir, $rev) = $this->getSourceGitRepoAndRev();
     $source_repo = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
+      new ShipItDummyLock(),
       $source_dir->getPath(),
       'master',
     );
@@ -76,6 +79,7 @@ final class EmptyCommitTest extends ShellTest {
     $this->initMercurialRepo($dest_path);
     $dest_repo = ShipItRepo::typedOpen(
       ShipItDestinationRepo::class,
+      new ShipItDummyLock(),
       $dest_path->getPath(),
       'master',
     );
@@ -91,6 +95,7 @@ final class EmptyCommitTest extends ShellTest {
     list($source_dir, $rev) = $this->getSourceHgRepoAndRev();
     $source_repo = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
+      new ShipItDummyLock(),
       $source_dir->getPath(),
       'master',
     );
@@ -111,6 +116,7 @@ final class EmptyCommitTest extends ShellTest {
     $this->initGitRepo($dest_path);
     $dest_repo = ShipItRepo::typedOpen(
       ShipItDestinationRepo::class,
+      new ShipItDummyLock(),
       $dest_path->getPath(),
       'master',
     );
@@ -126,6 +132,7 @@ final class EmptyCommitTest extends ShellTest {
     list($source_dir, $rev) = $this->getSourceHgRepoAndRev();
     $source_repo = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
+      new ShipItDummyLock(),
       $source_dir->getPath(),
       'master',
     );
@@ -146,6 +153,7 @@ final class EmptyCommitTest extends ShellTest {
     $this->initMercurialRepo($dest_path);
     $dest_repo = ShipItRepo::typedOpen(
       ShipItDestinationRepo::class,
+      new ShipItDummyLock(),
       $dest_path->getPath(),
       'master',
     );

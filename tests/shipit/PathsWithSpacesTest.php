@@ -31,7 +31,7 @@ final class PathsWithSpacesTest extends ShellTest {
 
   <<DataProvider('exampleRepos')>>
   public function testPathWithSpace(ShipItTempDir $temp_dir): void {
-    $repo = ShipItRepo::open($temp_dir->getPath(), '.');
+    $repo = ShipItRepo::open(new ShipItDummyLock(), $temp_dir->getPath(), '.');
     $head = $repo->getHeadChangeset();
 
     $head = \expect($head)->toNotBeNull();

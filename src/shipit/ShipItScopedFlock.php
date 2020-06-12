@@ -122,11 +122,25 @@ final class ShipItScopedFlock implements IShipItLock {
       throw new \Exception('Failed to weaken lock');
     }
     $this->released = true;
+    if ($this->destructBehavior === ShipItScopedFlockOperation::RELEASE) {
+      /* HH_FIXME[2049] __PHPStdLib */
+      /* HH_FIXME[4107] __PHPStdLib */
+      \fclose($this->fp);
+      /* HH_FIXME[2049] __PHPStdLib */
+      /* HH_FIXME[4107] __PHPStdLib */
+      \unlink($this->path);
+    }
   }
 
   private function debugWrite(string $message, int $level): void {
     if (self::$verbose & $level) {
       ShipItLogger::err("  [flock] %s: %s\n", $message, $this->path);
     }
+  }
+
+  public static function getLockFilePathForRepoPath(string $repo_path): string {
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+    return \dirname($repo_path).'/'.\basename($repo_path).'.fbshipit-lock';
   }
 }

@@ -43,7 +43,11 @@ final class RenameFileTest extends ShellTest {
       vec['hg', 'commit', '-Am', 'moved file'],
     );
 
-    $repo = new ShipItRepoHG($temp_dir->getPath(), 'master');
+    $repo = new ShipItRepoHG(
+      new ShipItDummyLock(),
+      $temp_dir->getPath(),
+      'master',
+    );
     $changeset = $repo->getChangesetFromID('.');
     $changeset = \expect($changeset)->toNotBeNull();
     /* HH_FIXME[2049] __PHPStdLib */
