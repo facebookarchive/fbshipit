@@ -35,7 +35,7 @@ final class ImportDemoProject {
       );
   }
 
-  public static function cliMain(): void {
+  public static async function cliMainAsync(): Awaitable<void> {
     $config = new ShipItBaseConfig(
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit-target',
@@ -71,5 +71,5 @@ final class ImportDemoProject {
 async function mainAsync(): Awaitable<void> {
   require_once(\dirname(__DIR__).'/vendor/autoload.hack'); // @oss-enable
   \Facebook\AutoloadMap\initialize(); // @oss-enable
-  ImportDemoProject::cliMain();
+  await ImportDemoProject::cliMainAsync();
 }

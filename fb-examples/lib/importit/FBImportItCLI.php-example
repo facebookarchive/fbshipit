@@ -146,7 +146,7 @@ abstract class FBImportItCLI
   }
 
   <<__Override>>
-  final public static function cliMain(): void {
-    self::cliForBinary(static::class);
+  final public static async function cliMainAsync(): Awaitable<void> {
+    await self::cliForBinaryAsync(static::class);
   }
 }

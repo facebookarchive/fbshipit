@@ -28,7 +28,7 @@ final class ShipDemoProject {
       |> ShipItPathFilters::moveDirectories($$, self::getPathMappings());
   }
 
-  public static function cliMain(): void {
+  public static async function cliMainAsync(): Awaitable<void> {
     $config = new ShipItBaseConfig(
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit',
@@ -72,5 +72,5 @@ final class ShipDemoProject {
 async function mainAsync(): Awaitable<void> {
   require_once(\dirname(__DIR__).'/vendor/autoload.hack'); // @oss-enable
   \Facebook\AutoloadMap\initialize(); // @oss-enable
-  ShipDemoProject::cliMain();
+  await ShipDemoProject::cliMainAsync();
 }

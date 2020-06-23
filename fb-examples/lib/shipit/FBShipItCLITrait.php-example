@@ -38,21 +38,21 @@ trait FBShipItCLITrait {
     throw new ShipItExitException(128);
   }
 
-  abstract public static function cliMain(): void;
+  abstract public static function cliMainAsync(): Awaitable<void>;
 
-  final public static function cliForBinary(
+  final public static async function cliForBinaryAsync(
     classname<IShipItConfig> $config_class,
-  ): void {
+  ): Awaitable<void> {
     ShipItLogger::out("--- Starting %s\n", $config_class);
     $config = $config_class::getBaseConfig();
     $runner = new ShipItPhaseRunner($config, $config_class::getPhases());
     self::executeRunner($runner);
   }
 
-  final public static function cliShipIt(
+  final public static async function cliShipItAsync(
     ?FBShipItConfigeratorConfig $config = null,
     ?string $_external_branch = null,
-  ): void {
+  ): Awaitable<void> {
     $config_name = $config === null ? '' : $config->getConfigeratorName();
     ShipItLogger::out("--- Starting ShipIt: %s\n", $config_name);
     $runner = new FBShipItProjectRunner(
@@ -62,10 +62,10 @@ trait FBShipItCLITrait {
     self::executeRunner($runner);
   }
 
-  final public static function cliImportIt(
+  final public static async function cliImportItAsync(
     ?FBShipItConfigeratorConfig $config = null,
     ?string $external_branch = null,
-  ): void {
+  ): Awaitable<void> {
     $config_name = $config === null ? '' : $config->getConfigeratorName();
     ShipItLogger::out("--- Starting ImportIt: %s\n", $config_name);
     $runner = new FBShipItProjectRunner(
