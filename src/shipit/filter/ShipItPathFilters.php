@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Keyset, C};
+use namespace HH\Lib\{Str, Keyset, C, Dict, Regex};
 
 abstract final class ShipItPathFilters {
   // Skip debug messages on very large changesets, as that can cause
@@ -179,5 +179,47 @@ abstract final class ShipItPathFilters {
     }
 
     return self::stripExceptDirectories($changeset, $roots);
+  }
+
+  /**
+   * Rewrite C/C++ #include directives using path mappings.
+   *
+   * E.g. `#include "deep/project/name.h"` exports to `#include "src/name.h"`
+   */
+  public static function rewriteCppIncludeDirectivePaths(
+    ShipItChangeset $changeset,
+    dict<string, string> $path_mappings,
+  ): ShipItChangeset {
+    // This explicitly does not support mapping #includes to the root of the
+    // destination repo. This causes problems when importing files as it's not
+    // possible to determine whether to map paths for the #include or not.
+    $path_mappings = Dict\filter_with_key(
+      $path_mappings,
+      ($src, $dest) ==> !Str\is_empty($src) && !Str\is_empty($dest),
+    );
+    $diffs = vec[];
+    foreach ($changeset->getDiffs() as $diff) {
+      $diff['body'] = Regex\replace_with(
+        $diff['body'],
+        re"/#include [<\"](.*)[>\"]/",
+        ($match) ==> {
+          $full_match = $match[0];
+          $path = $match[1];
+          foreach ($path_mappings as $src => $dest) {
+            if (!Str\starts_with($path, $src)) {
+              continue;
+            }
+            return Str\replace(
+              $full_match,
+              $path,
+              $dest.Str\slice($path, Str\length($src)),
+            );
+          }
+          return $full_match;
+        },
+      );
+      $diffs[] = $diff;
+    }
+    return $changeset->withDiffs($diffs);
   }
 }

@@ -12,7 +12,7 @@
  */
 namespace Facebook\ImportIt;
 
-use namespace HH\Lib\{Keyset, Vec};
+use namespace HH\Lib\{Keyset, Vec, Str};
 use type Facebook\HackTest\DataProvider; // @oss-enable
 // @oss-disable: use type DataProvider;
 
@@ -81,5 +81,41 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
       );
     })
       ->toThrow(\Facebook\ShipIt\ShipItImportDisallowedException::class);
+  }
+
+  public function testRewriteCppIncludeDirectivePaths(): void {
+    $changeset = (new \Facebook\ShipIt\ShipItChangeset())->withDiffs(vec[
+      shape(
+        'path' => 'junk',
+        'body' => Str\join(
+          vec[
+            '#include "src/test.h"',
+            '#include <functional>',
+            '#include "other.h"',
+            '#include <folly/something.h>',
+          ],
+          "\n",
+        ),
+      ),
+    ]);
+    $changeset = ImportItPathFilters::rewriteCppIncludeDirectivePaths(
+      $changeset,
+      dict[
+        'deep/project/in/fbsource/' => 'src/',
+        'root/ignored/' => '',
+        'folly/' => 'folly/',
+      ],
+    );
+    \expect($changeset->getDiffs()[0]['body'])->toBePHPEqual(
+      Str\join(
+        vec[
+          '#include "deep/project/in/fbsource/test.h"',
+          '#include <functional>',
+          '#include "other.h"',
+          '#include <folly/something.h>',
+        ],
+        "\n",
+      ),
+    );
   }
 }

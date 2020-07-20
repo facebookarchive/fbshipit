@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Keyset, Vec};
+use namespace HH\Lib\{Keyset, Vec, Str};
 use type Facebook\HackTest\DataProvider; // @oss-enable
 // @oss-disable: use type DataProvider;
 
@@ -182,5 +182,41 @@ final class PathFiltersTest extends BaseTest {
     $changeset = ShipItPathFilters::stripExceptDirectories($changeset, $roots);
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
       ->toBePHPEqual($paths_expected);
+  }
+
+  public function testRewriteCppIncludeDirectivePaths(): void {
+    $changeset = (new ShipItChangeset())->withDiffs(vec[
+      shape(
+        'path' => 'junk',
+        'body' => Str\join(
+          vec[
+            '#include "deep/project/in/fbsource/test.h"',
+            '#include <functional>',
+            '#include "other.h"',
+            '#include <folly/something.h>',
+          ],
+          "\n",
+        ),
+      ),
+    ]);
+    $changeset = ShipItPathFilters::rewriteCppIncludeDirectivePaths(
+      $changeset,
+      dict[
+        'deep/project/in/fbsource/' => 'src/',
+        'root/ignored/' => '',
+        'folly/' => 'folly/',
+      ],
+    );
+    \expect($changeset->getDiffs()[0]['body'])->toBePHPEqual(
+      Str\join(
+        vec[
+          '#include "src/test.h"',
+          '#include <functional>',
+          '#include "other.h"',
+          '#include <folly/something.h>',
+        ],
+        "\n",
+      ),
+    );
   }
 }

@@ -38,6 +38,22 @@ abstract final class ImportItPathFilters {
   }
 
   /**
+   * Rewrite C/C++ #include directives using path mappings.
+   *
+   * E.g. `#include "src/header.h"` imports to `#include "deep/project/header.h"`.
+   */
+  public static function rewriteCppIncludeDirectivePaths(
+    \Facebook\ShipIt\ShipItChangeset $changeset,
+    dict<string, string> $path_mappings,
+  ): \Facebook\ShipIt\ShipItChangeset {
+    $path_mappings = self::invertShipIt($path_mappings);
+    return \Facebook\ShipIt\ShipItPathFilters::rewriteCppIncludeDirectivePaths(
+      $changeset,
+      $path_mappings,
+    );
+  }
+
+  /**
    * Invert this ShipIt map, throwing on any keys that would be duplicated.
    *
    * @param $shipit_mapping the mapping to invert
