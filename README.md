@@ -91,7 +91,7 @@ This will give you the path to a git repository with a single commit; you can th
 
 ## Using With An Existing Destination Repository
 
-When there is at least one relevant commit in the source repostitory that is not in the destination repository, run:
+When there is at least one relevant commit in the source repository that is not in the destination repository, run:
 
 ```
 hhvm my_script.hack --first-commit=FIRST_UNSYNCED_COMMIT_ID_GOES_HERE
