@@ -91,7 +91,7 @@ final class SyncTrackingTest extends ShellTest {
 
     // Prepare an empty repo
     (new ShipItShellCommand($path, 'hg', 'init'))->runSynchronously();
-    $this->configureHg($tempdir);
+    self::configureHg($tempdir);
 
     // Add a tracked commit
     /* HH_FIXME[2049] __PHPStdLib */

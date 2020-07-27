@@ -21,11 +21,11 @@ use type Facebook\HackTest\DataProvider; // @oss-enable
 final class PathsWithSpacesTest extends ShellTest {
   const FILE_NAME = 'foo bar/herp derp.txt';
 
-  public function exampleRepos(
+  public static function exampleRepos(
   ): dict<classname<ShipItRepo>, vec<ShipItTempDir>> {
     return dict[
-      ShipItRepoGIT::class => vec[$this->createGitExample()],
-      ShipItRepoHG::class => vec[$this->createHGExample()],
+      ShipItRepoGIT::class => vec[self::createGitExample()],
+      ShipItRepoHG::class => vec[self::createHGExample()],
     ];
   }
 
@@ -40,15 +40,15 @@ final class PathsWithSpacesTest extends ShellTest {
     \expect($paths)->toBePHPEqual(vec[self::FILE_NAME]);
   }
 
-  private function createGitExample(): ShipItTempDir {
+  private static function createGitExample(): ShipItTempDir {
     $temp_dir = new ShipItTempDir(__FUNCTION__);
     $path = $temp_dir->getPath();
-    $this->execSteps($path, vec['git', 'init']);
-    $this->configureGit($temp_dir);
+    self::execSteps($path, vec['git', 'init']);
+    self::configureGit($temp_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \mkdir($path.'/'.\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
-    $this->execSteps(
+    self::execSteps(
       $path,
       vec['touch', self::FILE_NAME],
       vec['git', 'add', '.'],
@@ -58,15 +58,15 @@ final class PathsWithSpacesTest extends ShellTest {
     return $temp_dir;
   }
 
-  private function createHGExample(): ShipItTempDir {
+  private static function createHGExample(): ShipItTempDir {
     $temp_dir = new ShipItTempDir(__FUNCTION__);
     $path = $temp_dir->getPath();
-    $this->execSteps($path, vec['hg', 'init']);
-    $this->configureHg($temp_dir);
+    self::execSteps($path, vec['hg', 'init']);
+    self::configureHg($temp_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \mkdir($path.'/'.\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
-    $this->execSteps(
+    self::execSteps(
       $path,
       vec['touch', self::FILE_NAME],
       vec['hg', 'commit', '-Am', 'initial commit'],

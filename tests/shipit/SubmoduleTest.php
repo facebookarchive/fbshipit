@@ -53,7 +53,7 @@ final class SubmoduleTest extends ShellTest {
     $submodule_dir = new ShipItTempDir('submodule');
     (new ShipItShellCommand($submodule_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($submodule_dir);
+    self::configureGit($submodule_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents($submodule_dir->getPath().'/somefile', '');
@@ -89,7 +89,7 @@ final class SubmoduleTest extends ShellTest {
     $source_dir = new ShipItTempDir('source-repo');
     (new ShipItShellCommand($source_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($source_dir);
+    self::configureGit($source_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents(
@@ -139,7 +139,7 @@ final class SubmoduleTest extends ShellTest {
     $dest_dir = new ShipItTempDir('dest-repo');
     (new ShipItShellCommand($dest_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($dest_dir);
+    self::configureGit($dest_dir);
     (
       new ShipItShellCommand(
         $dest_dir->getPath(),

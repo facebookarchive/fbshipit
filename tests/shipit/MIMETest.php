@@ -21,7 +21,7 @@ final class MIMETest extends ShellTest {
     (
       new ShipItShellCommand($tempdir->getPath(), 'git', 'init')
     )->runSynchronously();
-    $this->configureGit($tempdir);
+    self::configureGit($tempdir);
     (
       new ShipItShellCommand(
         $tempdir->getPath(),

@@ -15,7 +15,7 @@ namespace Facebook\ShipIt;
 abstract class ShellTest extends \Facebook\HackTest\HackTest { // @oss-enable
 // @oss-disable: abstract class ShellTest extends \HackTest {
 
-  protected function execSteps(string $cwd, Container<string> ...$steps): void {
+  protected static function execSteps(string $cwd, Container<string> ...$steps): void {
     foreach ($steps as $step) {
       /* HH_FIXME[4128] Use ShipItShellCommand */
       ShipItUtil::shellExec(
@@ -27,15 +27,15 @@ abstract class ShellTest extends \Facebook\HackTest\HackTest { // @oss-enable
     }
   }
 
-  protected function configureGit(ShipItTempDir $temp_dir): void {
-    $this->execSteps(
+  protected static function configureGit(ShipItTempDir $temp_dir): void {
+    self::execSteps(
       $temp_dir->getPath(),
       vec['git', 'config', 'user.name', 'FBShipIt Unit Test'],
       vec['git', 'config', 'user.email', 'fbshipit@example.com'],
     );
   }
 
-  protected function configureHg(ShipItTempDir $temp_dir): void {
+  protected static function configureHg(ShipItTempDir $temp_dir): void {
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents(

@@ -32,10 +32,10 @@ final class RenameFileTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents($temp_dir->getPath().'/initial.txt', 'my content here');
 
-    $this->execSteps($temp_dir->getPath(), vec['hg', 'init']);
-    $this->configureHg($temp_dir);
+    self::execSteps($temp_dir->getPath(), vec['hg', 'init']);
+    self::configureHg($temp_dir);
 
-    $this->execSteps(
+    self::execSteps(
       $temp_dir->getPath(),
       vec['hg', 'commit', '-Am', 'initial commit'],
       vec['hg', 'mv', 'initial.txt', 'moved.txt'],

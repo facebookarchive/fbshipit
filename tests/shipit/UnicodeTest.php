@@ -229,6 +229,6 @@ final class UnicodeTest extends ShellTest {
   private function initMercurialRepo(ShipItTempDir $tempdir): void {
     $path = $tempdir->getPath();
     (new ShipItShellCommand($path, 'hg', 'init'))->runSynchronously();
-    $this->configureHg($tempdir);
+    self::configureHg($tempdir);
   }
 }

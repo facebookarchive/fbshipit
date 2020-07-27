@@ -31,7 +31,7 @@ final class NewlinesTest extends ShellTest {
     $this->createTestFiles($temp_dir);
     $this->initMercurialRepo($temp_dir);
 
-    $this->execSteps(
+    self::execSteps(
       $temp_dir->getPath(),
       vec['hg', 'commit', '-Am', 'add files'],
     );
@@ -54,7 +54,7 @@ final class NewlinesTest extends ShellTest {
     $this->createTestFiles($temp_dir);
     $this->initGitRepo($temp_dir);
 
-    $this->execSteps(
+    self::execSteps(
       $temp_dir->getPath(),
       vec['git', 'add', '.'],
       vec['git', 'commit', '-m', 'add files'],
@@ -94,13 +94,13 @@ final class NewlinesTest extends ShellTest {
   }
 
   private function initGitRepo(ShipItTempDir $temp_dir): void {
-    $this->execSteps($temp_dir->getPath(), vec['git', 'init']);
-    $this->configureGit($temp_dir);
+    self::execSteps($temp_dir->getPath(), vec['git', 'init']);
+    self::configureGit($temp_dir);
   }
 
   private function initMercurialRepo(ShipItTempDir $temp_dir): void {
-    $this->execSteps($temp_dir->getPath(), vec['hg', 'init']);
-    $this->configureHg($temp_dir);
+    self::execSteps($temp_dir->getPath(), vec['hg', 'init']);
+    self::configureHg($temp_dir);
   }
 
   private function assertCreatesCorrectNewLines(

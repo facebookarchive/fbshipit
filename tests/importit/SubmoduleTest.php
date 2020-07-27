@@ -64,7 +64,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     $submodule_dir = new ShipItTempDir('submodule');
     (new ShipItShellCommand($submodule_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($submodule_dir);
+    self::configureGit($submodule_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents($submodule_dir->getPath().'/somefile', '');
@@ -128,7 +128,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     $dest_dir = new ShipItTempDir('dest-repo');
     (new ShipItShellCommand($dest_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($dest_dir);
+    self::configureGit($dest_dir);
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     \file_put_contents(
@@ -169,7 +169,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     $source_dir = new ShipItTempDir('source-dir');
     (new ShipItShellCommand($source_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
-    $this->configureGit($source_dir);
+    self::configureGit($source_dir);
     $source_dir = \Facebook\ShipIt\ShipItCreateNewRepoPhase::createNewGitRepo(
       (
         new \Facebook\ShipIt\ShipItBaseConfig(
