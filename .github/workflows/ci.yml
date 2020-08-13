@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       # Test multiple HHVM versions
       matrix:
-        hhvm: [latest]
+        hhvm: [latest, 4.64-latest]
     runs-on: ubuntu-latest
     container:
       image: hhvm/hhvm:${{ matrix.hhvm }}
