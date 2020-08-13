@@ -4,7 +4,7 @@
   "keywords": [ "Facebook", "FBShipIt", "Hack" ],
   "license": [ "MIT" ],
   "require": {
-    "hhvm": "~4.8",
+    "hhvm": "~4.64",
     "hhvm/hsl": "~4.0",
     "hhvm/hsl-experimental": "~4.0",
     "hhvm/hhvm-autoload": "~3.0",
