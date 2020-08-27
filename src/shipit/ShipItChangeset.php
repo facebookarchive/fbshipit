@@ -40,6 +40,8 @@ type ShipItChangesetData = shape(
  * Repo agnostic representation of a patch/changeset
  */
 final class ShipItChangeset {
+  const SHORT_REV_LENGTH = 7;
+
   private string $id = "";
   private int $timestamp = 0;
   private string $author = "";
@@ -65,7 +67,7 @@ final class ShipItChangeset {
     if ($this->getID() === '') {
       return '';
     }
-    $short_id = Str\slice($this->getID(), 0, ShipItUtil::SHORT_REV_LENGTH);
+    $short_id = Str\slice($this->getID(), 0, self::SHORT_REV_LENGTH);
     invariant(
       $short_id is string,
       'got %s, expected string',

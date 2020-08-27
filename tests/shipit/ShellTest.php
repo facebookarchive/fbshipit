@@ -15,15 +15,13 @@ namespace Facebook\ShipIt;
 abstract class ShellTest extends \Facebook\HackTest\HackTest { // @oss-enable
 // @oss-disable: abstract class ShellTest extends \HackTest {
 
-  protected static function execSteps(string $cwd, Container<string> ...$steps): void {
+  protected static function execSteps(
+    string $cwd,
+    Container<string> ...$steps
+  ): void {
     foreach ($steps as $step) {
-      /* HH_FIXME[4128] Use ShipItShellCommand */
-      ShipItUtil::shellExec(
-        $cwd,
-        /* stdin = */ null,
-        ShipItUtil::DONT_VERBOSE,
-        ...$step
-      );
+      (new ShipItShellCommand($cwd, ...$step))->setOutputToScreen()
+        ->runSynchronously();
     }
   }
 

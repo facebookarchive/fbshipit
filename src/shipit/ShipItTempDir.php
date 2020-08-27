@@ -43,17 +43,11 @@ final class ShipItTempDir {
 
   public function remove(): void {
     $this->assertMode(ShipItTempDirMode::AUTO_REMOVE);
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    ShipItUtil::shellExec(
+    (
       /* HH_FIXME[2049] __PHPStdLib */
       /* HH_FIXME[4107] __PHPStdLib */
-      \sys_get_temp_dir(),
-      /* stdin = */ null,
-      ShipItUtil::DONT_VERBOSE,
-      'rm',
-      '-rf',
-      $this->path,
-    );
+      new ShipItShellCommand(\sys_get_temp_dir(), 'rm', '-rf', $this->path)
+    )->runSynchronously();
     $this->mode = ShipItTempDirMode::REMOVED;
   }
 

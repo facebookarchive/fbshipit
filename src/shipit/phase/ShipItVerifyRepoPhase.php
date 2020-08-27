@@ -115,38 +115,31 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
     $dirty_remote = 'shipit_dest';
     $dirty_ref = $dirty_remote.'/'.$config->getDestinationBranch();
 
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    ShipItUtil::shellExec(
-      $clean_path,
-      /* stdin = */ null,
-      ShipItUtil::DONT_VERBOSE,
-      'git',
-      'remote',
-      'add',
-      $dirty_remote,
-      $config->getDestinationPath(),
-    );
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    ShipItUtil::shellExec(
-      $clean_path,
-      null,
-      ShipItUtil::DONT_VERBOSE,
-      'git',
-      'fetch',
-      $dirty_remote,
-    );
 
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    $diffstat = Str\trim_right(ShipItUtil::shellExec(
-      $clean_path,
-      null,
-      ShipItUtil::DONT_VERBOSE,
-      'git',
-      'diff',
-      '--stat',
-      'HEAD',
-      $dirty_ref,
-    ));
+    (
+      new ShipItShellCommand(
+        $clean_path,
+        'git',
+        'remote',
+        'add',
+        $dirty_remote,
+        $config->getDestinationPath(),
+      )
+    )->runSynchronously();
+    (
+      new ShipItShellCommand($clean_path, 'git', 'fetch', $dirty_remote)
+    )->runSynchronously();
+
+    $diffstat = (
+      new ShipItShellCommand(
+        $clean_path,
+        'git',
+        'diff',
+        '--stat',
+        'HEAD',
+        $dirty_ref,
+      )
+    )->runSynchronously()->getStdOut();
 
     if ($diffstat === '') {
       if ($this->createPatch) {
@@ -167,20 +160,18 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       throw new ShipItExitException(1);
     }
 
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    $diff = ShipItUtil::shellExec(
-      $clean_path,
-      /* stdin = */ null,
-      ShipItUtil::DONT_VERBOSE,
-      'git',
-      'diff',
-      '--full-index',
-      '--binary',
-      '--no-color',
-      $dirty_ref,
-      'HEAD',
-    );
-
+    $diff = (
+      new ShipItShellCommand(
+        $clean_path,
+        'git',
+        'diff',
+        '--full-index',
+        '--binary',
+        '--no-color',
+        $dirty_ref,
+        'HEAD',
+      )
+    )->runSynchronously()->getStdOut();
 
     $source_sync_id = $this->verifySourceCommit;
     if ($source_sync_id === null) {

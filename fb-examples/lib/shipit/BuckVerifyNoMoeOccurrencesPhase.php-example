@@ -24,15 +24,12 @@ final class BuckVerifyNoMoeOccurrencesPhase extends BuildAndTestPhase {
 
   <<__Override>>
   protected function test(ShipItBaseConfig $config): void {
-    /* HH_FIXME[4128] Use ShipItShellCommand */
-    $moe_occurrences = ShipItUtil::shellExec(
-      $config->getDestinationPath(),
-      /* stdin = */ null,
-      ShipItUtil::DONT_VERBOSE | ShipItUtil::NO_THROW,
-      'grep',
-      '-r',
-      'MOE',
-    );
+    $moe_occurrences = (
+      new ShipItShellCommand($config->getDestinationPath(), 'grep', '-r', 'MOE')
+    )
+      ->setNoExceptions()
+      ->runSynchronously()
+      ->getStdOut();
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */
     $moe_occurrences = \preg_replace("@^.*Binary.*\n@m", '', $moe_occurrences);

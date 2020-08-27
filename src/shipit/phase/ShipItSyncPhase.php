@@ -71,7 +71,7 @@ final class ShipItSyncPhase extends ShipItPhase {
           $this->skippedSourceCommits = keyset(Str\split($x, ','));
           foreach ($this->skippedSourceCommits as $commit) {
             // 7 happens to be the usual output
-            if (Str\length($commit) < ShipItUtil::SHORT_REV_LENGTH) {
+            if (Str\length($commit) < ShipItChangeset::SHORT_REV_LENGTH) {
               throw new ShipItException(
                 'Skipped rev '.
                 $commit.

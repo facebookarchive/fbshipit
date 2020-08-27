@@ -267,13 +267,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     vec<vec<string>> $steps,
   ): void {
     foreach ($steps as $step) {
-      /* HH_FIXME[4128] Use ShipItShellCommand */
-      ShipItUtil::shellExec(
-        $path,
-        /* stdin = */ null,
-        ShipItUtil::DONT_VERBOSE,
-        ...$step
-      );
+      (new ShipItShellCommand($path, ...$step))->runSynchronously();
     }
   }
 }
