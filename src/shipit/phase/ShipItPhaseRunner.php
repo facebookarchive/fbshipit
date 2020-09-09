@@ -18,7 +18,7 @@ class ShipItPhaseRunner {
   protected IShipItArgumentParser $argumentParser;
 
   public function __construct(
-    protected ShipItBaseConfig $config,
+    protected ShipItManifest $manifest,
     protected vec<ShipItPhase> $phases,
     ?IShipItArgumentParser $argumentParser = null,
   ) {
@@ -29,14 +29,14 @@ class ShipItPhaseRunner {
     $this->parseCLIArguments();
     try {
       foreach ($this->phases as $phase) {
-        $phase->run($this->config);
+        $phase->run($this->manifest);
       }
     } finally {
-      if ($this->config->hasSourceSharedLock()) {
-        $this->config->getSourceSharedLock()->release();
+      if ($this->manifest->hasSourceSharedLock()) {
+        $this->manifest->getSourceSharedLock()->release();
       }
-      if ($this->config->hasDestinationSharedLock()) {
-        $this->config->getDestinationSharedLock()->release();
+      if ($this->manifest->hasDestinationSharedLock()) {
+        $this->manifest->getDestinationSharedLock()->release();
       }
     }
   }
@@ -52,72 +52,72 @@ class ShipItPhaseRunner {
         'long_name' => 'base-dir::',
         'description' => 'Path to store repositories',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withBaseDirectory(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'temp-dir::',
         'replacement' => 'base-dir',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withBaseDirectory(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'source-repo-dir::',
         'description' => 'path to fetch source from',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withSourcePath(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'destination-repo-dir::',
         'description' => 'path to push filtered changes to',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withDestinationPath(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'source-branch::',
         'description' => "Branch to sync from",
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withSourceBranch(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'src-branch::',
         'replacement' => 'source-branch',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withSourceBranch(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'destination-branch::',
         'description' => 'Branch to sync to',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withDestinationBranch(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
         'long_name' => 'dest-branch::',
         'replacement' => 'destination-branch',
         'write' => $x ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withDestinationBranch(Str\trim($x));
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
@@ -128,9 +128,9 @@ class ShipItPhaseRunner {
         'long_name' => 'skip-project-specific',
         'description' => 'Skip anything project-specific',
         'write' => $_ ==> {
-          $this->config = $this->config
+          $this->manifest = $this->manifest
             ->withProjectSpecificPhasesDisabled();
-          return $this->config;
+          return $this->manifest;
         },
       ),
       shape(
@@ -138,8 +138,8 @@ class ShipItPhaseRunner {
         'long_name' => 'verbose',
         'description' => 'Give more verbose output',
         'write' => $_ ==> {
-          $this->config = $this->config->withVerboseEnabled();
-          return $this->config;
+          $this->manifest = $this->manifest->withVerboseEnabled();
+          return $this->manifest;
         },
       ),
     ];

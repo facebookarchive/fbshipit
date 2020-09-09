@@ -92,11 +92,11 @@ final class ShipItGitHubInitPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $config): void {
+  public function runImpl(ShipItManifest $manifest): void {
     $class = $this->githubUtils;
     $local_path = $this->side === ShipItRepoSide::SOURCE
-      ? $config->getSourcePath()
-      : $config->getDestinationPath();
+      ? $manifest->getSourcePath()
+      : $manifest->getDestinationPath();
 
     $credentials = null;
     if ($this->transport !== ShipItTransport::SSH && !$this->anonymousHttps) {

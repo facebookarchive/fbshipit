@@ -14,7 +14,7 @@ namespace Facebook\ShipIt;
 
 final class ShipItSyncConfig {
   const type TFilterFn = (function(
-    ShipItBaseConfig,
+    ShipItManifest,
     ShipItChangeset,
   ): ShipItChangeset);
   const type TPostFilterChangesetsFn = (function(
@@ -96,7 +96,7 @@ final class ShipItSyncConfig {
   }
 
   public function getFilter(
-  ): (function(ShipItBaseConfig, ShipItChangeset): ShipItChangeset) {
+  ): (function(ShipItManifest, ShipItChangeset): ShipItChangeset) {
     return $this->filter;
   }
 

@@ -16,7 +16,7 @@ abstract class ShipItPhase {
   private bool $skipped = false;
 
   abstract public function getReadableName(): string;
-  abstract protected function runImpl(ShipItBaseConfig $config): void;
+  abstract protected function runImpl(ShipItManifest $manifest): void;
 
   /**
    * This allows you to build multi-project automation.
@@ -48,11 +48,11 @@ abstract class ShipItPhase {
     $this->skipped = false;
   }
 
-  final public function run(ShipItBaseConfig $config): void {
-    $logger = new ShipItVerboseLogger($config->isVerboseEnabled());
+  final public function run(ShipItManifest $manifest): void {
+    $logger = new ShipItVerboseLogger($manifest->isVerboseEnabled());
 
     if (
-      $this->isProjectSpecific() && !$config->areProjectSpecificPhasesEnabled()
+      $this->isProjectSpecific() && !$manifest->areProjectSpecificPhasesEnabled()
     ) {
       $this->skip();
     }
@@ -63,7 +63,7 @@ abstract class ShipItPhase {
     }
     $logger->out("Starting phase: %s", $this->getReadableName());
     try {
-      $this->runImpl($config);
+      $this->runImpl($manifest);
     } catch (ShipItExitException $e) {
       $logger->out("Finished phase: %s", $this->getReadableName());
       // This is used to signal that ShipIt is exiting, not a reportable

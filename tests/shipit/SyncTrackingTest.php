@@ -50,8 +50,8 @@ final class SyncTrackingTest extends ShellTest {
     $this->tempDir?->remove();
   }
 
-  private function getBaseConfig(): ShipItBaseConfig {
-    return (new ShipItBaseConfig('/var/tmp/fbshipit', '', '', keyset[]))
+  private function getManifest(): ShipItManifest {
+    return (new ShipItManifest('/var/tmp/fbshipit', '', '', keyset[]))
       ->withCommitMarkerPrefix(true);
   }
 
@@ -77,7 +77,7 @@ final class SyncTrackingTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     $fake_commit_id = \bin2hex(\random_bytes(16));
     $message = ShipItSync::addTrackingData(
-      $this->getBaseConfig(),
+      $this->getManifest(),
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     \expect($message)->toContainSubstring('fbshipit');
@@ -98,7 +98,7 @@ final class SyncTrackingTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     $fake_commit_id = \bin2hex(\random_bytes(16));
     $message = ShipItSync::addTrackingData(
-      $this->getBaseConfig(),
+      $this->getManifest(),
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     (new ShipItShellCommand($path, 'touch', 'testfile'))->runSynchronously();
@@ -118,11 +118,11 @@ final class SyncTrackingTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     $fake_commit_id_2 = \bin2hex(\random_bytes(16));
     $message_1 = ShipItSync::addTrackingData(
-      $this->getBaseConfig(),
+      $this->getManifest(),
       (new ShipItChangeset())->withID($fake_commit_id_1),
     )->getMessage();
     $message_2 = ShipItSync::addTrackingData(
-      $this->getBaseConfig(),
+      $this->getManifest(),
       (new ShipItChangeset())->withID($fake_commit_id_2),
     )->getMessage();
     $repo = $this->getGITRepoWithCommit($message_1."\n\n".$message_2);
@@ -134,7 +134,7 @@ final class SyncTrackingTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     $fake_commit_id = \bin2hex(\random_bytes(16));
     $message = ShipItSync::addTrackingData(
-      $this->getBaseConfig(),
+      $this->getManifest(),
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     $repo = $this->getGITRepoWithCommit($message." ");
@@ -155,7 +155,7 @@ final class SyncTrackingTest extends ShellTest {
     /* HH_FIXME[4107] __PHPStdLib */
     $fake_commit_id = \bin2hex(\random_bytes(16));
     $message = ShipItSync::addTrackingData(
-      $this->getBaseConfig()->withCommitMarkerPrefix(false),
+      $this->getManifest()->withCommitMarkerPrefix(false),
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     \expect($message)->toNotContainSubstring('fbshipit');
@@ -167,7 +167,7 @@ final class SyncTrackingTest extends ShellTest {
     $in = (new ShipItChangeset())
       ->withCoAuthorLines("Co-authored-by: Jon Janzen <jonjanzen@fb.com>");
     $out = ShipItSync::addTrackingData(
-      $this->getBaseConfig()->withCommitMarkerPrefix(true),
+      $this->getManifest()->withCommitMarkerPrefix(true),
       $in,
       "TEST",
     );

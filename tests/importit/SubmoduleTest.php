@@ -172,7 +172,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     self::configureGit($source_dir);
     $source_dir = \Facebook\ShipIt\ShipItCreateNewRepoPhase::createNewGitRepo(
       (
-        new \Facebook\ShipIt\ShipItBaseConfig(
+        new \Facebook\ShipIt\ShipItManifest(
           '',
           $dest_dir->getPath(),
           //$source_dir->getPath(),

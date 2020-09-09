@@ -66,7 +66,7 @@ a Changeset, and return a new, modified one.
 ## Using FBShipIt
 
 You need to construct:
- - a `ShipItBaseConfig` object, defining your default working directory, and the directory names of your source and destination repositories
+ - a `ShipItManifest` object, defining your default working directory, and the directory names of your source and destination repositories
  - a list of phases you want to run
  - a pipeline of filters, assuming you are using the `ShipItSyncPhase`
 

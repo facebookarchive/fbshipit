@@ -14,7 +14,7 @@ namespace Facebook\ImportIt;
 
 use namespace HH\Lib\Str;
 use type Facebook\ShipIt\{
-  ShipItBaseConfig,
+  ShipItManifest,
   ShipItChangeset,
   ShipItDestinationRepo,
   ShipItLogger,
@@ -104,14 +104,18 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
   }
 
   <<__Override>>
-  final protected function runImpl(ShipItBaseConfig $config): void {
+  final protected function runImpl(ShipItManifest $manifest): void {
     list($changeset, $destination_base_rev) =
-      $this->getSourceChangsetAndDestinationBaseRevision($config);
-    $this->applyPatchToDestination($config, $changeset, $destination_base_rev);
+      $this->getSourceChangsetAndDestinationBaseRevision($manifest);
+    $this->applyPatchToDestination(
+      $manifest,
+      $changeset,
+      $destination_base_rev,
+    );
   }
 
   private function getSourceChangsetAndDestinationBaseRevision(
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
   ): (ShipItChangeset, ?string) {
     $pr_number = null;
     $expected_head_rev = $this->expectedHeadRev;
@@ -129,27 +133,27 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
       );
     }
     $source_repo = new ImportItRepoGIT(
-      $config->getSourceSharedLock(),
-      $config->getSourcePath(),
-      $config->getSourceBranch(),
+      $manifest->getSourceSharedLock(),
+      $manifest->getSourcePath(),
+      $manifest->getSourceBranch(),
     );
     return $source_repo->getChangesetAndBaseRevisionForPullRequest(
       $pr_number,
       $expected_head_rev,
-      $config->getSourceBranch(),
+      $manifest->getSourceBranch(),
       $this->applyToLatest,
     );
   }
 
   private function applyPatchToDestination(
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
     ShipItChangeset $changeset,
     ?string $base_rev,
   ): void {
     $destination_repo = ImportItRepo::open(
-      $config->getDestinationSharedLock(),
-      $config->getDestinationPath(),
-      $config->getDestinationBranch(),
+      $manifest->getDestinationSharedLock(),
+      $manifest->getDestinationPath(),
+      $manifest->getDestinationBranch(),
     );
     if ($base_rev !== null) {
       ShipItLogger::out(
@@ -164,7 +168,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
     ShipItLogger::out("  Filtering...\n");
     $filter_fn = $this->filter;
     $changeset = $filter_fn($changeset);
-    if ($config->isVerboseEnabled()) {
+    if ($manifest->isVerboseEnabled()) {
       $changeset->dumpDebugMessages();
     }
     ShipItLogger::out("  Exporting...\n");

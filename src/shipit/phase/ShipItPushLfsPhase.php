@@ -48,17 +48,17 @@ final class ShipItPushLfsPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final protected function runImpl(ShipItBaseConfig $config): void {
+  final protected function runImpl(ShipItManifest $manifest): void {
     switch ($this->side) {
       case ShipItRepoSide::SOURCE:
-        $lock = $config->getSourceSharedLock();
-        $local_path = $config->getSourcePath();
-        $branch = $config->getSourceBranch();
+        $lock = $manifest->getSourceSharedLock();
+        $local_path = $manifest->getSourcePath();
+        $branch = $manifest->getSourceBranch();
         break;
       case ShipItRepoSide::DESTINATION:
-        $lock = $config->getDestinationSharedLock();
-        $local_path = $config->getDestinationPath();
-        $branch = $config->getDestinationBranch();
+        $lock = $manifest->getDestinationSharedLock();
+        $local_path = $manifest->getDestinationPath();
+        $branch = $manifest->getDestinationBranch();
         break;
     }
     // FIXME LFS syncing only supported for internal->external

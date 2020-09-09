@@ -20,7 +20,7 @@ final class ShipItImportDisallowedException extends ShipItException {}
 
 final class ShipItSync {
   public function __construct(
-    private ShipItBaseConfig $baseConfig,
+    private ShipItManifest $manifest,
     private ShipItSyncConfig $syncConfig,
   ) {
   }
@@ -59,7 +59,7 @@ final class ShipItSync {
   }
 
   private function getFilteredChangesets(): vec<ShipItChangeset> {
-    $base_config = $this->baseConfig;
+    $manifest = $this->manifest;
     $skipped_ids = $this->syncConfig->getSkippedSourceCommits();
     $filter = $this->syncConfig->getFilter();
 
@@ -83,13 +83,13 @@ final class ShipItSync {
         continue;
       }
 
-      $changeset = $filter($base_config, $changeset);
+      $changeset = $filter($manifest, $changeset);
       if (!$this->isValidChangeToSync($changeset)) {
         $changesets[] = $changeset->withDebugMessage(
           'SKIPPED COMMIT: no matching files',
         );
       } else {
-        $changesets[] = self::addTrackingData($base_config, $changeset);
+        $changesets[] = self::addTrackingData($manifest, $changeset);
       }
     }
     return $changesets;
@@ -112,7 +112,7 @@ final class ShipItSync {
       \mkdir($patches_dir, 0755, /* recursive = */ true);
     }
 
-    $verbose = $this->baseConfig->isVerboseEnabled();
+    $verbose = $this->manifest->isVerboseEnabled();
     $dest = $this->getRepo(ShipItDestinationRepo::class);
 
     $changesets = $this->syncConfig->postFilterChangesets($changesets, $dest);
@@ -123,7 +123,7 @@ final class ShipItSync {
       if ($patches_dir !== null) {
         $file = $patches_dir.
           '/'.
-          $this->baseConfig->getDestinationBranch().
+          $this->manifest->getDestinationBranch().
           '-'.
           $changeset->getID().
           '.patch';
@@ -206,7 +206,7 @@ final class ShipItSync {
     if ($filename === null) {
       return;
     }
-    $destination_branch = $this->baseConfig->getDestinationBranch();
+    $destination_branch = $this->manifest->getDestinationBranch();
     // Support logging stats for a project with multiple branches.
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
@@ -233,7 +233,7 @@ final class ShipItSync {
         'source' => dict[
           'id' => $source_changeset?->getID(),
           'timestamp' => $source_changeset?->getTimestamp(),
-          'branch' => $this->baseConfig->getSourceBranch(),
+          'branch' => $this->manifest->getSourceBranch(),
         ],
         'destination' => dict[
           'id' => $destination_changeset?->getID(),
@@ -286,23 +286,23 @@ final class ShipItSync {
   private function getRepo<Trepo as ShipItRepo>(
     classname<Trepo> $class,
   ): Trepo {
-    $config = $this->baseConfig;
+    $manifest = $this->manifest;
 
     if ($class === ShipItSourceRepo::class) {
       return ShipItRepo::typedOpen(
         $class,
-        $config->getSourceSharedLock(),
-        $config->getSourcePath(),
-        $config->getSourceBranch(),
+        $manifest->getSourceSharedLock(),
+        $manifest->getSourcePath(),
+        $manifest->getSourceBranch(),
       );
     }
 
     if ($class === ShipItDestinationRepo::class) {
       return ShipItRepo::typedOpen(
         $class,
-        $config->getDestinationSharedLock(),
-        $config->getDestinationPath(),
-        $config->getDestinationBranch(),
+        $manifest->getDestinationSharedLock(),
+        $manifest->getDestinationPath(),
+        $manifest->getDestinationBranch(),
       );
     }
 
@@ -327,7 +327,7 @@ final class ShipItSync {
   }
 
   public static function addTrackingData(
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
     ShipItChangeset $changeset,
     ?string $rev = null,
   ): ShipItChangeset {
@@ -337,7 +337,7 @@ final class ShipItSync {
     $new_message = Str\format(
       "%s\n\n%sshipit-source-id: %s",
       $changeset->getMessage(),
-      $config->getCommitMarkerPrefix() ? 'fb' : '',
+      $manifest->getCommitMarkerPrefix() ? 'fb' : '',
       $rev,
     );
     // Co-authored-by must be the absolute last thing in the message

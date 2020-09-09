@@ -84,7 +84,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $config): void {
+  public function runImpl(ShipItManifest $manifest): void {
     if ($this->useLatestSourceCommit) {
       if ($this->verifySourceCommit !== null) {
         throw new ShipItException(
@@ -95,14 +95,14 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       }
       $repo = ShipItRepo::typedOpen(
         ShipItDestinationRepo::class,
-        $config->getDestinationSharedLock(),
-        $config->getDestinationPath(),
-        $config->getDestinationBranch(),
+        $manifest->getDestinationSharedLock(),
+        $manifest->getDestinationPath(),
+        $manifest->getDestinationBranch(),
       );
       $this->verifySourceCommit = $repo->findLastSourceCommit(keyset[]);
     }
     $clean_dir = ShipItCreateNewRepoPhase::createNewGitRepo(
-      $config,
+      $manifest,
       $this->filter,
       shape(
         'name' => 'FBShipIt Internal User',
@@ -113,7 +113,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
     );
     $clean_path = $clean_dir->getPath();
     $dirty_remote = 'shipit_dest';
-    $dirty_ref = $dirty_remote.'/'.$config->getDestinationBranch();
+    $dirty_ref = $dirty_remote.'/'.$manifest->getDestinationBranch();
 
     (
       new ShipItShellCommand(
@@ -122,7 +122,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
         'remote',
         'add',
         $dirty_remote,
-        $config->getDestinationPath(),
+        $manifest->getDestinationPath(),
       )
     )->runSynchronously();
     (
@@ -176,9 +176,9 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
     if ($source_sync_id === null) {
       $repo = ShipItRepo::typedOpen(
         ShipItSourceRepo::class,
-        $config->getSourceSharedLock(),
-        $config->getSourcePath(),
-        $config->getSourceBranch(),
+        $manifest->getSourceSharedLock(),
+        $manifest->getSourcePath(),
+        $manifest->getSourceBranch(),
       );
       $changeset = $repo->getHeadChangeset();
       if ($changeset === null) {
@@ -213,7 +213,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       "  the changes carefully.\n\n",
       $patch_file,
       $diffstat,
-      $config->getDestinationPath(),
+      $manifest->getDestinationPath(),
       $patch_file,
       $source_sync_id,
     );

@@ -44,8 +44,8 @@ final class ShipItAssertValidFilterPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  protected function runImpl(ShipItBaseConfig $config): void {
-    $this->assertValid($config->getSourceRoots());
+  protected function runImpl(ShipItManifest $manifest): void {
+    $this->assertValid($manifest->getSourceRoots());
   }
 
   // Public for testing

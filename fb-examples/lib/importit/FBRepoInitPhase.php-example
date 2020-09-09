@@ -51,10 +51,10 @@ final class FBRepoInitPhase extends \Facebook\ShipIt\ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(\Facebook\ShipIt\ShipItBaseConfig $config): void {
+  public function runImpl(\Facebook\ShipIt\ShipItManifest $manifest): void {
     $local_path = $this->side === \Facebook\ShipIt\ShipItRepoSide::SOURCE
-      ? $config->getSourcePath()
-      : $config->getDestinationPath();
+      ? $manifest->getSourcePath()
+      : $manifest->getDestinationPath();
 
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */

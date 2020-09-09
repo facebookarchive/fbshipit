@@ -114,10 +114,10 @@ final class ShipItSyncPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  protected function runImpl(ShipItBaseConfig $base): void {
+  protected function runImpl(ShipItManifest $manifest): void {
     $sync = (
       new ShipItSyncConfig(
-        $base->getSourceRoots(),
+        $manifest->getSourceRoots(),
         $this->filter,
         $this->postFilterChangesets,
       )
@@ -130,6 +130,6 @@ final class ShipItSyncPhase extends ShipItPhase {
       ->withAllowEmptyCommits($this->allowEmptyCommit)
       ->withShouldDoSubmodules($this->shouldDoSubmodules);
 
-    (new ShipItSync($base, $sync))->run();
+    (new ShipItSync($manifest, $sync))->run();
   }
 }

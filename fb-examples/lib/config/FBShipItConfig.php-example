@@ -194,7 +194,7 @@ abstract class FBShipItConfig {
     $changeset = $changeset
       |> ShipItPathFilters::stripExceptSourceRoots(
         $$,
-        $this->getBaseConfig($branch_config)->getSourceRoots(),
+        $this->getManifest($branch_config)->getSourceRoots(),
       )
       |> $this->filterSubmodules($$)
       |> (
@@ -250,12 +250,12 @@ abstract class FBShipItConfig {
     return $roots;
   }
 
-  public function getBaseConfig(
+  public function getManifest(
     FBSourceBranchConfig $branch_config,
-  ): ShipItBaseConfig {
+  ): ShipItManifest {
     $static_config = $this->getStaticConfig();
     return (
-      new ShipItBaseConfig(
+      new ShipItManifest(
         '/var/tmp/fbshipit',
         /* source_dir = */ $static_config['internalRepo'],
         Shapes::idx(
@@ -443,13 +443,13 @@ abstract class FBShipItConfig {
       );
   }
 
-  final public function getImportBaseConfig(
+  final public function getImportManifest(
     FBSourceBranchConfig $branch_config,
-  ): ShipItBaseConfig {
+  ): ShipItManifest {
     $static_config = $this->getStaticConfig();
-    $shipit_base_config = $this->getBaseConfig($branch_config);
+    $shipit_manifest = $this->getManifest($branch_config);
     return (
-      new ShipItBaseConfig(
+      new ShipItManifest(
         /* base_dir = */ '/var/tmp/fbimportit',
         /* source_dir */ Shapes::idx(
           $static_config,
@@ -461,8 +461,8 @@ abstract class FBShipItConfig {
         /* source_roots = */ keyset[],
       )
     )
-      ->withSourceBranch($shipit_base_config->getDestinationBranch())
-      ->withDestinationBranch($shipit_base_config->getSourceBranch())
+      ->withSourceBranch($shipit_manifest->getDestinationBranch())
+      ->withDestinationBranch($shipit_manifest->getSourceBranch())
       ->withCommitMarkerPrefix(true);
   }
 

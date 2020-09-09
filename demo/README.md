@@ -59,7 +59,7 @@ In this demo, we only want the `fb-examples` folder, so all other paths are stri
 ## 4. Base Config
 
 When the source and destination repositories are cloned to the local system, they use
-the paths provided by the `ShipItBaseConfig`. For the default working dir,
+the paths provided by the `ShipItManifest`. For the default working dir,
 `/var/tmp/shipit` is the conventional location. While the source and destination repo
 names can be anything they are, by convention, the names of the actual repositories.
 

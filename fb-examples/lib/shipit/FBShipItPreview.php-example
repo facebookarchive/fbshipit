@@ -122,7 +122,7 @@ order to preview the full patch.';
       );
       foreach ($branch_configs as $branch_config) {
         $source_roots =
-          $config_object->getBaseConfig($branch_config)->getSourceRoots();
+          $config_object->getManifest($branch_config)->getSourceRoots();
         $changeset_paths = Vec\map(
           $changeset->getDiffs(),
           ($diff) ==> $diff['path'],

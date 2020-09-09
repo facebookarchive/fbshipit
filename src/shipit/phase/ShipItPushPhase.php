@@ -35,16 +35,16 @@ final class ShipItPushPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  final protected function runImpl(ShipItBaseConfig $config): void {
+  final protected function runImpl(ShipItManifest $manifest): void {
     $repo = ShipItRepo::open(
-      $config->getDestinationSharedLock(),
-      $config->getDestinationPath(),
-      $config->getDestinationBranch(),
+      $manifest->getDestinationSharedLock(),
+      $manifest->getDestinationPath(),
+      $manifest->getDestinationBranch(),
     );
     invariant(
       $repo is ShipItDestinationRepo,
       '%s is not a writable repository type - got %s, needed %s',
-      $config->getDestinationPath(),
+      $manifest->getDestinationPath(),
       \get_class($repo),
       ShipItDestinationRepo::class,
     );

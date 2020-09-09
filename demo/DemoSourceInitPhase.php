@@ -34,8 +34,8 @@ final class DemoSourceRepoInitPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $config): void {
-    $local_path = $config->getSourcePath();
+  public function runImpl(ShipItManifest $manifest): void {
+    $local_path = $manifest->getSourcePath();
 
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */

@@ -29,7 +29,7 @@ final class ShipDemoProject {
   }
 
   public static function cliMain(): void {
-    $config = new ShipItBaseConfig(
+    $manifest = new ShipItManifest(
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit',
       /* destination repo name */ 'fbshipit-target',
@@ -61,7 +61,7 @@ final class ShipDemoProject {
     ];
 
     try {
-      (new ShipItPhaseRunner($config, $phases))->run();
+      (new ShipItPhaseRunner($manifest, $phases))->run();
     } catch (ShipItExitException $e) {
       exit($e->exitCode);
     }

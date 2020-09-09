@@ -73,7 +73,7 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
     ?IShipItArgumentParser $argument_parser = null,
   ): ShipItPhaseRunner {
     return new ShipItPhaseRunner(
-      $config_object->getBaseConfig($branch_config),
+      $config_object->getManifest($branch_config),
       $config_object->getPhases($branch_config),
       $argument_parser,
     );
@@ -127,7 +127,7 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $_config): void {
+  public function runImpl(ShipItManifest $_manifest): void {
     $config_object = $this->configObject;
     $branch_configs = $this->getBranchConfigs();
     if ($this->repoMetadataFile !== null) {

@@ -42,10 +42,10 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $config): void {
+  public function runImpl(ShipItManifest $manifest): void {
     $local_path = $this->side === ShipItRepoSide::SOURCE
-      ? $config->getSourcePath()
-      : $config->getDestinationPath();
+      ? $manifest->getSourcePath()
+      : $manifest->getDestinationPath();
 
     /* HH_FIXME[2049] __PHPStdLib */
     /* HH_FIXME[4107] __PHPStdLib */

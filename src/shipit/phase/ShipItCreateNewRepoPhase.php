@@ -79,12 +79,12 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   }
 
   <<__Override>>
-  public function runImpl(ShipItBaseConfig $config): void {
+  public function runImpl(ShipItManifest $manifest): void {
     $output = $this->outputPath;
     try {
       if ($output === null) {
         $temp_dir = self::createNewGitRepo(
-          $config,
+          $manifest,
           $this->filter,
           $this->committer,
           $this->shouldDoSubmodules,
@@ -95,7 +95,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
         $output = $temp_dir->getPath();
       } else {
         self::createNewGitRepoAt(
-          $config,
+          $manifest,
           $output,
           $this->filter,
           $this->committer,
@@ -127,7 +127,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   }
 
   public static function createNewGitRepo(
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
     (function(ShipItChangeset): ShipItChangeset) $filter,
     shape('name' => string, 'email' => string) $committer,
     bool $do_submodules = true,
@@ -136,7 +136,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     $temp_dir = new ShipItTempDir('git-with-initial-commit');
     self::createNewGitRepoImpl(
       $temp_dir->getPath(),
-      $config,
+      $manifest,
       $filter,
       $committer,
       $do_submodules,
@@ -146,7 +146,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   }
 
   public static function createNewGitRepoAt(
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
     string $output_dir,
     (function(ShipItChangeset): ShipItChangeset) $filter,
     shape('name' => string, 'email' => string) $committer,
@@ -165,7 +165,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     try {
       self::createNewGitRepoImpl(
         $output_dir,
-        $config,
+        $manifest,
         $filter,
         $committer,
         $do_submodules,
@@ -181,24 +181,24 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
 
   private static function createNewGitRepoImpl(
     string $output_dir,
-    ShipItBaseConfig $config,
+    ShipItManifest $manifest,
     (function(ShipItChangeset): ShipItChangeset) $filter,
     shape('name' => string, 'email' => string) $committer,
     bool $do_submodules,
     ?string $revision = null,
   ): void {
-    $logger = new ShipItVerboseLogger($config->isVerboseEnabled());
+    $logger = new ShipItVerboseLogger($manifest->isVerboseEnabled());
 
     $source = ShipItRepo::typedOpen(
       ShipItSourceRepo::class,
-      $config->getSourceSharedLock(),
-      $config->getSourcePath(),
-      $config->getSourceBranch(),
+      $manifest->getSourceSharedLock(),
+      $manifest->getSourcePath(),
+      $manifest->getSourceBranch(),
     );
 
     $logger->out("  Exporting...");
     $export = $source->export(
-      $config->getSourceRoots(),
+      $manifest->getSourceRoots(),
       $do_submodules,
       $revision,
     );
@@ -238,9 +238,9 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     invariant($changeset !== null, 'got a null changeset :/');
     $changeset = $changeset->withID($rev);
     $changeset = $filter($changeset)->withSubject('Initial commit');
-    $changeset = ShipItSync::addTrackingData($config, $changeset, $rev);
+    $changeset = ShipItSync::addTrackingData($manifest, $changeset, $rev);
 
-    if ($config->isVerboseEnabled()) {
+    if ($manifest->isVerboseEnabled()) {
       $changeset->dumpDebugMessages();
     }
 
@@ -254,7 +254,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
         ShipItDestinationRepo::class,
         $output_lock,
         $output_dir,
-        '--orphan='.$config->getDestinationBranch(),
+        '--orphan='.$manifest->getDestinationBranch(),
       );
     } finally {
       $output_lock->release();

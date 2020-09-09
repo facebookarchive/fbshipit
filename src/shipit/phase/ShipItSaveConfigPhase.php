@@ -57,28 +57,28 @@ final class ShipItSaveConfigPhase extends ShipItPhase {
     ];
   }
 
-  public function renderConfig(ShipItBaseConfig $config): self::TSavedConfig {
+  public function renderConfig(ShipItManifest $manifest): self::TSavedConfig {
     return shape(
       'destination' => shape(
-        'branch' => $config->getDestinationBranch(),
+        'branch' => $manifest->getDestinationBranch(),
         'owner' => $this->owner,
         'project' => $this->project,
       ),
       'source' => shape(
-        'branch' => $config->getSourceBranch(),
-        'roots' => $config->getSourceRoots(),
+        'branch' => $manifest->getSourceBranch(),
+        'roots' => $manifest->getSourceRoots(),
       ),
     );
   }
 
   <<__Override>>
-  protected function runImpl(ShipItBaseConfig $config): void {
+  protected function runImpl(ShipItManifest $manifest): void {
     invariant($this->outputFile !== null, 'impossible');
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     \file_put_contents(
       $this->outputFile,
-      \json_encode($this->renderConfig($config), \JSON_PRETTY_PRINT),
+      \json_encode($this->renderConfig($manifest), \JSON_PRETTY_PRINT),
     );
     ShipItLogger::out("Finished phase: %s\n", $this->getReadableName());
     throw new ShipItExitException(0);

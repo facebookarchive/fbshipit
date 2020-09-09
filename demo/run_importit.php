@@ -13,7 +13,7 @@ use type Facebook\ShipIt\{
   DemoGitHubUtils,
   DemoSourceRepoInitPhase,
   ShipItPhaseRunner,
-  ShipItBaseConfig,
+  ShipItManifest,
   ShipItChangeset,
   ShipItCleanPhase,
   ShipItPullPhase,
@@ -36,7 +36,7 @@ final class ImportDemoProject {
   }
 
   public static function cliMain(): void {
-    $config = new ShipItBaseConfig(
+    $manifest = new ShipItManifest(
       /* default working dir = */ '/var/tmp/shipit',
       /* source repo name */ 'fbshipit-target',
       /* destination repo name */ 'fbshipit',
@@ -60,7 +60,7 @@ final class ImportDemoProject {
     ];
 
     try {
-      (new ShipItPhaseRunner($config, $phases))->run();
+      (new ShipItPhaseRunner($manifest, $phases))->run();
     } catch (ShipItExitException $e) {
       exit($e->exitCode);
     }

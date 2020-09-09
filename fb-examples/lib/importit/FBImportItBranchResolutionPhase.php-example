@@ -39,7 +39,7 @@ final class FBImportItBranchResolutionPhase
     ?IShipItArgumentParser $argument_parser = null,
   ): ShipItPhaseRunner {
     return new ShipItPhaseRunner(
-      $config_object->getImportBaseConfig($branch_config),
+      $config_object->getImportManifest($branch_config),
       $config_object->getImportPhases($branch_config),
       $argument_parser,
     );

@@ -14,7 +14,7 @@ namespace Facebook\ShipIt;
 
 use namespace HH\Lib\Str;
 
-final class ShipItBaseConfig {
+final class ShipItManifest {
   public function __construct(
     private string $baseDirectoryPath,
     private string $defaultSourceDirectoryName,
@@ -201,8 +201,8 @@ final class ShipItBaseConfig {
   }
 
   private function modified<Tignored>(
-    (function(ShipItBaseConfig): Tignored) $mutator,
-  ): ShipItBaseConfig {
+    (function(ShipItManifest): Tignored) $mutator,
+  ): ShipItManifest {
     $ret = clone $this;
     $mutator($ret);
     return $ret;
