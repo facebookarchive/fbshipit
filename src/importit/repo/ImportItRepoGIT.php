@@ -12,7 +12,7 @@
  */
 namespace Facebook\ImportIt;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Str, Vec};
 use type Facebook\ShipIt\{ShipItChangeset};
 
 /**
