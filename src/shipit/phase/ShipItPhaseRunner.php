@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Math, Dict, C, Vec};
+use namespace HH\Lib\{C, Dict, Math, Str, Vec};
 
 class ShipItPhaseRunner {
   protected IShipItArgumentParser $argumentParser;

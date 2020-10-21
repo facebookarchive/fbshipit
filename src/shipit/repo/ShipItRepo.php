@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, C, Regex};
+use namespace HH\Lib\{C, Regex, Str};
 
 class ShipItRepoException extends \Exception {
   public function __construct(?ShipItRepo $repo, string $message) {

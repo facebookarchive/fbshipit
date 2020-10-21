@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Dict, Vec};
+use namespace HH\Lib\{Dict, Str, Vec};
 
 final class ShipItShellCommand {
   const type TFailureHandler = (function(ShipItShellCommandResult): void);

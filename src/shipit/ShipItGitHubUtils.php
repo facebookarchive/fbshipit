@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Regex};
+use namespace HH\Lib\{Regex, Str};
 
 type ShipItGitHubCredentials = shape(
   'name' => string,

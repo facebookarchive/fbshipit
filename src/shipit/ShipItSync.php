@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Regex, C, Vec};
+use namespace HH\Lib\{C, Regex, Str, Vec};
 
 class ShipItException extends \Exception {}
 

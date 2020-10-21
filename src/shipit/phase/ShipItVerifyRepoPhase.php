@@ -12,7 +12,6 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Str;
 
 final class ShipItVerifyRepoPhase extends ShipItPhase {
   private bool $createPatch = false;

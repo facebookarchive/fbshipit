@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Str, Regex, Vec, Keyset};
+use namespace HH\Lib\{C, Keyset, Regex, Str, Vec};
 
 final class ShipItRepoHGException extends ShipItRepoException {}
 

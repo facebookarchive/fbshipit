@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, C};
+use namespace HH\Lib\{C, Str};
 
 final class ShipItAssertValidFilterPhase extends ShipItPhase {
   const TEST_FILE_NAME = 'shipit_test_file.txt';

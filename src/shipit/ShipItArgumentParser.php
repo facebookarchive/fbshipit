@@ -8,7 +8,7 @@
 
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Vec, Str};
+use namespace HH\Lib\{Str, Vec};
 
 interface IShipItArgumentParser {
   public function parseArgs(

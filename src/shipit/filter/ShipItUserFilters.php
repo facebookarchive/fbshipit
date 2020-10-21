@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, C};
+use namespace HH\Lib\{C, Str};
 
 final class ShipItUserFilters {
   /** Rewrite authors that match a certain pattern.

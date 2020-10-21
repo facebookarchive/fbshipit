@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Keyset, C, Dict, Regex};
+use namespace HH\Lib\{C, Dict, Keyset, Regex, Str};
 
 abstract final class ShipItPathFilters {
   // Skip debug messages on very large changesets, as that can cause

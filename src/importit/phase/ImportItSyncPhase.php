@@ -14,10 +14,10 @@ namespace Facebook\ImportIt;
 
 use namespace HH\Lib\Str;
 use type Facebook\ShipIt\{
-  ShipItManifest,
   ShipItChangeset,
   ShipItDestinationRepo,
   ShipItLogger,
+  ShipItManifest,
 };
 
 final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
