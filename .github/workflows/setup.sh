@@ -9,7 +9,7 @@ apt-get install -y \
   locales
 
 locale-gen en_US.UTF-8
-echo "::set-env name=LC_ALL::en_US.UTF-8"
+echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
 
 git --version
 hg --version
