@@ -100,7 +100,9 @@ final abstract class ShipItConditionalLinesFilter {
     $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
       if (
-        $path_regex is nonnull && !\Regex::isMatch($path_regex, $diff['path'])
+        /* HH_FIXME[2049] __PHPStdLib */
+        /* HH_FIXME[4107] __PHPStdLib */
+        $path_regex is nonnull && !\preg_match($path_regex, $diff['path'])
       ) {
         $diffs[] = $diff;
         continue;
