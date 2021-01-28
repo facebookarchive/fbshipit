@@ -4,4 +4,4 @@ safe_vector_array = true
 version = 3.0.0
 ignored_paths = [ "^vendor/.*/tests?/" ]
 allowed_decl_fixme_codes=2053,4045
-allowed_fixme_codes_strict=2011,2049,2050,2053,4007,4027,4045,4106,4107,4108,4110,4128,4135,4188,4240,4323,4324
+allowed_fixme_codes_strict=2011,2049,2050,2053,4007,4027,4045,4106,4107,4108,4110,4128,4135,4188,4240,4323,4324,4390,4401
