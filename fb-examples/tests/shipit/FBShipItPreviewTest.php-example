@@ -37,10 +37,10 @@ final class FBShipItPreviewTest extends FBBaseTest {
       ]);
   }
 
-  public function testHandleChangeset(): void {
+  public async function testHandleChangeset(): Awaitable<void> {
     $changeset = self::makeChangeset();
-    $result = (new FBShipItPreview())
-      ->handleChangeset('phabtest1_git', 'side_branch', $changeset, null);
+    $result = await (new FBShipItPreview())
+      ->genHandleChangeset('phabtest1_git', 'side_branch', $changeset, null);
     \expect(1)->toBePHPEqual(C\count($result));
     \expect(
       shape(
@@ -64,12 +64,12 @@ final class FBShipItPreviewTest extends FBBaseTest {
     \expect(null)->toBePHPEqual($result[0]['patch']);
   }
 
-  public function testHandleFullPatch(): void {
+  public async function testHandleFullPatch(): Awaitable<void> {
     $changeset = self::makeChangeset();
     // Actual Phabricator git-style raw patch of an fbsource diff
     $patch = \file_get_contents(__DIR__.'/example_www_git_diff.patch');
-    $result = (new FBShipItPreview())
-      ->handleChangeset('facebook-www', 'master', $changeset, $patch);
+    $result = await (new FBShipItPreview())
+      ->genHandleChangeset('facebook-www', 'master', $changeset, $patch);
     \expect($result[0]['patch'])
       ->toBePHPEqual(
         \file_get_contents(__DIR__.'/example_fbshipit_git_diff.patch'),
@@ -85,7 +85,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
     \expect(null)->toBePHPEqual($result[0]['error']);
   }
 
-  public function testHandleRenames(): void {
+  public async function testHandleRenames(): Awaitable<void> {
     $changeset = self::makeChangeset()->withDiffs(vec[
       shape(
         'path' =>
@@ -98,8 +98,8 @@ final class FBShipItPreviewTest extends FBBaseTest {
       ),
     ]);
     $patch = \file_get_contents(__DIR__.'/example_rename_git_diff.patch');
-    $result = (new FBShipItPreview())
-      ->handleChangeset('facebook-www', 'master', $changeset, $patch);
+    $result = await (new FBShipItPreview())
+      ->genHandleChangeset('facebook-www', 'master', $changeset, $patch);
     $error = $result[0]['error'];
     invariant($error !== null, 'Expected error');
     \expect($error)->toContainSubstring('This patch contains renamed');

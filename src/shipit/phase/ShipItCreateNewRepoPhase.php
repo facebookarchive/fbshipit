@@ -20,7 +20,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
   private bool $shouldDoSubmodules = true;
 
   public function __construct(
-    private (function(ShipItChangeset): ShipItChangeset) $filter,
+    private (function(ShipItChangeset): Awaitable<ShipItChangeset>) $genFilter,
     private shape('name' => string, 'email' => string) $committer,
   ) {
     $this->skip();
@@ -78,9 +78,9 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     $output = $this->outputPath;
     try {
       if ($output === null) {
-        $temp_dir = self::createNewGitRepo(
+        $temp_dir = await self::genCreateNewGitRepo(
           $manifest,
-          $this->filter,
+          $this->genFilter,
           $this->committer,
           $this->shouldDoSubmodules,
           $this->sourceCommit,
@@ -89,10 +89,10 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
         $temp_dir->keep();
         $output = $temp_dir->getPath();
       } else {
-        self::createNewGitRepoAt(
+        await self::genCreateNewGitRepoAt(
           $manifest,
           $output,
-          $this->filter,
+          $this->genFilter,
           $this->committer,
           $this->shouldDoSubmodules,
           $this->sourceCommit,
@@ -121,18 +121,18 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     );
   }
 
-  public static function createNewGitRepo(
+  public static async function genCreateNewGitRepo(
     ShipItManifest $manifest,
-    (function(ShipItChangeset): ShipItChangeset) $filter,
+    (function(ShipItChangeset): Awaitable<ShipItChangeset>) $gen_filter,
     shape('name' => string, 'email' => string) $committer,
     bool $do_submodules = true,
     ?string $revision = null,
-  ): ShipItTempDir {
+  ): Awaitable<ShipItTempDir> {
     $temp_dir = new ShipItTempDir('git-with-initial-commit');
-    self::createNewGitRepoImpl(
+    await self::genCreateNewGitRepoImpl(
       $temp_dir->getPath(),
       $manifest,
-      $filter,
+      $gen_filter,
       $committer,
       $do_submodules,
       $revision,
@@ -140,14 +140,14 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     return $temp_dir;
   }
 
-  public static function createNewGitRepoAt(
+  public static async function genCreateNewGitRepoAt(
     ShipItManifest $manifest,
     string $output_dir,
-    (function(ShipItChangeset): ShipItChangeset) $filter,
+    (function(ShipItChangeset): Awaitable<ShipItChangeset>) $gen_filter,
     shape('name' => string, 'email' => string) $committer,
     bool $do_submodules = true,
     ?string $revision = null,
-  ): void {
+  ): Awaitable<void> {
     /* HH_IGNORE_ERROR[2049] __PHPStdLib */
     /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     if (\file_exists($output_dir)) {
@@ -158,10 +158,10 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     \mkdir($output_dir, 0755, /* recursive = */ true);
 
     try {
-      self::createNewGitRepoImpl(
+      await self::genCreateNewGitRepoImpl(
         $output_dir,
         $manifest,
-        $filter,
+        $gen_filter,
         $committer,
         $do_submodules,
         $revision,
@@ -174,14 +174,14 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     }
   }
 
-  private static function createNewGitRepoImpl(
+  private static async function genCreateNewGitRepoImpl(
     string $output_dir,
     ShipItManifest $manifest,
-    (function(ShipItChangeset): ShipItChangeset) $filter,
+    (function(ShipItChangeset): Awaitable<ShipItChangeset>) $gen_filter,
     shape('name' => string, 'email' => string) $committer,
     bool $do_submodules,
     ?string $revision = null,
-  ): void {
+  ): Awaitable<void> {
     $logger = new ShipItVerboseLogger($manifest->isVerboseEnabled());
 
     $source = ShipItRepo::typedOpen(
@@ -298,8 +298,8 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     }
     $changesets = Vec\filter_nulls($changesets);
     invariant(!C\is_empty($changesets), 'got a null changeset :/');
-    $changesets = Vec\map($changesets, ($changeset) ==> {
-      $changeset = $filter($changeset);
+    $changesets = await Vec\map_async($changesets, async ($changeset) ==> {
+      $changeset = await $gen_filter($changeset);
       if ($manifest->isVerboseEnabled()) {
         $changeset->dumpDebugMessages();
       }

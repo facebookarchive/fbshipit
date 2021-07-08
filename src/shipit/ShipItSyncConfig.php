@@ -16,7 +16,7 @@ final class ShipItSyncConfig {
   const type TFilterFn = (function(
     ShipItManifest,
     ShipItChangeset,
-  ): ShipItChangeset);
+  ): Awaitable<ShipItChangeset>);
   const type TPostFilterChangesetsFn = (function(
     vec<ShipItChangeset>,
     ShipItRepo,
@@ -32,7 +32,7 @@ final class ShipItSyncConfig {
 
   public function __construct(
     private keyset<string> $sourceRoots,
-    private self::TFilterFn $filter,
+    private self::TFilterFn $genFilter,
     private ?self::TPostFilterChangesetsFn $postFilterChangesets = null,
   ) {
   }
@@ -98,8 +98,8 @@ final class ShipItSyncConfig {
   public function getFilter(): (function(
     ShipItManifest,
     ShipItChangeset,
-  ): ShipItChangeset) {
-    return $this->filter;
+  ): Awaitable<ShipItChangeset>) {
+    return $this->genFilter;
   }
 
   public function postFilterChangesets(

@@ -68,12 +68,12 @@ final class FBShipItPreview {
     );
   }
 
-  final public function handleChangeset(
+  final public async function genHandleChangeset(
     string $arcanist_project,
     string $internal_branch,
     ShipItChangeset $changeset,
     ?string $patch = null,
-  ): vec<ShipItPreviewOutput> {
+  ): Awaitable<vec<ShipItPreviewOutput>> {
     try {
       $repo = RepoArcanistProject::getRepo($arcanist_project);
     // @oss-disable: } catch (\InvariantViolationException $_e) {
@@ -130,7 +130,7 @@ pull request in order to preview the full patch.';
         ) {
           continue;
         }
-        $transformed_changeset = $config_object->filterChangeset(
+        $transformed_changeset = await $config_object->genFilterChangeset(
           $changeset,
           $branch_config,
         );

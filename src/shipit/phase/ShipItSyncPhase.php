@@ -127,6 +127,6 @@ final class ShipItSyncPhase extends ShipItPhase {
       ->withAllowEmptyCommits($this->allowEmptyCommit)
       ->withShouldDoSubmodules($this->shouldDoSubmodules);
 
-    (new ShipItSync($manifest, $sync))->run();
+    await (new ShipItSync($manifest, $sync))->genRun();
   }
 }

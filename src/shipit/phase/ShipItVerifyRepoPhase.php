@@ -20,7 +20,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
   private bool $shouldDoSubmodules = true;
 
   public function __construct(
-    private (function(ShipItChangeset): ShipItChangeset) $filter,
+    private (function(ShipItChangeset): Awaitable<ShipItChangeset>) $genFilter,
   ) {
     $this->skip();
   }
@@ -97,9 +97,9 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       );
       $this->verifySourceCommit = $repo->findLastSourceCommit(keyset[]);
     }
-    $clean_dir = ShipItCreateNewRepoPhase::createNewGitRepo(
+    $clean_dir = await ShipItCreateNewRepoPhase::genCreateNewGitRepo(
       $manifest,
-      $this->filter,
+      $this->genFilter,
       shape(
         'name' => 'FBShipIt Internal User',
         'email' => 'fbshipit@example.com',

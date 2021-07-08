@@ -58,10 +58,11 @@ final class ShipItSync {
     return $changesets;
   }
 
-  private function getFilteredChangesets(): vec<ShipItChangeset> {
+  private async function genFilteredChangesets(
+  ): Awaitable<vec<ShipItChangeset>> {
     $manifest = $this->manifest;
     $skipped_ids = $this->syncConfig->getSkippedSourceCommits();
-    $filter = $this->syncConfig->getFilter();
+    $gen_filter = $this->syncConfig->getFilter();
 
     $changesets = vec[];
     foreach ($this->getSourceChangesets() as $changeset) {
@@ -83,7 +84,7 @@ final class ShipItSync {
         continue;
       }
 
-      $changeset = $filter($manifest, $changeset);
+      $changeset = await $gen_filter($manifest, $changeset);
       if (!$this->isValidChangeToSync($changeset)) {
         $changesets[] = $changeset->withDebugMessage(
           'SKIPPED COMMIT: no matching files',
@@ -95,8 +96,8 @@ final class ShipItSync {
     return $changesets;
   }
 
-  public function run(): void {
-    $changesets = $this->getFilteredChangesets();
+  public async function genRun(): Awaitable<void> {
+    $changesets = await $this->genFilteredChangesets();
     if (C\is_empty($changesets)) {
       ShipItLogger::out("  No new commits to sync.\n");
       $this->maybeLogStats(vec[], vec[]);

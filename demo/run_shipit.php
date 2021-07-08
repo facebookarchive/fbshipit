@@ -47,7 +47,7 @@ final class ShipDemoProject {
         DemoGitHubUtils::class,
       ),
       new ShipItCreateNewRepoPhase(
-        ($changeset) ==> self::filterChangeset($changeset),
+        async ($changeset) ==> self::filterChangeset($changeset),
         shape(
           'name' => DemoGitHubUtils::$committerName,
           'email' => DemoGitHubUtils::$committerEmail,
@@ -55,7 +55,7 @@ final class ShipDemoProject {
       ),
       new ShipItPullPhase(ShipItRepoSide::DESTINATION),
       new ShipItSyncPhase(
-        ($_config, $changeset) ==> self::filterChangeset($changeset),
+        async ($_config, $changeset) ==> self::filterChangeset($changeset),
       ),
       new ShipItPushPhase(),
     ];

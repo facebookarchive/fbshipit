@@ -19,16 +19,16 @@ use type Facebook\HackTest\DataProvider; // @oss-enable
 
 <<\Oncalls('open_source')>>
 final class AssertValidFilterPhaseTest extends BaseTest {
-  public function testAllowsValidCombination(): void {
+  public async function testAllowsValidCombination(): Awaitable<void> {
     $phase = new ShipItAssertValidFilterPhase(
-      $changeset ==> $changeset->withDiffs(
+      async $changeset ==> $changeset->withDiffs(
         Vec\filter(
           $changeset->getDiffs(),
           $diff ==> Str\slice($diff['path'], 0, 4) === 'foo/',
         ),
       ),
     );
-    $phase->assertValid(keyset['foo/']);
+    await $phase->genAssertValid(keyset['foo/']);
     // no exception thrown :)
   }
 
@@ -43,55 +43,57 @@ final class AssertValidFilterPhaseTest extends BaseTest {
   }
 
   <<DataProvider('exampleEmptyRoots')>>
-  public function testAllowsIdentityFunctionForEmptyRoots(
+  public async function testAllowsIdentityFunctionForEmptyRoots(
     keyset<string> $roots,
-  ): void {
-    $phase = new ShipItAssertValidFilterPhase($changeset ==> $changeset);
-    $phase->assertValid($roots);
+  ): Awaitable<void> {
+    $phase = new ShipItAssertValidFilterPhase(async $changeset ==> $changeset);
+    await $phase->genAssertValid($roots);
     // no exception thrown :)
   }
 
-  public function testThrowsForIdentityFunctionWithRoots(): void {
-    \expect(() ==> {
+  public async function testThrowsForIdentityFunctionWithRoots(
+  ): Awaitable<void> {
+    \expect(async () ==> {
       $phase = new ShipItAssertValidFilterPhase(
-        $changeset ==> $changeset, // stuff outside of 'foo' should be removed
+        async $changeset ==> $changeset,
+        // stuff outside of 'foo' should be removed
       );
-      $phase->assertValid(keyset['foo/']);
+      await $phase->genAssertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(InvariantException::class); // @oss-enable
   }
 
-  public function testThrowsForEmptyChangeset(): void {
-    \expect(() ==> {
+  public async function testThrowsForEmptyChangeset(): Awaitable<void> {
+    \expect(async () ==> {
       $phase = new ShipItAssertValidFilterPhase(
-        $_changeset ==> (new ShipItChangeset()),
+        async $_changeset ==> (new ShipItChangeset()),
       );
-      $phase->assertValid(keyset['foo/']);
+      await $phase->genAssertValid(keyset['foo/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(InvariantException::class); // @oss-enable
   }
 
-  public function testThrowsForPartialMatch(): void {
-    \expect(() ==> {
+  public async function testThrowsForPartialMatch(): Awaitable<void> {
+    \expect(async () ==> {
       $phase = new ShipItAssertValidFilterPhase(
-        $changeset ==> $changeset->withDiffs(
+        async $changeset ==> $changeset->withDiffs(
           Vec\filter(
             $changeset->getDiffs(),
             $diff ==> Str\slice($diff['path'], 0, 3) === 'foo',
           ),
         ),
       );
-      $phase->assertValid(keyset['foo/', 'herp/']);
+      await $phase->genAssertValid(keyset['foo/', 'herp/']);
     })
       // @oss-disable: ->toThrow(\InvariantViolationException::class);
     ->toThrow(InvariantException::class); // @oss-enable
   }
 
-  public function testAllowsForStrippedPaths(): void {
+  public async function testAllowsForStrippedPaths(): Awaitable<void> {
     $phase = new ShipItAssertValidFilterPhase(
-      $changeset ==> $changeset->withDiffs(
+      async $changeset ==> $changeset->withDiffs(
         Vec\filter(
           $changeset->getDiffs(),
           $diff ==> Str\slice($diff['path'], 0, 4) === 'foo/',
@@ -99,6 +101,6 @@ final class AssertValidFilterPhaseTest extends BaseTest {
       ),
       vec['@bar@'],
     );
-    $phase->assertValid(keyset['foo/', 'bar/']);
+    await $phase->genAssertValid(keyset['foo/', 'bar/']);
   }
 }

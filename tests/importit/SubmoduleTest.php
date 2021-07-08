@@ -59,7 +59,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     \expect($new_pos)->toBePHPEqual(185);
   }
 
-  public function testImportCommitPatchWithSubmodule(): void {
+  public async function testImportCommitPatchWithSubmodule(): Awaitable<void> {
     // First create a repo that we'll use as our submodule.
     $submodule_dir = new ShipItTempDir('submodule');
     (new ShipItShellCommand($submodule_dir->getPath(), 'git', 'init'))
@@ -170,28 +170,29 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     (new ShipItShellCommand($source_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
     self::configureGit($source_dir);
-    $source_dir = \Facebook\ShipIt\ShipItCreateNewRepoPhase::createNewGitRepo(
-      (
-        new \Facebook\ShipIt\ShipItManifest(
-          '',
-          $dest_dir->getPath(),
-          //$source_dir->getPath(),
-          (new ShipItTempDir('source-dir'))->getPath(),
-          keyset[],
+    $source_dir =
+      await \Facebook\ShipIt\ShipItCreateNewRepoPhase::genCreateNewGitRepo(
+        (
+          new \Facebook\ShipIt\ShipItManifest(
+            '',
+            $dest_dir->getPath(),
+            //$source_dir->getPath(),
+            (new ShipItTempDir('source-dir'))->getPath(),
+            keyset[],
+          )
         )
-      )
-        ->withDestinationBranch('master')
-        ->withSourceBranch('master'),
-      $c ==> ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile(
-        $c,
-        'rev.txt',
-        'submodule-test',
-      ),
-      shape(
-        'name' => 'Test User',
-        'email' => 'someone@example.com',
-      ),
-    );
+          ->withDestinationBranch('master')
+          ->withSourceBranch('master'),
+        async $c ==> ShipItSubmoduleFilter::useSubmoduleCommitFromTextFile(
+          $c,
+          'rev.txt',
+          'submodule-test',
+        ),
+        shape(
+          'name' => 'Test User',
+          'email' => 'someone@example.com',
+        ),
+      );
     (new ShipItShellCommand($source_dir->getPath(), 'git', 'submodule', 'init'))
       ->runSynchronously();
     (
