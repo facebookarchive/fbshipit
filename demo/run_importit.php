@@ -36,12 +36,14 @@ final class ImportDemoProject {
   }
 
   public static async function genCliMain(): Awaitable<void> {
-    $manifest = new ShipItManifest(
-      /* default working dir = */ '/var/tmp/shipit',
-      /* source repo name */ 'fbshipit-target',
-      /* destination repo name */ 'fbshipit',
-      /* source roots = */ keyset['.'],
-    );
+    $manifest = (
+      new ShipItManifest(
+        /* default working dir = */ '/var/tmp/shipit',
+        /* source repo name */ 'fbshipit-target',
+        /* destination repo name */ 'fbshipit',
+        /* source roots = */ keyset['.'],
+      )
+    )->withDestinationBranch('main');
 
     $phases = vec[
       new DemoSourceRepoInitPhase(),

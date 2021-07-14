@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   ci:
@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       # Test multiple HHVM versions
       matrix:
-        hhvm: [latest, 4.80-latest]
+        hhvm: [latest]
     runs-on: ubuntu-latest
     container:
       image: hhvm/hhvm:${{ matrix.hhvm }}
