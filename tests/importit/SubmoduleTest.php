@@ -65,9 +65,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     (new ShipItShellCommand($submodule_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
     self::configureGit($submodule_dir);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($submodule_dir->getPath().'/somefile', '');
+    PHP\file_put_contents($submodule_dir->getPath().'/somefile', '');
     (
       new ShipItShellCommand(
         $submodule_dir->getPath(),
@@ -129,15 +127,11 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     (new ShipItShellCommand($dest_dir->getPath(), 'git', 'init'))
       ->runSynchronously();
     self::configureGit($dest_dir);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents(
+    PHP\file_put_contents(
       $dest_dir->getPath().'/rev.txt',
       'Subproject commit '.$submodule_first_id."\n",
     );
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents(
+    PHP\file_put_contents(
       $dest_dir->getPath().'/.gitmodules',
       '[submodule "test"]
          path=submodule-test

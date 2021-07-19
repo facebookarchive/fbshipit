@@ -26,10 +26,8 @@ abstract final class ShipItUserFilters {
   ): Awaitable<ShipItChangeset> {
     $matches = dict[];
     if (
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \preg_match_with_matches($pattern, $changeset->getAuthor(), inout $matches) &&
-      C\contains_key($matches, 'user')
+      PHP\preg_match($pattern, $changeset->getAuthor(), inout $matches) &&
+      C\contains_key($matches as KeyedContainer<_, _>, 'user')
     ) {
       $author = await $user_info::genDestinationAuthorFromLocalUser(
         $matches['user'],
@@ -87,9 +85,7 @@ abstract final class ShipItUserFilters {
     string $pattern,
   ): ShipItChangeset {
     $matches = dict[];
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\preg_match_with_matches($pattern, $changeset->getMessage(), inout $matches)) {
+    if (PHP\preg_match($pattern, $changeset->getMessage(), inout $matches)) {
       return $changeset->withAuthor($matches['author']);
     }
     return $changeset;

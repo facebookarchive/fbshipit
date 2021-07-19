@@ -121,14 +121,10 @@ abstract class ShipItRepo {
     string $path,
     string $branch,
   ): ShipItRepo {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if (\file_exists($path.'/.git')) {
+    if (PHP\file_exists($path.'/.git')) {
       return new ShipItRepoGIT($lock, $path, $branch);
     }
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if (\file_exists($path.'/.hg')) {
+    if (PHP\file_exists($path.'/.hg')) {
       return new ShipItRepoHG($lock, $path, $branch);
     }
     throw new ShipItRepoException(
@@ -143,18 +139,16 @@ abstract class ShipItRepo {
   public static function parseDiffHunk(string $hunk): ?ShipItDiff {
     list($header, $body) = Str\split($hunk, "\n", 2);
     $matches = varray[];
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \preg_match_with_matches(
+    PHP\preg_match(
       '@^diff --git ("?)[ab]/(.*?)"? "?[ab]/(.*?)"?$@',
       Str\trim($header),
       inout $matches,
     );
-    if (C\is_empty($matches)) {
+    if (C\is_empty($matches as KeyedContainer<_, _>)) {
       return null;
     }
-    $path = $matches[2];
-    $new_path = C\count($matches) > 3 ? $matches[3] : null;
+    $path = $matches[2] as string;
+    $new_path = C\count($matches) > 3 ? $matches[3] as string : null;
     if ($new_path !== null && $path !== $new_path) {
       $operation = ShipItDiffOperation::RENAME;
     } else {
@@ -162,9 +156,7 @@ abstract class ShipItRepo {
     }
     if ($matches[1] === '"') {
       // Quoted paths may contain escaped characters.
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      $path = \stripslashes($path);
+      $path = PHP\stripslashes($path);
     }
     return shape(
       'path' => $path,

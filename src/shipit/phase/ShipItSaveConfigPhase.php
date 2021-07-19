@@ -71,9 +71,7 @@ final class ShipItSaveConfigPhase extends ShipItPhase {
     ShipItManifest $manifest,
   ): Awaitable<void> {
     invariant($this->outputFile !== null, 'impossible');
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \file_put_contents(
+    PHP\file_put_contents(
       $this->outputFile,
       \json_encode($this->renderConfig($manifest), \JSON_PRETTY_PRINT),
     );

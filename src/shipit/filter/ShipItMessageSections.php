@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Dict, Str}; // @oss-enable
+use namespace HH\Lib\{C, Dict, Str, Regex}; // @oss-enable
 
 /** Utility class for commit messages with sections preceded by "Header: ".
  *
@@ -39,9 +39,7 @@ final class ShipItMessageSections {
     $section = '';
     foreach (Str\split($changeset->getMessage(), "\n") as $line) {
       $line = Str\trim_right($line);
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      if (\preg_match('/^[a-zA-Z ]+:/', $line)) {
+      if (Regex\matches($line, re'/^[a-zA-Z ]+:/')) {
         $h = Str\lowercase(Str\slice($line, 0, Str\search($line, ':')));
         if ($valid_sections === null || C\contains($valid_sections, $h)) {
           $section = $h;
@@ -50,10 +48,8 @@ final class ShipItMessageSections {
           // Treat "Summary: FBOnly: bar" as "FBOnly: bar" - handy if using
           // Phabricator
           if (
-            /* HH_FIXME[2049] __PHPStdLib */
-            /* HH_FIXME[4107] __PHPStdLib */
-            \preg_match('/^[a-zA-Z ]+:/', $value)
-&& $valid_sections !== null
+            Regex\matches($value, re'/^[a-zA-Z ]+:/') &&
+            $valid_sections !== null
           ) {
             $h = Str\lowercase(Str\slice($value, 0, Str\search($value, ':')));
             if (C\contains($valid_sections, $h)) {
@@ -82,9 +78,7 @@ final class ShipItMessageSections {
   public static function buildMessage(dict<string, string> $sections): string {
     $out = '';
     foreach ($sections as $section => $text) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      if (\ctype_space($text) || Str\length($text) === 0) {
+      if (PHP\ctype_space($text) || $text === '') {
         continue;
       }
       $section_head = Str\capitalize_words($section).":";
@@ -103,9 +97,7 @@ final class ShipItMessageSections {
     $lines = Str\split($str, "\n");
     $cn = 0;
     foreach ($lines as $line) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      if (!(\ctype_space($line) || Str\length($line) === 0)) {
+      if (!(PHP\ctype_space($line) || $line === '')) {
         ++$cn;
       }
     }

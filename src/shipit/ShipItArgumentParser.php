@@ -20,9 +20,8 @@ final class ShipItCLIArgumentParser implements IShipItArgumentParser {
   public function parseArgs(
     vec<ShipItCLIArgument> $config,
   ): dict<string, mixed> {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return \getopt(
+    /* HH_FIXME[4110] */
+    return PHP\getopt(
       Vec\map($config, $opt ==> Shapes::idx($opt, 'short_name', ''))
         |> Str\join($$, ''),
       Vec\map($config, $opt ==> $opt['long_name']),

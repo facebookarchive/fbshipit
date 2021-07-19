@@ -28,9 +28,7 @@ final class RenameFileTest extends ShellTest {
    */
   public function testRenameFile(): void {
     $temp_dir = new ShipItTempDir('rename-file-test');
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($temp_dir->getPath().'/initial.txt', 'my content here');
+    PHP\file_put_contents($temp_dir->getPath().'/initial.txt', 'my content here');
 
     self::execSteps($temp_dir->getPath(), vec['hg', 'init']);
     self::configureHg($temp_dir);
@@ -50,9 +48,9 @@ final class RenameFileTest extends ShellTest {
     );
     $changeset = $repo->getChangesetFromID('.');
     $changeset = \expect($changeset)->toNotBeNull();
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \shell_exec('rm -rf '.\escapeshellarg($temp_dir->getPath()));
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+    \shell_exec('rm -rf '.PHP\escapeshellarg($temp_dir->getPath()));
 
     \expect($changeset->getSubject())->toEqual('moved file');
 

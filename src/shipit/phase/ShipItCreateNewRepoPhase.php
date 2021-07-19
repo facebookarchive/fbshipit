@@ -148,14 +148,10 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
     bool $do_submodules = true,
     ?string $revision = null,
   ): Awaitable<void> {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if (\file_exists($output_dir)) {
+    if (PHP\file_exists($output_dir)) {
       throw new ShipItException("path '$output_dir' already exists");
     }
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \mkdir($output_dir, 0755, /* recursive = */ true);
+    PHP\mkdir($output_dir, 0755, /* recursive = */ true);
 
     try {
       await self::genCreateNewGitRepoImpl(

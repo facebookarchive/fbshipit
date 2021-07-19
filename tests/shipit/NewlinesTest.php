@@ -73,12 +73,8 @@ final class NewlinesTest extends ShellTest {
   }
 
   private function createTestFiles(ShipItTempDir $temp_dir): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($temp_dir->getPath().'/unix.txt', self::UNIX_TXT);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($temp_dir->getPath().'/windows.txt', self::WINDOWS_TXT);
+    PHP\file_put_contents($temp_dir->getPath().'/unix.txt', self::UNIX_TXT);
+    PHP\file_put_contents($temp_dir->getPath().'/windows.txt', self::WINDOWS_TXT);
   }
 
   private function assertContainsCorrectNewLines(

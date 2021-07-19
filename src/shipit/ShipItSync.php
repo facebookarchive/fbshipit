@@ -105,12 +105,8 @@ final class ShipItSync {
     }
 
     $patches_dir = $this->syncConfig->getPatchesDirectory();
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if ($patches_dir !== null && !\file_exists($patches_dir)) {
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \mkdir($patches_dir, 0755, /* recursive = */ true);
+    if ($patches_dir !== null && !PHP\file_exists($patches_dir)) {
+      PHP\mkdir($patches_dir, 0755, /* recursive = */ true);
     }
 
     $verbose = $this->manifest->isVerboseEnabled();
@@ -128,14 +124,10 @@ final class ShipItSync {
           '-'.
           $changeset->getID().
           '.patch';
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        if (\file_exists($file)) {
+        if (PHP\file_exists($file)) {
           ShipItLogger::out("Overwriting patch file: %s\n", $file);
         }
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        \file_put_contents($file, $dest::renderPatch($changeset));
+        PHP\file_put_contents($file, $dest::renderPatch($changeset));
         $changeset = $changeset->withDebugMessage(
           'Saved patch file: %s',
           $file,
@@ -206,9 +198,7 @@ final class ShipItSync {
     }
     $destination_branch = $this->manifest->getDestinationBranch();
     // Support logging stats for a project with multiple branches.
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if (\is_dir($filename)) {
+    if (PHP\is_dir($filename)) {
       // Slashes are allowed in branch names but not filenames.
       $namesafe_branch = Regex\replace(
         $destination_branch,
@@ -223,9 +213,7 @@ final class ShipItSync {
     $destination_changeset = $this
       ->getRepo(ShipItDestinationRepo::class)
       ->getHeadChangeset();
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \file_put_contents(
+    PHP\file_put_contents(
       $filename,
       \json_encode(dict[
         'source' => dict[

@@ -45,9 +45,7 @@ final class PathsWithSpacesTest extends ShellTest {
     $path = $temp_dir->getPath();
     self::execSteps($path, vec['git', 'init']);
     self::configureGit($temp_dir);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \mkdir($path.'/'.\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
+    PHP\mkdir($path.'/'.PHP\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
     self::execSteps(
       $path,
       vec['touch', self::FILE_NAME],
@@ -63,9 +61,7 @@ final class PathsWithSpacesTest extends ShellTest {
     $path = $temp_dir->getPath();
     self::execSteps($path, vec['hg', 'init']);
     self::configureHg($temp_dir);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \mkdir($path.'/'.\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
+    PHP\mkdir($path.'/'.PHP\dirname(self::FILE_NAME), 0755, /* recursive = */ true);
     self::execSteps(
       $path,
       vec['touch', self::FILE_NAME],

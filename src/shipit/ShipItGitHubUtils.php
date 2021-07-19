@@ -106,12 +106,8 @@ abstract class ShipItGitHubUtils {
       );
       $auth_user = Str\format(
         '%s:%s',
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          \urlencode($user),
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          \urlencode($password),
+          PHP\urlencode($user),
+          PHP\urlencode($password),
       );
     }
     if (Str\search($remote_url, self::GIT_HTTPS_URL_PREFIX) === 0) {
@@ -128,15 +124,11 @@ abstract class ShipItGitHubUtils {
     string $origin,
     string $local_path,
   ): void {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    if (!\file_exists($local_path)) {
+    if (!PHP\file_exists($local_path)) {
       ShipItRepoGIT::cloneRepo($origin, $local_path);
     }
     invariant(
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \file_exists($local_path.'/.git'),
+      PHP\file_exists($local_path.'/.git'),
       '%s is not a git repo',
       $local_path,
     );
@@ -164,19 +156,11 @@ abstract class ShipItGitHubUtils {
     $url = Str\format('https://api.github.com%s', $path);
 
     while ($url !== null) {
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      $ch = \curl_init($url);
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \curl_setopt($ch, \CURLOPT_USERAGENT, 'Facebook/ShipIt');
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \curl_setopt($ch, \CURLOPT_HTTPHEADER, $request_headers);
+      $ch = PHP\curl_init($url);
+      PHP\curl_setopt($ch, \CURLOPT_USERAGENT, 'Facebook/ShipIt');
+      PHP\curl_setopt($ch, \CURLOPT_HTTPHEADER, $request_headers);
       if (!$use_oauth) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        \curl_setopt(
+        PHP\curl_setopt(
           $ch,
           \CURLOPT_USERPWD,
           Str\format(
@@ -186,14 +170,10 @@ abstract class ShipItGitHubUtils {
           ),
         );
       }
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \curl_setopt($ch, \CURLOPT_HEADER, 1);
+      PHP\curl_setopt($ch, \CURLOPT_HEADER, 1);
       /* @lint-ignore AWAIT_IN_LOOP Intentional serial await */
       $response = await \HH\Asio\curl_exec($ch);
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      $header_len = \curl_getinfo($ch, \CURLINFO_HEADER_SIZE);
+      $header_len = PHP\curl_getinfo($ch, \CURLINFO_HEADER_SIZE);
       $response_header = Str\slice($response, 0, $header_len);
       $results[] = Str\slice($response, $header_len);
 

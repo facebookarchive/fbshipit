@@ -33,19 +33,11 @@ final class ShipItScopedFlock implements IShipItLock {
   public static int $verbose = 0;
 
   public static function createShared(string $path): ShipItScopedFlock {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $dir = \dirname($path);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists($dir)) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \mkdir($dir, /* mode = */ 0755, /* recursive = */ true);
+    $dir = PHP\dirname($path);
+    if (!PHP\file_exists($dir)) {
+      PHP\mkdir($dir, /* mode = */ 0755, /* recursive = */ true);
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $fp = \fopen($path, 'w+');
+    $fp = PHP\fopen($path, 'w+');
     if (!$fp) {
       throw new \Exception('Failed to fopen: '.$path);
     }
@@ -91,10 +83,7 @@ final class ShipItScopedFlock implements IShipItLock {
         throw new \Exception('Invalid lock operation');
     }
 
-    $_wouldblock = null;
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $flock_result = \flock($fp, $constructBehavior, inout $_wouldblock);
+    $flock_result = PHP\flock($fp, $constructBehavior);
     if (!$flock_result) {
       throw new \Exception('Failed to acquire lock');
     }
@@ -114,21 +103,16 @@ final class ShipItScopedFlock implements IShipItLock {
         throw new \Exception('Invalid release operation');
     }
 
-    $_wouldblock = null;
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $flock_result = \flock($this->fp, $this->destructBehavior, inout $_wouldblock);
+    $flock_result = PHP\flock($this->fp, $this->destructBehavior);
     if (!$flock_result) {
       throw new \Exception('Failed to weaken lock');
     }
     $this->released = true;
     if ($this->destructBehavior === ShipItScopedFlockOperation::RELEASE) {
       try {
-        /* HH_FIXME[2049] __PHPStdLib */
-        /* HH_FIXME[4107] __PHPStdLib */
-        \fclose($this->fp);
-        /* HH_FIXME[2049] __PHPStdLib */
-        /* HH_FIXME[4107] __PHPStdLib */
+        PHP\fclose($this->fp);
+        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
         \unlink($this->path);
       } catch (\Exception $_e) {
         // if these files already don't exist do nothing
@@ -143,8 +127,13 @@ final class ShipItScopedFlock implements IShipItLock {
   }
 
   public static function getLockFilePathForRepoPath(string $repo_path): string {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return \dirname($repo_path).'/'.\basename($repo_path).'.fbshipit-lock';
+    return PHP\dirname($repo_path).
+      '/'.
+      PHP\basename($repo_path).
+      '.fbshipit-lock';
   }
+}
+
+function flock(resource $handle, int $operation): bool {
+  return PHP\flock($handle, $operation);
 }

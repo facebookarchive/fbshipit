@@ -24,15 +24,11 @@ final class ShipItTempDir {
   private ShipItTempDirMode $mode = ShipItTempDirMode::AUTO_REMOVE;
 
   public function __construct(string $component) {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $path = \sys_get_temp_dir().'/shipit-'.$component.'-';
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $path .= \bin2hex(\random_bytes(32));
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \mkdir($path);
+    $path = PHP\sys_get_temp_dir().'/shipit-'.$component.'-';
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+    $path .= PHP\bin2hex(\random_bytes(32));
+    PHP\mkdir($path);
     $this->path = $path;
   }
 
@@ -44,9 +40,7 @@ final class ShipItTempDir {
   public function remove(): void {
     $this->assertMode(ShipItTempDirMode::AUTO_REMOVE);
     (
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      new ShipItShellCommand(\sys_get_temp_dir(), 'rm', '-rf', $this->path)
+      new ShipItShellCommand(PHP\sys_get_temp_dir(), 'rm', '-rf', $this->path)
     )->runSynchronously();
     $this->mode = ShipItTempDirMode::REMOVED;
   }

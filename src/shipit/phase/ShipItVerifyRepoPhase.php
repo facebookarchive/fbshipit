@@ -183,12 +183,8 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       $source_sync_id = $changeset->getID();
     }
 
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    $patch_file = \tempnam(\sys_get_temp_dir(), 'shipit-resync-patch-');
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \file_put_contents($patch_file, $diff);
+    $patch_file = PHP\tempnam(PHP\sys_get_temp_dir(), 'shipit-resync-patch-') as string;
+    PHP\file_put_contents($patch_file, $diff);
 
     ShipItLogger::out(
       "  Created patch file: %s\n\n".

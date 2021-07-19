@@ -107,25 +107,19 @@ abstract final class ShipItPathFilters {
         continue;
       }
 
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      $old_path = \preg_quote($old_path, '@');
+      $old_path = PHP\preg_quote($old_path, '@');
 
       $body = $diff['body'];
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      $body = \preg_replace(
+      $body = PHP\preg_replace(
         '@^--- (a/'.$old_path.'|"a/.*?"$)@m',
         '--- a/'.$new_path,
         $body,
-      );
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      $body = \preg_replace(
+      ) as string;
+      $body = PHP\preg_replace(
         '@^\+\+\+ (b/'.$old_path.'|"b/.*?"$)@m',
         '+++ b/'.$new_path,
         $body,
-      );
+      ) as string;
       $diffs[] = shape(
         'path' => $new_path,
         'body' => $body,
@@ -228,9 +222,8 @@ abstract final class ShipItPathFilters {
     Container<string> $patterns,
   ): ?string {
     foreach ($patterns as $pattern) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      if (\preg_match($pattern, $path)) {
+      $matches = varray[];
+      if (PHP\preg_match($pattern, $path, inout $matches)) {
         return $pattern;
       }
     }

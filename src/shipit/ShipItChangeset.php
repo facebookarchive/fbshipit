@@ -71,9 +71,7 @@ final class ShipItChangeset {
     invariant(
       $short_id is string,
       'got %s, expected string',
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \gettype($short_id),
+      PHP\gettype($short_id),
     );
     return $short_id;
   }

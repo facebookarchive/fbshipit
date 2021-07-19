@@ -121,9 +121,8 @@ index %s..0000000
    */
   public static function isSubmoduleDiff(ShipItDiff $diff): bool {
     $subproject_line = '[-+]Subproject commit [0-9a-fA-F]+';
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    return (bool)\preg_match(
+    $matches = varray[];
+    return (bool)PHP\preg_match(
       '@'.
       // Submodule file mode
       '(new file mode 160\d+ *\n)?'.
@@ -136,6 +135,7 @@ index %s..0000000
       // Nothing else
       '\s*$@',
       $diff['body'],
+      inout $matches,
     );
   }
 
@@ -153,9 +153,8 @@ index %s..0000000
       return false;
     }
     $subproject_line = '[-+]Subproject commit [0-9a-fA-F]+';
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    return (bool)\preg_match(
+    $matches = varray[];
+    return (bool)PHP\preg_match(
       '@'.
       // Regular file mode
       '(new file mode 100\d+ *\n)?'.
@@ -167,6 +166,7 @@ index %s..0000000
       // Nothing else
       '\s*$@',
       $diff['body'],
+      inout $matches,
     );
   }
 }

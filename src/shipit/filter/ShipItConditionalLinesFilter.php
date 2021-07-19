@@ -40,16 +40,10 @@ final abstract class ShipItConditionalLinesFilter {
     bool $remove_content = false,
   ): ShipItChangeset {
     $pattern = '/^([-+ ]\s*)(\S.*) '.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \preg_quote($comment_start, '/').
+      PHP\preg_quote($comment_start, '/').
       ' '.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \preg_quote($marker, '/').
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      ($comment_end === null ? '' : (' '.\preg_quote($comment_end, '/'))).
+      PHP\preg_quote($marker, '/').
+      ($comment_end === null ? '' : (' '.PHP\preg_quote($comment_end, '/'))).
       '$/';
 
     $replacement = '\\1'.$comment_start.' '.$marker;
@@ -71,17 +65,11 @@ final abstract class ShipItConditionalLinesFilter {
     ?string $comment_end = null,
   ): ShipItChangeset {
     $pattern = '/^([-+ ]\s*)'.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \preg_quote($comment_start, '/').
+      PHP\preg_quote($comment_start, '/').
       ' '.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \preg_quote($marker, '/').
+      PHP\preg_quote($marker, '/').
       ': (.+)'.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      ($comment_end === null ? '' : (' '.\preg_quote($comment_end, '/'))).
+      ($comment_end === null ? '' : (' '.PHP\preg_quote($comment_end, '/'))).
       '$/';
     $replacement = '\\1\\2 '.$comment_start.' '.$marker;
     if ($comment_end !== null) {
@@ -99,10 +87,9 @@ final abstract class ShipItConditionalLinesFilter {
   ): ShipItChangeset {
     $diffs = vec[];
     foreach ($changeset->getDiffs() as $diff) {
+      $_matches = varray[];
       if (
-        /* HH_FIXME[2049] __PHPStdLib */
-        /* HH_FIXME[4107] __PHPStdLib */
-        $path_regex is nonnull && !\preg_match($path_regex, $diff['path'])
+        $path_regex is nonnull && !PHP\preg_match($path_regex, $diff['path'], inout $_matches)
       ) {
         $diffs[] = $diff;
         continue;
@@ -110,9 +97,7 @@ final abstract class ShipItConditionalLinesFilter {
       $diff['body'] = Str\split($diff['body'], "\n")
         |> Vec\map(
           $$,
-          /* HH_FIXME[2049] __PHPStdLib */
-          /* HH_FIXME[4107] __PHPStdLib */
-          $line ==> \preg_replace($pattern, $replacement, $line, /* limit */ 1),
+          $line ==> PHP\preg_replace($pattern, $replacement, $line, /* limit */ 1) as string,
         )
         |> Str\join($$, "\n");
       $diffs[] = $diff;

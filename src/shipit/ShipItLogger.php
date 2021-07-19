@@ -42,9 +42,7 @@ abstract final class ShipItLogger {
       // No place to log to.
       return;
     }
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \fprintf(\STDOUT, (string) $f, ...$args);
+    PHP\fprintf(\STDOUT, (string) $f, ...$args);
   }
 
   public static function err(Str\SprintfFormatString $f, mixed ...$args): void {
@@ -58,8 +56,6 @@ abstract final class ShipItLogger {
       // No place to log to.
       return;
     }
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \fprintf(\STDERR, (string) $f, ...$args);
+    PHP\fprintf(\STDERR, (string) $f, ...$args);
   }
 }

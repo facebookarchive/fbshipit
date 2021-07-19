@@ -44,9 +44,7 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
       ? $manifest->getSourcePath()
       : $manifest->getDestinationPath();
 
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists($local_path)) {
+    if (!PHP\file_exists($local_path)) {
       return;
     }
 
@@ -55,12 +53,8 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
     }
 
     ShipItLogger::err("  Corruption detected, re-cloning\n");
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $path = \dirname($local_path);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (Str\contains(\php_uname('s'), 'Darwin')) {
+    $path = PHP\dirname($local_path);
+    if (Str\contains(PHP\php_uname('s'), 'Darwin')) {
       // MacOS doesn't have GNU rm
       (new ShipItShellCommand($path, 'rm', '-rf', $local_path))
         ->runSynchronously();
@@ -79,14 +73,10 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
   }
 
   private function isCorrupted(string $local_path): bool {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($local_path.'/.git/')) {
+    if (PHP\file_exists($local_path.'/.git/')) {
       return $this->isCorruptedGitRepo($local_path);
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($local_path.'/.hg/')) {
+    if (PHP\file_exists($local_path.'/.hg/')) {
       return $this->isCorruptedHGRepo($local_path);
     }
     return false;
@@ -114,9 +104,7 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
   private function isCorruptedHGRepo(string $local_path): bool {
     // Given ShipItRepoHG's lock usage, there should never be a transaction in
     // progress if we have the lock.
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($local_path.'/.hg/store/journal')) {
+    if (PHP\file_exists($local_path.'/.hg/store/journal')) {
       return true;
     }
 
@@ -139,9 +127,8 @@ final class ShipItDeleteCorruptedRepoPhase extends ShipItPhase {
       return true;
     }
     $revision = Str\trim($result->getStdOut());
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\preg_match('/^0+$/', $revision)) {
+    $matches = varray[];
+    if (PHP\preg_match('/^0+$/', $revision, inout $matches)) {
       // 000000...0 is not a valid revision ID, but it's what we get
       // for an empty repository
       return true;

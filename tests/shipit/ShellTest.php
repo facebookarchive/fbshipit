@@ -34,9 +34,7 @@ abstract class ShellTest extends \Facebook\HackTest\HackTest { // @oss-enable
   }
 
   protected static function configureHg(ShipItTempDir $temp_dir): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents(
+    PHP\file_put_contents(
       $temp_dir->getPath().'/.hg/hgrc',
       '[ui]
 username = FBShipIt Unit Test <fbshipit@example.com>',

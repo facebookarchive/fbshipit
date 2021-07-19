@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Str}; // @oss-enable
+use namespace HH\Lib\{C, Keyset, Str}; // @oss-enable
 
 final class ShipItMentions {
   // Ignore things like email addresses, let them pass cleanly through
@@ -22,15 +22,11 @@ final class ShipItMentions {
     ShipItChangeset $changeset,
     (function(string): string) $callback,
   ): ShipItChangeset {
-    $_count = null;
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $message = \preg_replace_callback(
+    $message = PHP\preg_replace_callback(
       self::MENTIONS_PATTERN,
       $matches ==> $callback($matches[1]),
       $changeset->getMessage(),
       -1,
-      inout $_count,
     );
 
     return $changeset->withMessage(Str\trim($message));
@@ -57,17 +53,14 @@ final class ShipItMentions {
     ShipItChangeset $changeset,
   ): keyset<string> {
     $matches = vec[];
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \preg_match_all_with_matches(
+    PHP\preg_match_all(
       self::MENTIONS_PATTERN,
       $changeset->getMessage(),
       inout $matches,
       \PREG_SET_ORDER,
     );
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    return (keyset(\array_map($match ==> $match[1], $matches)));
+    /* HH_FIXME[4110] */
+    return Keyset\map($matches as Container<_>, (KeyedContainer<int, string> $match) ==> $match[1]);
   }
 
   public static function containsMention(

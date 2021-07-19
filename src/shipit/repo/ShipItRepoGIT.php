@@ -133,9 +133,7 @@ class ShipItRepoGIT
           $changeset = $changeset->withSubject($value);
           break;
         case 'date':
-          /* HH_FIXME[2049] __PHPStdLib */
-          /* HH_FIXME[4107] __PHPStdLib */
-          $changeset = $changeset->withTimestamp(\strtotime($value));
+          $changeset = $changeset->withTimestamp(PHP\strtotime($value));
           break;
         /* added due to nonexhaustive switch */
         default:
@@ -244,9 +242,7 @@ class ShipItRepoGIT
     $ret = "From {$patch->getID()} Mon Sep 17 00:00:00 2001\n".
       Str\format("From: %s\n", self::encodePatchHeader($patch->getAuthor())).
       "Date: ".
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \date('r', $patch->getTimestamp()).
+      PHP\date('r', $patch->getTimestamp()).
       "\n".
       Str\format(
         "Subject: [PATCH] %s\n\n",
@@ -396,9 +392,7 @@ class ShipItRepoGIT
   }
 
   protected function gitPipeCommand(?string $stdin, string ...$args): string {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists("{$this->path}/.git")) {
+    if (!PHP\file_exists("{$this->path}/.git")) {
       throw new ShipItRepoGITException($this, $this->path." is not a GIT repo");
     }
 
@@ -422,22 +416,14 @@ class ShipItRepoGIT
 
   public static function cloneRepo(string $origin, string $path): void {
     invariant(
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      !\file_exists($path),
+      !PHP\file_exists($path),
       '%s already exists, cowardly refusing to overwrite',
       $path,
     );
 
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $parent_path = \dirname($path);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists($parent_path)) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \mkdir($parent_path, 0755, /* recursive = */ true);
+    $parent_path = PHP\dirname($path);
+    if (!PHP\file_exists($parent_path)) {
+      PHP\mkdir($parent_path, 0755, /* recursive = */ true);
     }
 
     if (ShipItRepo::$verbose & ShipItRepo::VERBOSE_FETCH) {
@@ -457,17 +443,13 @@ class ShipItRepoGIT
   <<__Override>>
   public function pushLfs(string $pull_endpoint, string $push_endpoint): void {
     invariant(
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \file_exists($this->getPath().'/.gitattributes'),
+      PHP\file_exists($this->getPath().'/.gitattributes'),
       '.gitattributes not exists, cowardly refusing to pull lfs',
     );
     // ignore .lfsconfig. otherwise this would interfere
     // with the downstream consumer.
     invariant(
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      !\file_exists($this->getPath().'/.lfsconfig'),
+      !PHP\file_exists($this->getPath().'/.lfsconfig'),
       '.lfsconfig exists, needs to strip it in your config',
     );
     $this->gitCommand('lfs', 'install', '--local');
@@ -555,13 +537,9 @@ class ShipItRepoGIT
       $dest_submodule_path = $dest->getPath().'/'.$submodule['path'];
       // This removes the empty directory for the submodule that gets created
       // by the git-archive command.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \rmdir($dest_submodule_path);
+      PHP\rmdir($dest_submodule_path);
       // This will setup a file that looks just like how git stores submodules.
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \file_put_contents($dest_submodule_path, 'Subproject commit '.$sha);
+      PHP\file_put_contents($dest_submodule_path, 'Subproject commit '.$sha);
     }
 
     return shape('tempDir' => $dest, 'revision' => $rev);
@@ -580,41 +558,33 @@ class ShipItRepoGIT
     if ($roots !== null && !C\is_empty($roots) && !C\contains($roots, '')) {
       return vec[];
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists($this->getPath().'/.gitmodules')) {
+    if (!PHP\file_exists($this->getPath().'/.gitmodules')) {
       return vec[];
     }
     $configs = $this->gitCommand('config', '-f', '.gitmodules', '--list');
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $configs = dict(\parse_ini_string($configs))
+    $configs = dict(PHP\parse_ini_string($configs) as KeyedContainer<_, _>)
       |> Dict\filter_keys($$, ($key) ==> {
-        return Str\slice($key, 0, 10) === 'submodule.' &&
-          (Str\slice($key, -5) === '.path' || Str\slice($key, -4) === '.url');
+        return Str\slice($key as string, 0, 10) === 'submodule.' &&
+          (Str\slice($key as string, -5) === '.path' || Str\slice($key as string, -4) === '.url');
       });
     return Vec\keys($configs)
-      |> Vec\filter($$, $key ==> Str\slice($key, -4) === '.url')
-      |> Vec\map($$, $key ==> Str\slice($key, 10, Str\length($key) - 10 - 4))
+      |> Vec\filter($$, $key ==> Str\slice($key as string, -4) === '.url')
+      |> Vec\map($$, $key ==> Str\slice($key as string, 10, Str\length($key as string) - 10 - 4))
       |> Vec\map(
         $$,
         $name ==> shape(
           'name' => $name,
-          'path' => $configs['submodule.'.$name.'.path'],
-          'url' => $configs['submodule.'.$name.'.url'],
+          'path' => $configs['submodule.'.$name.'.path'] as string,
+          'url' => $configs['submodule.'.$name.'.url'] as string,
         ),
       )
       |> Vec\filter(
         $$,
-        /* HH_FIXME[2049] __PHPStdLib */
-        /* HH_FIXME[4107] __PHPStdLib */
-        $config ==> \file_exists($this->getPath().'/'.$config['path']),
+        $config ==> PHP\file_exists($this->getPath().'/'.($config['path'])),
       );
   }
 
   private static function encodePatchHeader(string $to_encode): string {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    return \mb_encode_mimeheader($to_encode);
+    return PHP\mb_encode_mimeheader($to_encode);
   }
 }

@@ -103,9 +103,7 @@ final class ShipItShellCommand {
   }
 
   private function getCommandAsString(): string {
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    return Vec\map($this->command, $str ==> \escapeshellarg($str))
+    return Vec\map($this->command, $str ==> PHP\escapeshellarg($str))
       |> Str\join($$, ' ');
   }
 
@@ -139,13 +137,9 @@ final class ShipItShellCommand {
     }
     if ($stdin !== null) {
       while (Str\length($stdin)) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        $written = \fwrite($pipes[0], $stdin);
+        $written = PHP\fwrite($pipes[0], $stdin);
         if ($written === 0) {
-          /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-          /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-          $status = \proc_get_status($fp);
+          $status = PHP\proc_get_status($fp);
           if ($status['running']) {
             continue;
           }
@@ -159,28 +153,20 @@ final class ShipItShellCommand {
         }
         $stdin = Str\slice($stdin, $written);
       }
-      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-      \fclose($pipes[0]);
+      PHP\fclose($pipes[0]);
     }
 
     $stdout_stream = $pipes[1];
     $stderr_stream = $pipes[2];
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \stream_set_blocking($stdout_stream, false);
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    \stream_set_blocking($stderr_stream, false);
+    PHP\stream_set_blocking($stdout_stream, false);
+    PHP\stream_set_blocking($stderr_stream, false);
     $stdout = '';
     $stderr = '';
     while (true) {
       $ready_streams = vec[$stdout_stream, $stderr_stream];
       $null_byref = null;
       do {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        $result = \stream_select(
+        $result = PHP\stream_select(
           inout $ready_streams,
           /* write streams = */ inout $null_byref,
           /* exception streams = */ inout $null_byref,
@@ -197,10 +183,8 @@ final class ShipItShellCommand {
         break;
       }
       $all_empty = true;
-      foreach ($ready_streams as $stream) {
-        /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-        /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-        $out = \fread($stream, 1024);
+      foreach (($ready_streams as Container<_>) as $stream) {
+        $out = PHP\fread($stream as resource, 1024) as string;
         if (Str\length($out) === 0) {
           continue;
         }
@@ -224,9 +208,7 @@ final class ShipItShellCommand {
         break;
       }
     }
-    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
-    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
-    $exitcode = \proc_close($fp);
+    $exitcode = PHP\proc_close($fp);
 
     $result = new ShipItShellCommandResult($exitcode, $stdout, $stderr);
 

@@ -25,30 +25,22 @@ final class UnicodeTest extends ShellTest {
 
   <<__Override>>
   public async function beforeEachTestAsync(): Awaitable<void> {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $ctype = \getenv('LC_CTYPE');
+    $ctype = PHP\getenv('LC_CTYPE');
     if ($ctype !== false) {
       $this->ctype = $ctype;
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \putenv('LC_CTYPE=US-ASCII');
+    PHP\putenv('LC_CTYPE=US-ASCII');
   }
 
   <<__Override>>
   public async function afterEachTestAsync(): Awaitable<void> {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \putenv('LC_CTYPE='.(string)$this->ctype);
+    PHP\putenv('LC_CTYPE='.(string)$this->ctype);
   }
 
   <<__Memoize>>
   private function getExpectedContent(): string {
     $content = \file_get_contents(self::CONTENT_FILE);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \expect(\hash('sha256', $content, /* raw output = */ false))
+    \expect(PHP\hash('sha256', $content, /* raw output = */ false))
       ->toEqual(self::CONTENT_SHA256);
     return $content;
   }
@@ -132,9 +124,7 @@ final class UnicodeTest extends ShellTest {
     $path = $tempdir->getPath();
     $this->initGitRepo($tempdir);
 
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($tempdir->getPath().'/foo', 'bar');
+    PHP\file_put_contents($tempdir->getPath().'/foo', 'bar');
 
     (new ShipItShellCommand($path, 'git', 'add', 'foo'))->runSynchronously();
     (
@@ -165,9 +155,7 @@ final class UnicodeTest extends ShellTest {
     $path = $tempdir->getPath();
     $this->initMercurialRepo($tempdir);
 
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($tempdir->getPath().'/foo', 'bar');
+    PHP\file_put_contents($tempdir->getPath().'/foo', 'bar');
 
     (
       new ShipItShellCommand(

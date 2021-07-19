@@ -34,14 +34,10 @@ abstract class ImportItRepo {
     string $path,
     string $branch,
   ): \Facebook\ShipIt\ShipItRepo {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($path.'/.git')) {
+    if (PHP\file_exists($path.'/.git')) {
       return new ImportItRepoGIT($lock, $path, $branch);
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($path.'/.hg')) {
+    if (PHP\file_exists($path.'/.hg')) {
       return new ImportItRepoHG($lock, $path, $branch);
     }
     throw new ImportItRepoException(

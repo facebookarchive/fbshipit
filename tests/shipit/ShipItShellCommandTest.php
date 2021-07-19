@@ -46,9 +46,9 @@ final class ShipItShellCommandTest extends ShellTest {
   }
 
   public function testSettingEnvironmentVariable(): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $herp = \bin2hex(\random_bytes(16));
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+    $herp = PHP\bin2hex(\random_bytes(16));
     $result = (new ShipItShellCommand('/', 'env'))
       ->setEnvironmentVariables(dict['HERP' => $herp])
       ->runSynchronously();
@@ -76,11 +76,9 @@ final class ShipItShellCommandTest extends ShellTest {
 
     $matched_any = false;
     foreach ($to_try as $var) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      $value = \getenv($var);
+      $value = PHP\getenv($var);
       if ($value !== false) {
-        \expect($output)->toContainSubstring($var.'='.$value."\n");
+        \expect($output)->toContainSubstring($var.'='.(string)$value."\n");
         $matched_any = true;
       }
     }
@@ -95,9 +93,7 @@ final class ShipItShellCommandTest extends ShellTest {
         |> Str\trim($$),
     )->toEqual('/');
 
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $tmp = \sys_get_temp_dir();
+    $tmp = PHP\sys_get_temp_dir();
     \expect(
       (new ShipItShellCommand($tmp, 'pwd'))
         ->runSynchronously()
@@ -141,56 +137,42 @@ final class ShipItShellCommandTest extends ShellTest {
   }
 
   public function testNoRetriesByDefault(): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $file = \tempnam(\sys_get_temp_dir(), __CLASS__);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
+    $file = PHP\tempnam(PHP\sys_get_temp_dir(), __CLASS__) as string;
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     \unlink($file);
     $result = (new ShipItShellCommand('/', 'test', '-e', $file))
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      ->setFailureHandler($_ ==> \touch($file))
+      ->setFailureHandler($_ ==> PHP\touch($file))
       ->setNoExceptions()
       ->runSynchronously();
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     \unlink($file);
     \expect($result->getExitCode())->toEqual(1);
   }
 
   public function testRetries(): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $file = \tempnam(\sys_get_temp_dir(), __CLASS__);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
+    $file = PHP\tempnam(PHP\sys_get_temp_dir(), __CLASS__) as string;
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
     \unlink($file);
     $result = (new ShipItShellCommand('/', 'test', '-e', $file))
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      ->setFailureHandler($_ ==> \touch($file))
+      ->setFailureHandler($_ ==> PHP\touch($file))
       ->setNoExceptions()
       ->setRetries(1)
       ->runSynchronously();
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($file)) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
+    if (PHP\file_exists($file)) {
+      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       \unlink($file);
     }
     \expect($result->getExitCode())->toEqual(0);
   }
 
   public function testRetriesNotUsedOnSuccess(): void {
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    $file = \tempnam(\sys_get_temp_dir(), __CLASS__);
+    $file = PHP\tempnam(PHP\sys_get_temp_dir(), __CLASS__) as string;
     // rm will fail if ran twice with same arg
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (Str\contains(\php_uname('s'), 'Darwin')) {
+    if (Str\contains(PHP\php_uname('s'), 'Darwin')) {
       // MacOS doesn't have GNU rm
       $result = (new ShipItShellCommand('/', 'rm', $file))
         ->setRetries(1)
@@ -200,11 +182,9 @@ final class ShipItShellCommandTest extends ShellTest {
         ->setRetries(1)
         ->runSynchronously();
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (\file_exists($file)) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
+    if (PHP\file_exists($file)) {
+      /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+      /* HH_IGNORE_ERROR[4107] __PHPStdLib */
       \unlink($file);
     }
     \expect($result->getExitCode())->toEqual(0);

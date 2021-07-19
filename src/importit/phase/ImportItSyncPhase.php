@@ -227,16 +227,9 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
     if ($patchesDirectory === null) {
       return;
     }
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    if (!\file_exists($patchesDirectory)) {
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-      \mkdir($patchesDirectory, 0755, /* recursive = */ true);
-      /* HH_FIXME[2049] __PHPStdLib */
-      /* HH_FIXME[4107] __PHPStdLib */
-    } else if (!\is_dir($patchesDirectory)) {
-      /* HH_FIXME[2049] __PHPStdLib */
+    if (!PHP\file_exists($patchesDirectory)) {
+      PHP\mkdir($patchesDirectory, 0755, /* recursive = */ true);
+    } else if (!PHP\is_dir($patchesDirectory)) {
       ShipItLogger::err(
         "Cannot log to %s: the path exists and is not a directory.\n",
         $patchesDirectory,
@@ -244,9 +237,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
       return;
     }
     $file = $this->getPatchLocationForChangeset($changeset);
-    /* HH_FIXME[2049] __PHPStdLib */
-    /* HH_FIXME[4107] __PHPStdLib */
-    \file_put_contents($file, $destination_repo::renderPatch($changeset));
+    PHP\file_put_contents($file, $destination_repo::renderPatch($changeset));
     $changeset->withDebugMessage('Saved patch file: %s', $file);
   }
 
