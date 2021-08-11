@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Keyset, Regex, Str}; // @oss-enable
+use namespace HH\Lib\{C, Dict, Keyset, Regex, Str}; // @oss-enable
 
 abstract final class ShipItMentions {
   public static async function genRewriteMentions(
@@ -24,11 +24,8 @@ abstract final class ShipItMentions {
 
     $mentions = await (
       Regex\every_match($changeset->getMessage(), $pattern)
-      |> Dict\fb\gen_pull(
-        $$,
-        async $match ==> await $callback($match[1]),
-        $match ==> $match[1],
-      )
+      |> Dict\from_values($$, $match ==> $match[1])
+      |> Dict\map_async($$, async $match ==> await $callback($match[1]))
     );
 
     $message = Regex\replace_with(

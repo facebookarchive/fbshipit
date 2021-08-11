@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Str}; // @oss-enable
+use namespace HH\Lib\{C, Regex, Str}; // @oss-enable
 
 abstract final class ShipItUserFilters {
   /** Rewrite authors that match a certain pattern.
