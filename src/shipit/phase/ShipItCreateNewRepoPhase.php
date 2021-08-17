@@ -12,7 +12,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{C, Str, Vec}; // @oss-enable
+use namespace HH\Lib\{C, Dict, Str, Vec}; // @oss-enable
 
 final class ShipItCreateNewRepoPhase extends ShipItPhase {
   private ?string $sourceCommit = null;
