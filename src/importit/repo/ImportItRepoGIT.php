@@ -31,17 +31,13 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
     string $source_default_branch,
     bool $use_latest_base_revision,
   ): Awaitable<(ShipItChangeset, ?string)> {
-    $lock = $this->getSharedLock()->getExclusive();
-    try {
-      return await $this->genChangesetAndBaseRevisionForPullRequestLocked(
-        $pr_number,
-        $expected_head_rev,
-        $source_default_branch,
-        $use_latest_base_revision,
-      );
-    } finally {
-      $lock->release();
-    }
+    using $this->getSharedLock()->getExclusive();
+    return await $this->genChangesetAndBaseRevisionForPullRequestLocked(
+      $pr_number,
+      $expected_head_rev,
+      $source_default_branch,
+      $use_latest_base_revision,
+    );
   }
 
   private async function genChangesetAndBaseRevisionForPullRequestLocked(

@@ -484,19 +484,18 @@ class ShipItRepoHG
 
     // Prefetch is needed for reasonable performance with the remote file
     // log extension
-    $lock = $this->getSharedLock()->getExclusive();
-    try {
-      await $this->genHgPipeCommand(
-        $patterns,
-        'prefetch',
-        '-r',
-        $rev,
-        'listfile:/dev/stdin',
-      );
-    } catch (ShipItShellCommandException $_e) {
-      // ignore, not all repos are shallow
-    } finally {
-      $lock->release();
+    using ($this->getSharedLock()->getExclusive()) {
+      try {
+        await $this->genHgPipeCommand(
+          $patterns,
+          'prefetch',
+          '-r',
+          $rev,
+          'listfile:/dev/stdin',
+        );
+      } catch (ShipItShellCommandException $_e) {
+        // ignore, not all repos are shallow
+      }
     }
 
     await $this->genHgPipeCommand(

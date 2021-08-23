@@ -13,8 +13,9 @@ namespace Facebook\ShipIt;
 <<\Oncalls('open_source')>>
 final class ShipItDummyLock implements IShipItLock {
 
-  public function getExclusive(): this {
-    return $this;
+  <<__ReturnDisposable>>
+  public function getExclusive(): ShipItExclusiveLock {
+    return new ShipItExclusiveLock($this);
   }
 
   public function release(): void {}

@@ -20,7 +20,8 @@ enum ShipItScopedFlockOperation: int as int {
 }
 
 interface IShipItLock {
-  public function getExclusive(): this;
+  <<__ReturnDisposable>>
+  public function getExclusive(): ShipItExclusiveLock;
   public function release(): void;
 }
 
@@ -50,19 +51,20 @@ final class ShipItScopedFlock implements IShipItLock {
     );
   }
 
-  public function getExclusive(): ShipItScopedFlock {
+  <<__ReturnDisposable>>
+  public function getExclusive(): ShipItExclusiveLock {
     if (
       $this->constructBehavior === ShipItScopedFlockOperation::MAKE_EXCLUSIVE
     ) {
-      return $this;
+      return new ShipItExclusiveLock($this);
     }
 
-    return new ShipItScopedFlock(
+    return new ShipItExclusiveLock(new ShipItScopedFlock(
       $this->path,
       $this->fp,
       ShipItScopedFlockOperation::MAKE_EXCLUSIVE,
       ShipItScopedFlockOperation::MAKE_SHARED,
-    );
+    ));
   }
 
   private function __construct(
@@ -134,6 +136,10 @@ final class ShipItScopedFlock implements IShipItLock {
   }
 }
 
-function flock(resource $handle, int $operation): bool {
-  return PHP\flock($handle, $operation);
+final class ShipItExclusiveLock implements \IDisposable {
+  public function __construct(private IShipItLock $lock) {}
+
+  public function __dispose(): void {
+    $this->lock->release();
+  }
 }
