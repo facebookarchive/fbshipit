@@ -8,7 +8,7 @@
 
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\{Str, Vec}; // @oss-enable
+use namespace HH\Lib\{Dict, Str, Vec}; // @oss-enable
 
 interface IShipItArgumentParser {
   public function parseArgs(
