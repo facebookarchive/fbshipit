@@ -303,6 +303,7 @@ final class ShipItSync {
 
     $src_commit = await $dest->genFindLastSourceCommit(
       $this->syncConfig->getDestinationRoots(),
+      $this->manifest->getCommitMarker(),
     );
     if ($src_commit === null) {
       throw new ShipItException("Couldn't find synced commit id");
@@ -319,9 +320,9 @@ final class ShipItSync {
       $rev = $changeset->getID();
     }
     $new_message = Str\format(
-      "%s\n\n%sshipit-source-id: %s",
+      "%s\n\n%s: %s",
       $changeset->getMessage(),
-      $manifest->getCommitMarkerPrefix() ? 'fb' : '',
+      $manifest->getCommitMarker(),
       $rev,
     );
     // Co-authored-by must be the absolute last thing in the message
@@ -334,15 +335,22 @@ final class ShipItSync {
 
   public static function getTrackingDataFromString(
     string $raw_changeset,
+    string $commit_marker = '(fb)?shipit-source-id',
   ): ?string {
-    $matches = Regex\every_match(
+    $matches = dict[];
+    PHP\preg_match_all(
+      Str\format("/^ *%s: ?(?<commit>[a-z0-9]+)$/m", $commit_marker),
       $raw_changeset,
-      re"/^ *(fb)?shipit-source-id: ?(?<commit>[a-z0-9]+)$/m",
+      inout $matches,
     );
-    $last_match = C\last($matches);
+    $last_match = C\last($matches as dict<_, _>) ?as dict<_, _>;
     if ($last_match is null) {
       return null;
     }
-    return $last_match['commit'];
+    $last_match = C\last($last_match);
+    if ($last_match is null) {
+      return null;
+    }
+    return $last_match as string;
   }
 }

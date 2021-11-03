@@ -52,8 +52,7 @@ final class SyncTrackingTest extends ShellTest {
   }
 
   private function getManifest(): ShipItManifest {
-    return (new ShipItManifest('/var/tmp/fbshipit', '', '', keyset[]))
-      ->withCommitMarkerPrefix(true);
+    return (new ShipItManifest('/var/tmp/fbshipit', '', '', keyset[]));
   }
 
   private async function genGITRepoWithCommit(
@@ -85,9 +84,9 @@ final class SyncTrackingTest extends ShellTest {
     )->getMessage();
     \expect($message)->toContainSubstring('fbshipit');
     $repo = await $this->genGITRepoWithCommit($message);
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id,
-    );
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual($fake_commit_id);
   }
 
   public async function testLastSourceCommitWithMercurial(): Awaitable<void> {
@@ -111,9 +110,9 @@ final class SyncTrackingTest extends ShellTest {
 
     $repo = new ShipItRepoHG(new ShipItDummyLock(), $path);
     await $repo->genSetBranch('master');
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id,
-    );
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual($fake_commit_id);
   }
 
   public async function testLastSourceCommitMultipleMarkers(): Awaitable<void> {
@@ -128,9 +127,9 @@ final class SyncTrackingTest extends ShellTest {
       (new ShipItChangeset())->withID($fake_commit_id_2),
     )->getMessage();
     $repo = await $this->genGITRepoWithCommit($message_1."\n\n".$message_2);
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id_2,
-    );
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual($fake_commit_id_2);
   }
 
   public async function testLastSourceCommitWithWhitespace(): Awaitable<void> {
@@ -140,9 +139,9 @@ final class SyncTrackingTest extends ShellTest {
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     $repo = await $this->genGITRepoWithCommit($message." ");
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id,
-    );
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual($fake_commit_id);
   }
 
   public async function testLastSourceCommitMissingWhitespace(
@@ -150,32 +149,49 @@ final class SyncTrackingTest extends ShellTest {
     $fake_commit_id = ShipItTempDir::randomHex(16);
     $message = "fbshipit-source-id:".$fake_commit_id;
     $repo = await $this->genGITRepoWithCommit($message);
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id,
-    );
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual($fake_commit_id);
   }
 
   public async function testLastSourceCommitWithoutPrefix(): Awaitable<void> {
     $fake_commit_id = ShipItTempDir::randomHex(16);
     $message = ShipItSync::addTrackingData(
-      $this->getManifest()->withCommitMarkerPrefix(false),
+      $this->getManifest()->withCommitMarker('shipit-source-id'),
       (new ShipItChangeset())->withID($fake_commit_id),
     )->getMessage();
     \expect($message)->toNotContainSubstring('fbshipit');
     $repo = await $this->genGITRepoWithCommit($message);
-    \expect(await $repo->genFindLastSourceCommit(keyset[]))->toEqual(
-      $fake_commit_id,
-    );
+    \expect(await $repo->genFindLastSourceCommit(keyset[], 'shipit-source-id'))
+      ->toEqual($fake_commit_id);
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual(null);
+  }
+
+  public async function testLastSourceCommitWithCustomCommitMarker(
+  ): Awaitable<void> {
+    $fake_commit_id = ShipItTempDir::randomHex(16);
+    $message = ShipItSync::addTrackingData(
+      $this->getManifest()->withCommitMarker('jonjanzens-cool-commit-marker'),
+      (new ShipItChangeset())->withID($fake_commit_id),
+    )->getMessage();
+    \expect($message)->toNotContainSubstring('fbshipit');
+    $repo = await $this->genGITRepoWithCommit($message);
+    \expect(await $repo->genFindLastSourceCommit(
+      keyset[],
+      'jonjanzens-cool-commit-marker',
+    ))
+      ->toEqual($fake_commit_id);
+    \expect(
+      await $repo->genFindLastSourceCommit(keyset[], 'fbshipit-source-id'),
+    )->toEqual(null);
   }
 
   public function testCoAuthorLines(): void {
     $in = (new ShipItChangeset())
       ->withCoAuthorLines("Co-authored-by: Jon Janzen <jonjanzen@fb.com>");
-    $out = ShipItSync::addTrackingData(
-      $this->getManifest()->withCommitMarkerPrefix(true),
-      $in,
-      "TEST",
-    );
+    $out = ShipItSync::addTrackingData($this->getManifest(), $in, "TEST");
     \expect($out->getMessage())->toBePHPEqual(
       "fbshipit-source-id: TEST\n\nCo-authored-by: Jon Janzen <jonjanzen@fb.com>",
     );

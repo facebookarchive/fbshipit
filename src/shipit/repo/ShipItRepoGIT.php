@@ -67,16 +67,17 @@ class ShipItRepoGIT
 
   public async function genFindLastSourceCommit(
     keyset<string> $roots,
+    string $commit_marker,
   ): Awaitable<?string> {
     $log = await $this->genGitCommand(
       'log',
       '-1',
       '--grep',
-      '^\\(fb\\)\\?shipit-source-id: \\?[a-z0-9]\\+\\s*$',
+      Str\format('^%s: \\?[a-z0-9]\\+\\s*$', $commit_marker),
       ...$roots
     );
     $log = Str\trim($log);
-    return ShipItSync::getTrackingDataFromString($log);
+    return ShipItSync::getTrackingDataFromString($log, $commit_marker);
   }
 
   public async function genFindNextCommit(

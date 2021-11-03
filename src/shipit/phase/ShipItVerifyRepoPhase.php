@@ -95,8 +95,10 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
         $manifest->getDestinationPath(),
         $manifest->getDestinationBranch(),
       );
-      $this->verifySourceCommit =
-        await $repo->genFindLastSourceCommit(keyset[]);
+      $this->verifySourceCommit = await $repo->genFindLastSourceCommit(
+        keyset[],
+        $manifest->getCommitMarker(),
+      );
     }
     $clean_dir = await ShipItCreateNewRepoPhase::genCreateNewGitRepo(
       $manifest,
@@ -199,7 +201,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       "    $ git apply < %s\n".
       "    $ git status\n".
       "    $ git add --all --patch\n".
-      "    $ git commit -m 'fbshipit-source-id: %s'\n".
+      "    $ git commit -m '%s: %s'\n".
       "    $ git push\n\n".
       "  WARNING: there are 4 possible causes for differences:\n\n".
       "    1. changes in source haven't been copied to destination\n".
@@ -212,6 +214,7 @@ final class ShipItVerifyRepoPhase extends ShipItPhase {
       $diffstat,
       $manifest->getDestinationPath(),
       $patch_file,
+      $manifest->getCommitMarker(),
       $source_sync_id,
     );
     throw new ShipItExitException(0);

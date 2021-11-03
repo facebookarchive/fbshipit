@@ -163,6 +163,7 @@ final class ImportItSyncPhase extends \Facebook\ShipIt\ShipItPhase {
       $expected_head_rev,
       $manifest->getSourceBranch(),
       $this->applyToLatest,
+      $manifest->getCommitMarker(),
     );
   }
 

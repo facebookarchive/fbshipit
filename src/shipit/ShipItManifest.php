@@ -21,7 +21,7 @@ final class ShipItManifest {
     private string $defaultSourceDirectoryName,
     private string $defaultDestinationDirectoryName,
     private keyset<string> $sourceRoots,
-    private bool $commitMarkerPrefix = false,
+    private string $commitMarker = 'fbshipit-source-id',
   ) {}
 
   public function getBaseDirectory(): string {
@@ -123,14 +123,14 @@ final class ShipItManifest {
     );
   }
 
-  public function getCommitMarkerPrefix(): bool {
-    return $this->commitMarkerPrefix;
+  public function getCommitMarker(): string {
+    return $this->commitMarker;
   }
 
-  public function withCommitMarkerPrefix(bool $bool): this {
+  public function withCommitMarker(string $marker): this {
     return $this->modified($ret ==> {
-      $ret->commitMarkerPrefix = $bool;
-      return $ret->commitMarkerPrefix;
+      $ret->commitMarker = $marker;
+      return $ret->commitMarker;
     });
   }
 

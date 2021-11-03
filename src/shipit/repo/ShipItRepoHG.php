@@ -114,19 +114,20 @@ class ShipItRepoHG
 
   public async function genFindLastSourceCommit(
     keyset<string> $roots,
+    string $commit_marker,
   ): Awaitable<?string> {
     $log = await $this->genHgCommand(
       'log',
       '--limit',
       '1',
       '--keyword',
-      'shipit-source-id:',
+      Str\format('%s:', $commit_marker),
       '--template',
       '{desc}',
       ...$roots
     );
     $log = Str\trim($log);
-    return ShipItSync::getTrackingDataFromString($log);
+    return ShipItSync::getTrackingDataFromString($log, $commit_marker);
   }
 
   public async function genCommitPatch(

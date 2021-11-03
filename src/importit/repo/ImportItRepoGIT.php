@@ -31,6 +31,7 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
     string $expected_head_rev,
     string $source_default_branch,
     bool $use_latest_base_revision,
+    string $commit_marker,
   ): Awaitable<(ShipItChangeset, ?string)> {
     using $this->getSharedLock()->getExclusive();
     return await $this->genChangesetAndBaseRevisionForPullRequestLocked(
@@ -38,6 +39,7 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
       $expected_head_rev,
       $source_default_branch,
       $use_latest_base_revision,
+      $commit_marker,
     );
   }
 
@@ -46,6 +48,7 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
     string $expected_head_rev,
     string $source_default_branch,
     bool $use_latest_base_revision,
+    string $commit_marker,
   ): Awaitable<(ShipItChangeset, ?string)> {
     if ($pr_number === null) {
       $actual_head_rev =
@@ -123,7 +126,8 @@ final class ImportItRepoGIT extends \Facebook\ShipIt\ShipItRepoGIT {
     if ($use_latest_base_revision) {
       $base_revision = null;
     } else {
-      $base_revision = await $this->genFindLastSourceCommit(keyset[]);
+      $base_revision =
+        await $this->genFindLastSourceCommit(keyset[], $commit_marker);
     }
     return tuple($changeset, $base_revision);
   }

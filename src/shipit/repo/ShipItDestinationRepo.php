@@ -17,12 +17,14 @@ interface ShipItDestinationRepo {
   require extends ShipItRepo;
 
   /**
-   * Find the contents of the fbshipit-source-id: header in the latest commit.
+   * Find the contents of the specified commit marker in the latest commit.
    *
    * @param $roots list of paths that contain synced commits.
+   * @param $commit_marker normally, fbshipit-source-id, but can be customized.
    */
   public function genFindLastSourceCommit(
     keyset<string> $roots,
+    string $commit_marker,
   ): Awaitable<?string>;
 
   /**
