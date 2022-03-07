@@ -89,17 +89,15 @@ class ShipItRepoGIT
       $revision.'..',
       '--ancestry-path',
       '--no-merges',
-      '--oneline',
+      '--format=%H',
       ...$roots
     );
 
     $log = Str\trim($log);
-    if (Str\trim($log) === '') {
+    if ($log === '') {
       return null;
     }
-    $revs = Str\split(Str\trim($log), "\n");
-    list($rev) = Str\split(C\lastx($revs), ' ', 2);
-    return $rev;
+    return Str\split($log, "\n") |> C\lastx($$);
   }
 
   private static function parseHeader(string $header): ShipItChangeset {
