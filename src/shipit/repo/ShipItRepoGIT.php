@@ -20,9 +20,7 @@ final class ShipItRepoGITException extends ShipItRepoException {}
 /**
  * GIT specialization of ShipItRepo
  */
-class ShipItRepoGIT
-  extends ShipItRepo
-  implements ShipItSourceRepo, ShipItDestinationRepo {
+class ShipItRepoGIT extends ShipItRepo {
 
   const type TSubmoduleSpec = shape(
     'name' => string,

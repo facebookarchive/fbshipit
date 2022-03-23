@@ -277,7 +277,7 @@ final class ShipItSync {
   }
 
   <<__Memoize>>
-  private async function genRepo<<<__Enforceable>> reify Trepo as ShipItRepo>(
+  private async function genRepo<<<__Enforceable>> reify Trepo as IShipItRepo>(
   ): Awaitable<Trepo> {
     $manifest = $this->manifest;
 

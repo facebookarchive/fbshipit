@@ -20,9 +20,7 @@ final class ShipItRepoHGException extends ShipItRepoException {}
 /**
  * HG specialization of ShipItRepo
  */
-class ShipItRepoHG
-  extends ShipItRepo
-  implements ShipItDestinationRepo, ShipItSourceRepo {
+class ShipItRepoHG extends ShipItRepo {
   private ?string $branch;
   const string COMMIT_SEPARATOR = '-~-~-~';
 

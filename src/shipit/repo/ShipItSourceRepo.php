@@ -13,8 +13,7 @@
  */
 namespace Facebook\ShipIt;
 
-interface ShipItSourceRepo {
-  require extends ShipItRepo;
+interface ShipItSourceRepo extends IShipItRepo {
   /**
    * Get the next child of this revision in the current branch.
    *

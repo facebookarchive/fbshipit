@@ -13,8 +13,7 @@
  */
 namespace Facebook\ShipIt;
 
-interface ShipItDestinationRepo {
-  require extends ShipItRepo;
+interface ShipItDestinationRepo extends IShipItRepo {
 
   /**
    * Find the contents of the specified commit marker in the latest commit.

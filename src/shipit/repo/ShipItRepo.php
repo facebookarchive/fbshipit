@@ -16,7 +16,7 @@ namespace Facebook\ShipIt;
 use namespace HH\Lib\{C, Regex, Str}; // @oss-enable
 
 class ShipItRepoException extends \Exception {
-  public function __construct(?ShipItRepo $repo, string $message) {
+  public function __construct(?IShipItRepo $repo, string $message) {
     if ($repo !== null) {
       $message = \get_class($repo).": $message";
     }
@@ -28,7 +28,7 @@ class ShipItRepoException extends \Exception {
  * Repo handler interface
  * For agnostic communication with git, hg, etc...
  */
-abstract class ShipItRepo {
+abstract class ShipItRepo implements ShipItSourceRepo, ShipItDestinationRepo {
   /**
    * @param $path the path to the repository
    */
@@ -36,11 +36,6 @@ abstract class ShipItRepo {
     private IShipItLock $lock,
     protected string $path,
   ) {}
-
-  /**
-   * Get the ShipItChangeset of the HEAD revision in the current branch.
-   */
-  public abstract function genHeadChangeset(): Awaitable<?ShipItChangeset>;
 
   protected function getSharedLock(): IShipItLock {
     return $this->lock;
@@ -63,38 +58,8 @@ abstract class ShipItRepo {
     return $this->path;
   }
 
-  /**
-   * Implement to allow changing branches
-   */
-  protected abstract function genSetBranch(string $branch): Awaitable<bool>;
-
-  public abstract function genUpdateBranchTo(string $base_rev): Awaitable<void>;
-
-  /**
-   * Cleans our checkout.
-   */
-  public abstract function genClean(): Awaitable<void>;
-
-  /**
-   * Updates our checkout
-   */
-  public abstract function genPull(): Awaitable<void>;
-
-  /**
-   * push lfs support
-   */
-  public abstract function genPushLfs(
-    string $lfs_pull_endpoint,
-    string $lfs_push_endpoint,
-  ): Awaitable<void>;
-
-  /**
-   * Get the origin of the checkout.
-   */
-  public abstract function genOrigin(): Awaitable<string>;
-
-  public static async function genTypedOpen<
-    <<__Enforceable>> reify Trepo as ShipItRepo,
+  final public static async function genTypedOpen<
+    <<__Enforceable>> reify Trepo as IShipItRepo,
   >(IShipItLock $lock, string $path, string $branch): Awaitable<Trepo> {
     $repo = await ShipItRepo::genOpen($lock, $path, $branch);
     invariant(
@@ -110,11 +75,11 @@ abstract class ShipItRepo {
   /**
    * Factory
    */
-  public static async function genOpen(
+  final public static async function genOpen(
     IShipItLock $lock,
     string $path,
     string $branch,
-  ): Awaitable<ShipItRepo> {
+  ): Awaitable<IShipItRepo> {
     if (PHP\file_exists($path.'/.git')) {
       $repo = new ShipItRepoGIT($lock, $path);
       await $repo->genSetBranch($branch);
@@ -159,10 +124,6 @@ abstract class ShipItRepo {
       'new_path' => $new_path,
     );
   }
-
-  public abstract static function getDiffsFromPatch(
-    string $patch,
-  ): vec<ShipItDiff>;
 
   final public static function getCommitMessage(
     ShipItChangeset $changeset,

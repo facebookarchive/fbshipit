@@ -20,7 +20,7 @@ final class ShipItSyncConfig {
   ): Awaitable<ShipItChangeset>);
   const type TPostFilterChangesetsFn = (function(
     vec<ShipItChangeset>,
-    ShipItRepo,
+    IShipItRepo,
   ): Awaitable<vec<ShipItChangeset>>);
   const type TStatsFn = (function(
     vec<ShipItChangeset>,
@@ -110,7 +110,7 @@ final class ShipItSyncConfig {
 
   public async function genPostFilterChangesets(
     vec<ShipItChangeset> $changesets,
-    ShipItRepo $dest,
+    IShipItRepo $dest,
   ): Awaitable<vec<ShipItChangeset>> {
     $post_filter_changesets = $this->postFilterChangesets;
     if ($post_filter_changesets === null) {

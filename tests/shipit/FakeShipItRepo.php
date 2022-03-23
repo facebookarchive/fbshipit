@@ -54,4 +54,65 @@ final class FakeShipItRepo extends ShipItRepo {
   public static function getDiffsFromPatch(string $_patch): vec<ShipItDiff> {
     return vec[];
   }
+
+  public static function renderPatch(ShipItChangeset $patch): string {
+    return '';
+  }
+
+  public static function getChangesetFromExportedPatch(
+    string $header,
+    string $patch,
+  ): ShipItChangeset {
+    return new ShipItChangeset();
+  }
+
+  public async function genPush(): Awaitable<void> {
+  }
+
+  public async function genNativePatchFromID(
+    string $revision,
+  ): Awaitable<string> {
+    return '';
+  }
+  public async function genNativeHeaderFromID(
+    string $revision,
+  ): Awaitable<string> {
+    return '';
+  }
+
+  public async function genFindNextCommit(
+    string $revision,
+    keyset<string> $roots,
+  ): Awaitable<?string> {
+    return null;
+  }
+
+  public async function genFindLastSourceCommit(
+    keyset<string> $roots,
+    string $commit_marker,
+  ): Awaitable<?string> {
+    return null;
+  }
+
+  public async function genExport(
+    keyset<string> $roots,
+    bool $do_submodules,
+    ?string $rev = null,
+  ): Awaitable<shape('tempDir' => ShipItTempDir, 'revision' => string)> {
+    return shape('tempDir' => new ShipItTempDir(''), 'revision' => '');
+  }
+
+  public async function genCommitPatch(
+    ShipItChangeset $patch,
+    bool $do_submodules = true,
+  ): Awaitable<string> {
+    return '';
+  }
+
+  public async function genChangesetFromID(
+    string $revision,
+  ): Awaitable<ShipItChangeset> {
+    return new ShipItChangeset();
+  }
+
 }

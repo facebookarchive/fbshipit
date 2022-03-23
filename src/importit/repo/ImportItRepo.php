@@ -34,7 +34,7 @@ abstract class ImportItRepo {
     \Facebook\ShipIt\IShipItLock $lock,
     string $path,
     string $branch,
-  ): Awaitable<\Facebook\ShipIt\ShipItRepo> {
+  ): Awaitable<\Facebook\ShipIt\IShipItRepo> {
     if (PHP\file_exists($path.'/.git')) {
       $repo = new ImportItRepoGIT($lock, $path);
       await $repo->genSetBranch($branch);
