@@ -120,6 +120,11 @@ final class ShipItSync {
     $verbose = $this->manifest->isVerboseEnabled();
     $dest = await $this->genRepo<ShipItDestinationRepo>();
 
+    $start_sync_at_rev = $this->syncConfig->getStartSyncAtRev();
+    if ($start_sync_at_rev is nonnull) {
+      await $dest->genUpdateBranchTo($start_sync_at_rev);
+    }
+
     $changesets = await $this->syncConfig
       ->genPostFilterChangesets($changesets, $dest);
 

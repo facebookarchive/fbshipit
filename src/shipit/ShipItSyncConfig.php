@@ -35,6 +35,7 @@ final class ShipItSyncConfig {
   private ?self::TStatsFn $statsFunction = null;
   private ?bool $allowEmptyCommit = false;
   private bool $doSubmodules = true;
+  private ?string $startSyncAtRev = null;
 
   public function __construct(
     private keyset<string> $sourceRoots,
@@ -169,6 +170,17 @@ final class ShipItSyncConfig {
 
   public function getShouldDoSubmodules(): bool {
     return $this->doSubmodules;
+  }
+
+  public function withStartSyncAtRev(?string $rev): this {
+    return $this->modified($ret ==> {
+      $ret->startSyncAtRev = $rev;
+      return $ret->startSyncAtRev;
+    });
+  }
+
+  public function getStartSyncAtRev(): ?string {
+    return $this->startSyncAtRev;
   }
 
   private function modified<Tignored>(

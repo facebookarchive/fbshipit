@@ -21,6 +21,7 @@ final class ShipItSyncPhase extends ShipItPhase {
   private ?string $patchesDirectory = null;
   private ?string $statsFilename = null;
   private bool $shouldDoSubmodules = true;
+  private ?string $startSyncAtRev = null;
 
   public function __construct(
     private ShipItSyncConfig::TFilterFn $filter,
@@ -107,6 +108,15 @@ final class ShipItSyncPhase extends ShipItPhase {
           return $this->shouldDoSubmodules;
         },
       ),
+      shape(
+        'long_name' => 'start-sync-at::',
+        'description' =>
+          'Commit ID in the destination repo to set HEAD to before syncing',
+        'write' => $x ==> {
+          $this->startSyncAtRev = $x;
+          return $this->startSyncAtRev;
+        },
+      ),
     ];
   }
 
@@ -128,7 +138,8 @@ final class ShipItSyncPhase extends ShipItPhase {
       ->withStatsFilename($this->statsFilename)
       ->withStatsFunction($this->statsFunction)
       ->withAllowEmptyCommits($this->allowEmptyCommit)
-      ->withShouldDoSubmodules($this->shouldDoSubmodules);
+      ->withShouldDoSubmodules($this->shouldDoSubmodules)
+      ->withStartSyncAtRev($this->startSyncAtRev);
 
     await (new ShipItSync($manifest, $sync))->genRun();
   }
