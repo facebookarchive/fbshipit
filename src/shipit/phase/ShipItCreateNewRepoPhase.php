@@ -354,7 +354,7 @@ final class ShipItCreateNewRepoPhase extends ShipItPhase {
           vec['git', 'reset', '--soft', $initial_commit_sha],
           // Amend initial commit with content from all chunks
           // (this preserves initial commit's message w/ ShipIt tracking details)
-          vec['git', 'commit', '--amend', '--no-edit'],
+          vec['git', 'commit', '--amend', '--no-edit', '--allow-empty'],
         ],
       );
     } finally {
