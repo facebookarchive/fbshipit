@@ -23,6 +23,8 @@ final class ShipItRepoHGException extends ShipItRepoException {}
 class ShipItRepoHG extends ShipItRepo {
   private ?string $branch;
   const string COMMIT_SEPARATOR = '-~-~-~';
+  const string SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING_ENV_KEY =
+    'SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING';
 
   <<__Override>>
   public async function genSetBranch(string $branch): Awaitable<bool> {
@@ -150,11 +152,83 @@ class ShipItRepoHG extends ShipItRepo {
       await $this->genHgPipeCommand($diff, 'patch', '-');
     }
     $id = (await $this->genChangesetFromID('.'))?->getID();
-    invariant($id !== null, 'Unexpeceted null SHA!');
+    invariant($id !== null, 'Unexpected null SHA!');
     return $id;
   }
 
   public static function renderPatch(ShipItChangeset $patch): string {
+
+    $return = self::shouldDisableHgNativePatchRendering()
+      ? self::renderGitHeader($patch)
+      : self::renderHgHeader($patch);
+
+    // Render the body as a Git extended diff format (original)
+    // Note: This is not the default format consumed by Hg externally but is for Meta's
+    // internal hg client
+    $return .= self::renderGitExtendedDiffPatchBodyForPatch($patch);
+
+    return $return;
+  }
+
+  /**
+   * Determines if HG native patch rendering should be disabled.
+   *
+   * This condition is met if environment variable 'SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING'
+   * is set as long as that value is not 'false' (case insensitive)
+   */
+  private static function shouldDisableHgNativePatchRendering(): bool {
+    $disable_hg_native_patch_rendering_raw_value =
+      ShipItEnv::getEnv(self::SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING_ENV_KEY);
+
+    if ($disable_hg_native_patch_rendering_raw_value is null) {
+      return false;
+    }
+
+    $comparison = Str\compare_ci(
+      Str\trim($disable_hg_native_patch_rendering_raw_value),
+      'false',
+    ) !==
+      0;
+
+    return $comparison;
+  }
+
+  private static function renderGitExtendedDiffPatchBodyForPatch(
+    ShipItChangeset $patch,
+  ): string {
+    $return = "";
+    foreach ($patch->getDiffs() as $diff) {
+      $path = $diff['path'];
+      $body = $diff['body'];
+
+      $return .= "diff --git a/{$path} b/{$path}\n{$body}\n";
+    }
+    $return .= "--\n1.7.9.5\n";
+
+    return $return;
+  }
+
+  private static function renderHgHeader(ShipItChangeset $patch): string {
+    // Mercurial's internal date format treats offset counter to timezones in terms of sign,
+    // with the value "in seconds west of UTC (negative if the timezone is east of UTC)."
+    // see: https://www.mercurial-scm.org/repo/hg/help/dates
+    $timezone_offset_seconds = (new \DateTime())->getOffset() * -1;
+
+    $commit_message = self::getCommitMessage($patch);
+    $hg_header = "# HG changeset patch\n".
+      "# User {$patch->getAuthor()}\n".
+      "# Date {$patch->getTimestamp()} {$timezone_offset_seconds}\n".
+      "#      ".
+      PHP\date('r', $patch->getTimestamp()).
+      "\n".
+      "# Node ID {$patch->getID()}\n".
+      "# Parent  0000000000000000000000000000000000000000\n".
+      "{$commit_message}\n\n";
+
+    return $hg_header;
+  }
+
+  private static function renderGitHeader(ShipItChangeset $patch): string {
     // Mon Sep 17 is a magic date used by format-patch to distinguish from real
     // mailboxes. cf. https://git-scm.com/docs/git-format-patch
     $commit_message = self::getCommitMessage($patch)
@@ -165,13 +239,7 @@ class ShipItRepoHG extends ShipItRepo {
       PHP\date('r', $patch->getTimestamp()).
       "\n".
       "Subject: [PATCH] {$commit_message}\n---\n\n";
-    foreach ($patch->getDiffs() as $diff) {
-      $path = $diff['path'];
-      $body = $diff['body'];
 
-      $ret .= "diff --git a/{$path} b/{$path}\n{$body}";
-    }
-    $ret .= "--\n1.7.9.5\n";
     return $ret;
   }
 
