@@ -130,6 +130,9 @@ class FBShipItBranchResolutionPhase extends ShipItPhase {
   ): Awaitable<void> {
     $config_object = $this->configObject;
     $branch_configs = await $this->genBranchConfigs();
+
+    FBShipItScripts::disableHGNativeRenderingForPatchesIfNeeded();
+
     foreach ($branch_configs as $branch_config) {
       ShipItLogger::out(
         "--- Running for branch: (%s, %s)\n",
