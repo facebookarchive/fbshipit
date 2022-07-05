@@ -183,7 +183,7 @@ final class ShipItSync {
           $changeset->getShortID(),
         );
         if ($verbose) {
-          ShipItLogger::err("%s\n", ShipItRepoGIT::renderPatch($changeset));
+          ShipItLogger::err("%s\n", $dest::renderPatch($changeset));
         }
         throw $e;
       }
