@@ -9,6 +9,8 @@
 
 namespace Facebook\ShipIt;
 
+use namespace HH\Lib\C; // @oss-enable
+
 <<\Oncalls('open_source')>>
 final class ShitItDiffRenameTest extends ShellTest {
   public async function testShipItDiffRenamePathParse(): Awaitable<void> {
