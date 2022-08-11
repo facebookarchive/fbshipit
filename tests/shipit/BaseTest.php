@@ -18,6 +18,7 @@ use namespace HH\Lib\{Vec}; // @oss-enable
 abstract class BaseTest extends \Facebook\HackTest\HackTest { // @oss-enable
 // @oss-disable: abstract class BaseTest extends \WWWTest {
 
+  public static async function createData(): Awaitable<void> {} // @oss-enable
   public async function beforeEach(): Awaitable<void> {} // @oss-enable
   public async function afterEach(): Awaitable<void> {} // @oss-enable
 
@@ -29,6 +30,11 @@ abstract class BaseTest extends \Facebook\HackTest\HackTest { // @oss-enable
   <<__Override>> // @oss-enable
   public async function afterEachTestAsync(): Awaitable<void> { // @oss-enable
     await $this->afterEach(); // @oss-enable
+  } // @oss-enable
+
+  <<__Override>> // @oss-enable
+  public static async function beforeFirstTestAsync(): Awaitable<void> { // @oss-enable
+    await static::createData(); // @oss-enable
   } // @oss-enable
 
   protected static function diffsFromMap(

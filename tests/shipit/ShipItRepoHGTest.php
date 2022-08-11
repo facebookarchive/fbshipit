@@ -6,7 +6,7 @@ use Facebook\ShipIt\{ShipItRepoHG, ShipItEnv, ShipItChangeset, BaseTest};
 use type Facebook\HackTest\DataProvider; // @oss-enable
 // @oss-disable: use type DataProvider;
 
-// @oss-disable: <<Oncalls('open_source')>>
+<<\Oncalls('open_source')>>
 final class ShipItRepoHGTest extends BaseTest {
 
   <<__LateInit>> private static ShipItChangeset $testChangeset;
@@ -50,8 +50,9 @@ change - change
 
 GITPATCH;
 
-  // @oss-disable: <<__Override>>
+  <<__Override>>
   public static async function createData(): Awaitable<void> {
+    date_default_timezone_set("America/Los_Angeles"); // @oss-enable
     self::$testChangeset = (new ShipItChangeset())
       ->withAuthor("Tester McTesterson <tester@example.com>")
       ->withID("730c1a3381881be0fc32d0b229e1b57ad4c3cb23")

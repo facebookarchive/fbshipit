@@ -13,5 +13,10 @@
   "require-dev": {
     "hhvm/hacktest": "~2.0",
     "facebook/fbexpect": "^2.6.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "hhvm/hhvm-autoload": true
+    }
   }
 }
