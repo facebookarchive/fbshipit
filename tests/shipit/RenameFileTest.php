@@ -13,7 +13,7 @@
  */
 namespace Facebook\ShipIt;
 
-use namespace HH\Lib\Keyset; // @oss-enable
+use namespace HH\Lib\{Keyset, C}; // @oss-enable
 
 <<\Oncalls('open_source')>>
 final class RenameFileTest extends ShellTest {
@@ -73,7 +73,7 @@ final class RenameFileTest extends ShellTest {
 
   public async function testNativeRenameFile(): Awaitable<void> {
     $temp_dir = new ShipItTempDir('native-rename-file-test');
-    \Filesystem::writeFile(
+    PHP\file_put_contents(
       $temp_dir->getPath().'/initial.txt',
       'my content here',
     );
@@ -86,7 +86,7 @@ final class RenameFileTest extends ShellTest {
       vec['hg', 'commit', '-Am', 'initial commit'],
     );
 
-    \Filesystem::appendFile(
+    PHP\file_put_contents(
       $temp_dir->getPath().'/initial.txt',
       ' and not over there',
     );
@@ -101,11 +101,9 @@ final class RenameFileTest extends ShellTest {
     $repo->setUseNativeRenames(true);
     $changeset = await $repo->genChangesetFromID('.');
     $changeset = \expect($changeset)->toNotBeNull();
-    await \gen_execx(
-      \ExecCallsite::HSL_OPEN_SOURCE_TEST,
-      'rm -rf %s',
-      $temp_dir->getPath(),
-    );
+    /* HH_IGNORE_ERROR[2049] __PHPStdLib */
+    /* HH_IGNORE_ERROR[4107] __PHPStdLib */
+    \shell_exec('rm -rf '.$temp_dir->getPath());
     \expect($changeset->getSubject())->toEqual('moved file');
     $diffs = $changeset->getDiffs();
     \expect(C\count($diffs))->toEqual(1);
