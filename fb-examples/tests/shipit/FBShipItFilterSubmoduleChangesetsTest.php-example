@@ -90,14 +90,14 @@ Reviewed By: nobody',
     $config_object = static::getConfigObject();
     // The first two commits get merged together.
     $merged_changesets = $config_object->mergeSubmoduleChangesets($changesets);
-    \expect(C\count($merged_changesets))->toBePHPEqual(4);
-    \expect($merged_changesets[0]->getAuthor())->toBePHPEqual(
+    \expect(C\count($merged_changesets))->toEqual(4);
+    \expect($merged_changesets[0]->getAuthor())->toEqual(
       \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
     );
-    \expect($merged_changesets[0]->getSubject())->toBePHPEqual(
+    \expect($merged_changesets[0]->getSubject())->toEqual(
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
     );
-    \expect($merged_changesets[0]->getDiffs())->toBePHPEqual(
+    \expect($merged_changesets[0]->getDiffs())->toEqual(
       vec[
         shape('path' => 'dep_a.txt', 'body' => '0'),
         shape('path' => 'dep_b.txt', 'body' => '01'),
@@ -113,15 +113,15 @@ https://github.com/dep_c.txt
 
 Test Plan:',
     );
-    \expect($merged_changesets[1])->toBePHPEqual($changesets[2]);
-    \expect($merged_changesets[2])->toBePHPEqual($changesets[3]);
-    \expect($merged_changesets[3]->getAuthor())->toBePHPEqual(
+    \expect($merged_changesets[1])->toEqual($changesets[2]);
+    \expect($merged_changesets[2])->toEqual($changesets[3]);
+    \expect($merged_changesets[3]->getAuthor())->toEqual(
       \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
     );
-    \expect($merged_changesets[3]->getSubject())->toBePHPEqual(
+    \expect($merged_changesets[3]->getSubject())->toEqual(
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
     );
-    \expect($merged_changesets[3]->getDiffs())->toBePHPEqual(
+    \expect($merged_changesets[3]->getDiffs())->toEqual(
       vec[
         shape('path' => 'dep_b.txt', 'body' => '2'),
         shape('path' => 'dep_c.txt', 'body' => '2'),
@@ -148,7 +148,7 @@ Test Plan:',
     ];
     $config_object = static::getConfigObject();
     $merged_changesets = $config_object->mergeSubmoduleChangesets($changesets);
-    \expect($merged_changesets)->toBePHPEqual($changesets);
+    \expect($merged_changesets)->toEqual($changesets);
   }
 
   public async function testShouldSkipUpdateSubmodules(): Awaitable<void> {
@@ -216,7 +216,7 @@ Test Plan:',
     $changesets = vec[self::getSubmodulesChangeset()];
     $config_object = static::getConfigObject();
     \expect(await $config_object->genPostFilterChangesets($changesets, $repo))
-      ->toBePHPEqual(vec[]);
+      ->toEqual(vec[]);
   }
 
   private static function getConfigObject(): FBShipItConfig {

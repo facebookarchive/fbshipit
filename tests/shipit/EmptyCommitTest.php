@@ -29,7 +29,7 @@ final class EmptyCommitTest extends ShellTest {
       '',
       'Expecting a patch header for an empty commit.',
     );
-    \expect(await $source_repo->genNativePatchFromID($rev))->toBePHPEqual(
+    \expect(await $source_repo->genNativePatchFromID($rev))->toEqual(
       '',
       'Expecting no patch for an empty commit.',
     );
@@ -64,7 +64,7 @@ final class EmptyCommitTest extends ShellTest {
       '',
       'Expecting a patch header for an empty commit.',
     );
-    \expect(await $source_repo->genNativePatchFromID($rev))->toBePHPEqual(
+    \expect(await $source_repo->genNativePatchFromID($rev))->toEqual(
       '',
       'Expecting no patch for an empty commit.',
     );
@@ -99,7 +99,7 @@ final class EmptyCommitTest extends ShellTest {
       '',
       'Expecting a patch header for an empty commit.',
     );
-    \expect(await $source_repo->genNativePatchFromID($rev))->toBePHPEqual(
+    \expect(await $source_repo->genNativePatchFromID($rev))->toEqual(
       '',
       'Expecting no patch for an empty commit.',
     );
@@ -134,7 +134,7 @@ final class EmptyCommitTest extends ShellTest {
       '',
       'Expecting a patch header for an empty commit.',
     );
-    \expect(await $source_repo->genNativePatchFromID($rev))->toBePHPEqual(
+    \expect(await $source_repo->genNativePatchFromID($rev))->toEqual(
       '',
       'Expecting no patch for an empty commit.',
     );

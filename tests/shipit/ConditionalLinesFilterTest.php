@@ -39,7 +39,7 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '//',
     );
     $diffs = $changeset->getDiffs();
-    \expect(C\count($diffs))->toBePHPEqual(1);
+    \expect(C\count($diffs))->toEqual(1);
     $diff = $diffs[0]['body'];
 
     \expect($diff)->toMatchRegex(re"/^\+\/\/ @x-oss\-disable\: baz$/m");
@@ -57,7 +57,7 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '*/',
     );
     $diffs = $changeset->getDiffs();
-    \expect(C\count($diffs))->toBePHPEqual(1);
+    \expect(C\count($diffs))->toEqual(1);
     $diff = $diffs[0]['body'];
 
     \expect($diff)->toMatchRegex(re"/^\+\/\* @x-oss\-disable\: baz \*\/$/m");
@@ -110,7 +110,7 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '//',
     );
     $good_regex_diffs = $good_regex_changeset->getDiffs();
-    \expect(C\count($good_regex_diffs))->toBePHPEqual(1);
+    \expect(C\count($good_regex_diffs))->toEqual(1);
     $good_regex_diff = $good_regex_diffs[0]['body'];
 
     \expect($good_regex_diff)->toMatchRegex(
@@ -128,7 +128,7 @@ final class ConditionalLinesFilterTest extends BaseTest {
       '//',
     );
     $bad_regex_diffs = $bad_regex_changeset->getDiffs();
-    \expect(C\count($bad_regex_diffs))->toBePHPEqual(1);
+    \expect(C\count($bad_regex_diffs))->toEqual(1);
     $bad_regex_diff = $bad_regex_diffs[0]['body'];
 
     \expect($bad_regex_diff)->toNotMatchRegex(

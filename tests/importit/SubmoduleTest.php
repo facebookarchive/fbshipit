@@ -56,8 +56,8 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     $old_pos = Str\search($change, '6d9dffd0233c53bb83e4daf5475067073df9cdca');
     $new_pos = Str\search($change, 'ae031dcc9594163f5b0c35e7026563f1c8372595');
 
-    \expect($old_pos)->toBePHPEqual(125);
-    \expect($new_pos)->toBePHPEqual(185);
+    \expect($old_pos)->toEqual(125);
+    \expect($new_pos)->toEqual(185);
   }
 
   public async function testImportCommitPatchWithSubmodule(): Awaitable<void> {
@@ -236,7 +236,7 @@ final class SubmoduleTest extends \Facebook\ShipIt\ShellTest {
     );
 
     // Now we can finally check stuff!
-    \expect(\file_get_contents($dest_dir->getPath().'/rev.txt'))->toBePHPEqual(
+    \expect(\file_get_contents($dest_dir->getPath().'/rev.txt'))->toEqual(
       'Subproject commit '.$submodule_second_id."\n",
       'File should be updated with new hash.',
     );

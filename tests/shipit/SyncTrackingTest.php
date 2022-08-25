@@ -192,7 +192,7 @@ final class SyncTrackingTest extends ShellTest {
     $in = (new ShipItChangeset())
       ->withCoAuthorLines("Co-authored-by: Jon Janzen <jonjanzen@fb.com>");
     $out = ShipItSync::addTrackingData($this->getManifest(), $in, "TEST");
-    \expect($out->getMessage())->toBePHPEqual(
+    \expect($out->getMessage())->toEqual(
       "fbshipit-source-id: TEST\n\nCo-authored-by: Jon Janzen <jonjanzen@fb.com>",
     );
   }

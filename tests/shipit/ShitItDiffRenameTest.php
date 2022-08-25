@@ -18,9 +18,9 @@ final class ShitItDiffRenameTest extends ShellTest {
       "diff --git a/a.txt b/a_rename.txt \n similarity index 100% \n rename from a.txt \n rename to a_rename.txt",
     );
     \expect($diff)->toNotBeNull();
-    \expect($diff as nonnull['path'])->toBePHPEqual('a.txt');
+    \expect($diff as nonnull['path'])->toEqual('a.txt');
     \expect(Shapes::idx($diff, 'new_path'))->toNotBeNull();
-    \expect(Shapes::idx($diff, 'new_path') as nonnull)->toBePHPEqual(
+    \expect(Shapes::idx($diff, 'new_path') as nonnull)->toEqual(
       'a_rename.txt',
     );
   }
@@ -42,13 +42,13 @@ final class ShitItDiffRenameTest extends ShellTest {
       "" => "fbcode/opensource/phabtest_fbsource/",
     ];
     $changeset = ShipItPathFilters::moveDirectories($changeset, $map, vec[]);
-    \expect(C\count($changeset->getDiffs()))->toBePHPEqual(1);
+    \expect(C\count($changeset->getDiffs()))->toEqual(1);
     $diff = $changeset->getDiffs()[0];
-    \expect($diff['path'])->toBePHPEqual(
+    \expect($diff['path'])->toEqual(
       'fbcode/opensource/phabtest_fbsource/monica-test.md',
     );
     \expect(Shapes::idx($diff, 'new_path'))->toNotBeNull();
-    \expect(Shapes::idx($diff, 'new_path') as nonnull)->toBePHPEqual(
+    \expect(Shapes::idx($diff, 'new_path') as nonnull)->toEqual(
       'fbcode/opensource/phabtest_fbsource/edward-test.md',
     );
   }

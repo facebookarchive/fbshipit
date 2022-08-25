@@ -44,7 +44,7 @@ final class PathsWithSpacesTest extends ShellTest {
     $head = \expect($head)->toNotBeNull();
 
     $paths = Vec\map($head->getDiffs(), $diff ==> $diff['path']);
-    \expect($paths)->toBePHPEqual(vec[self::FILE_NAME]);
+    \expect($paths)->toEqual(vec[self::FILE_NAME]);
   }
 
   private static async function genCreateGitExample(

@@ -141,7 +141,7 @@ final class FBCommonFiltersTest extends FBBaseTest {
       $expected = vec[$file];
     }
     $actual = Vec\map($changeset->getDiffs(), $diff ==> $diff['path']);
-    \expect($actual)->toBePHPEqual($expected);
+    \expect($actual)->toEqual($expected);
   }
 
   public async function testPrivateFileInPublicFacebookDir(): Awaitable<void> {
@@ -159,7 +159,7 @@ final class FBCommonFiltersTest extends FBBaseTest {
       ),
     );
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual(vec['foo/com/facebook/something']);
+      ->toEqual(vec['foo/com/facebook/something']);
   }
 
   public async function testOverideUnitFailuresStripped(): Awaitable<void> {
@@ -281,7 +281,7 @@ Differential Revision: D1234567',
         )
       )->getMessage(),
     )
-      ->toBePHPEqual('Summary: One line change');
+      ->toEqual('Summary: One line change');
   }
 
   public async function testMultipleSummarySections(): Awaitable<void> {
@@ -305,7 +305,7 @@ Differential Revision: D1234567',
         )
       )->getMessage(),
     )
-      ->toBePHPEqual(
+      ->toEqual(
         "Summary:\nthe first\nthe second\n".
         "Closes https://github.com/facebook/fbshipit/pull/42\n\n".
         "Test Plan: run all code paths",
@@ -333,7 +333,7 @@ Differential Revision: D1234567',
         )
       )->getMessage(),
     )
-      ->toBePHPEqual(
+      ->toEqual(
         'Summary:
 One line change
 Closes https://github.com/facebook/fbshipit/pull/42
@@ -349,13 +349,14 @@ Test Plan: run all code paths',
       \expect(
         FBCommonFilters::filterMessageSections($changeset, keyset[])
           ->getMessage(),
-      )->toBePHPEqual('', "Strips section '".$section."'");
+      )->toEqual('', "Strips section '%s'", $section);
       \expect(
         FBCommonFilters::filterMessageSections($changeset, keyset[$section])
           ->getMessage(),
-      )->toBePHPEqual(
+      )->toEqual(
         Str\format("%s: some text", Str\capitalize_words($section)),
-        "Keeps section '".$section."'",
+        "Keeps section '%s'",
+        $section,
       );
     }
   }
@@ -429,7 +430,7 @@ Test Plan: run all code paths',
     \expect(
       FBCommonFilters::referencePullRequestNumber($changeset)
         ->getSubject(),
-    )->toBePHPEqual($changeset->getSubject().' (#42)');
+    )->toEqual($changeset->getSubject().' (#42)');
 
     $changeset = (new ShipItChangeset())
       ->withSubject('Original Subject')
@@ -439,7 +440,7 @@ Test Plan: run all code paths',
     \expect(
       FBCommonFilters::referencePullRequestNumber($changeset)
         ->getSubject(),
-    )->toBePHPEqual($changeset->getSubject().' (#42)');
+    )->toEqual($changeset->getSubject().' (#42)');
 
     $changeset = (new ShipItChangeset())
       ->withSubject('Original Subject')
@@ -449,7 +450,7 @@ Test Plan: run all code paths',
     \expect(
       FBCommonFilters::referencePullRequestNumber($changeset)
         ->getSubject(),
-    )->toBePHPEqual($changeset->getSubject().' (#42)');
+    )->toEqual($changeset->getSubject().' (#42)');
 
     $changeset = $changeset
       ->withSubject('Update travis.yml to build only on nightly and latest')
@@ -463,14 +464,14 @@ Closes https://github.com/facebook/fbshipit/pull/50',
     \expect(
       FBCommonFilters::referencePullRequestNumber($changeset)
         ->getSubject(),
-    )->toBePHPEqual($changeset->getSubject().' (#50)');
+    )->toEqual($changeset->getSubject().' (#50)');
 
     $changeset = $changeset
       ->withMessage('Closes https://github.com/facebook/fbshipit/issues/42');
     \expect(
       FBCommonFilters::referencePullRequestNumber($changeset)
         ->getSubject(),
-    )->toBePHPEqual($changeset->getSubject());
+    )->toEqual($changeset->getSubject());
   }
 
   public async function testClosingPullRequestReferencedInSubjectWithAllFilters(
@@ -491,8 +492,8 @@ This fixes a bug.';
         'projectFullName' => 'facebook/fbshipit',
       ),
     );
-    \expect($changeset->getSubject())->toBePHPEqual($original_subject.' (#42)');
-    \expect($changeset->getMessage())->toBePHPEqual('Summary:
+    \expect($changeset->getSubject())->toEqual($original_subject.' (#42)');
+    \expect($changeset->getMessage())->toEqual('Summary:
 Pull Request resolved: https://github.com/facebook/fbshipit/pull/42
 X-link: https://github.com/facebook/private/pull/42
 
@@ -513,8 +514,8 @@ cause_a_sev_many_files';
         'projectFullName' => '',
       ),
     );
-    \expect($changeset->getSubject())->toBePHPEqual($original_subject.' (#42)');
-    \expect($changeset->getMessage())->toBePHPEqual('');
+    \expect($changeset->getSubject())->toEqual($original_subject.' (#42)');
+    \expect($changeset->getMessage())->toEqual('');
   }
 
   public async function testFilterFBMentions(): Awaitable<void> {
@@ -541,7 +542,7 @@ So is This but with a greedy test char: ] foo
 bypass-lint
 
 Name2';
-    \expect($changeset->getMessage())->toBePHPEqual($expected_message);
+    \expect($changeset->getMessage())->toEqual($expected_message);
   }
 
   public async function testFilterAllowEmptyCommit(): Awaitable<void> {
@@ -572,7 +573,7 @@ Name2';
         'projectFullName' => '',
       ),
     );
-    \expect($changeset_2->getMessage())->toBePHPEqual('');
+    \expect($changeset_2->getMessage())->toEqual('');
   }
 
   public async function testStrippingCoAuthoredBy(): Awaitable<void> {

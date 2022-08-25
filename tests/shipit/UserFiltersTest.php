@@ -52,7 +52,7 @@ final class UserFiltersTest extends BaseTest {
     keyset<string> $expected,
   ): void {
     $changeset = (new ShipItChangeset())->withMessage($message);
-    \expect(ShipItMentions::getMentions($changeset))->toBePHPEqual($expected);
+    \expect(ShipItMentions::getMentions($changeset))->toEqual($expected);
   }
 
   public static function rewriteMentionsExamples(

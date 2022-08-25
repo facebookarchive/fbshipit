@@ -159,13 +159,13 @@ final class SymlinkTest extends ShellTest {
     $changeset = \expect($changeset)->toNotBeNull();
     \expect($changeset->isValid())->toBeTrue();
 
-    \expect(C\count($changeset->getDiffs()))->toBePHPEqual(
+    \expect(C\count($changeset->getDiffs()))->toEqual(
       2,
       'Expected a deletion chunk and a separate creation chunk',
     );
 
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual(
+      ->toEqual(
         vec['foo', 'foo'],
         'Expected chunks to affect the same file',
       );

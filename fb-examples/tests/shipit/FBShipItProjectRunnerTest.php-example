@@ -42,7 +42,7 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toNotBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = await $phase->genBranchConfigs();
-    \expect(C\count($branches))->toBePHPEqual(2);
+    \expect(C\count($branches))->toEqual(2);
   }
 
   public async function testGetPhasesWithBranch(): Awaitable<void> {
@@ -58,8 +58,8 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toNotBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = await $phase->genBranchConfigs();
-    \expect(C\count($branches))->toBePHPEqual(1);
-    \expect($branches[0]->getInternalBranch())->toBePHPEqual('side_branch');
+    \expect(C\count($branches))->toEqual(1);
+    \expect($branches[0]->getInternalBranch())->toEqual('side_branch');
   }
 
   public async function testGetPhasesImportIt(): Awaitable<void> {
@@ -75,8 +75,8 @@ final class FBShipItProjectRunnerTest extends FBBaseTest {
     );
     \expect($phase)->toBeInstanceOf(FBImportItBranchResolutionPhase::class);
     $branches = await $phase->genBranchConfigs();
-    \expect(C\count($branches))->toBePHPEqual(1);
-    \expect($branches[0]->getInternalBranch())->toBePHPEqual('master');
+    \expect(C\count($branches))->toEqual(1);
+    \expect($branches[0]->getInternalBranch())->toEqual('master');
   }
 
   public async function testGetPhasesImportItRequiresBranch(): Awaitable<void> {

@@ -42,7 +42,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
     $changeset = self::makeChangeset();
     $result = await (new FBShipItPreview())
       ->genHandleChangeset('phabtest1_git', 'side_branch', $changeset, null);
-    \expect(1)->toBePHPEqual(C\count($result));
+    \expect(1)->toEqual(C\count($result));
     \expect(
       (new ShipItChangeset())->withID('deadbeef')
         ->withTimestamp(12345)
@@ -59,11 +59,11 @@ final class FBShipItPreviewTest extends FBBaseTest {
           'STRIP FILE: "facebook/filtered.txt" matches pattern "@^facebook[/|$]@"',
         ),
     )->toBePHPEqual($result[0]['changeset']);
-    \expect('facebook')->toBePHPEqual($result[0]['githubOrg']);
-    \expect('phabtest1_git')->toBePHPEqual($result[0]['githubProject']);
+    \expect('facebook')->toEqual($result[0]['githubOrg']);
+    \expect('phabtest1_git')->toEqual($result[0]['githubProject']);
     \expect("Test Commit\n\nSummary: Stuff")
-      ->toBePHPEqual($result[0]['commitMessage']);
-    \expect(null)->toBePHPEqual($result[0]['patch']);
+      ->toEqual($result[0]['commitMessage']);
+    \expect(null)->toEqual($result[0]['patch']);
   }
 
   public async function testHandleFullPatch(): Awaitable<void> {
@@ -73,18 +73,18 @@ final class FBShipItPreviewTest extends FBBaseTest {
     $result = await (new FBShipItPreview())
       ->genHandleChangeset('facebook-www', 'master', $changeset, $patch);
     \expect($result[0]['patch'])
-      ->toBePHPEqual(
+      ->toEqual(
         \file_get_contents(__DIR__.'/example_fbshipit_git_diff.patch'),
       );
     $diffs = $result[0]['changeset']->getDiffs();
-    \expect(C\count($diffs))->toBePHPEqual(2);
+    \expect(C\count($diffs))->toEqual(2);
     \expect($diffs[0]['path'])
-      ->toBePHPEqual(
+      ->toEqual(
         'fb-examples/tests/shipit/FBCommonFiltersTest.php-example',
       );
     \expect($diffs[1]['path'])
-      ->toBePHPEqual('fb-examples/lib/shipit/FBCommonFilters.php-example');
-    \expect(null)->toBePHPEqual($result[0]['error']);
+      ->toEqual('fb-examples/lib/shipit/FBCommonFilters.php-example');
+    \expect(null)->toEqual($result[0]['error']);
   }
 
   public async function testHandleRenames(): Awaitable<void> {
@@ -106,7 +106,7 @@ final class FBShipItPreviewTest extends FBBaseTest {
     invariant($error !== null, 'Expected error');
     \expect($error)->toContainSubstring('This patch contains renamed');
     $diffs = $result[0]['changeset']->getDiffs();
-    \expect(C\count($diffs))->toBePHPEqual(1);
-    \expect('src/shipit/file.php')->toBePHPEqual($diffs[0]['path']);
+    \expect(C\count($diffs))->toEqual(1);
+    \expect('src/shipit/file.php')->toEqual($diffs[0]['path']);
   }
 }

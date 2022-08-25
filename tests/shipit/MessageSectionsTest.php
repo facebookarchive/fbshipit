@@ -51,7 +51,7 @@ final class MessageSectionsTest extends BaseTest {
   ): void {
     $in = (new ShipItChangeset())->withMessage($message);
     $out = ShipItMessageSections::getSections($in, $valid);
-    \expect($out)->toBePHPEqual($expected);
+    \expect($out)->toEqual($expected);
   }
 
   public static function examplesForBuildMessage(

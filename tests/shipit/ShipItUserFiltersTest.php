@@ -24,7 +24,7 @@ final class ShipItUserFiltersTest extends BaseTest {
       );
     $changeset =
       ShipItUserFilters::rewriteAuthorFromGitHubAuthorLine($changeset);
-    \expect($changeset->getAuthor())->toBePHPEqual('github author');
+    \expect($changeset->getAuthor())->toEqual('github author');
   }
 
   public function testRewriteAuthorFromGitHubAuthorLineNoMatch(): void {
@@ -35,7 +35,7 @@ final class ShipItUserFiltersTest extends BaseTest {
       );
     $changeset =
       ShipItUserFilters::rewriteAuthorFromGitHubAuthorLine($changeset);
-    \expect($changeset->getAuthor())->toBePHPEqual('original author');
+    \expect($changeset->getAuthor())->toEqual('original author');
   }
 
   public function testRewriteAuthorFromGitHubAuthorLineMultiline(): void {
@@ -46,6 +46,6 @@ final class ShipItUserFiltersTest extends BaseTest {
       );
     $changeset =
       ShipItUserFilters::rewriteAuthorFromGitHubAuthorLine($changeset);
-    \expect($changeset->getAuthor())->toBePHPEqual('github author');
+    \expect($changeset->getAuthor())->toEqual('github author');
   }
 }

@@ -82,7 +82,7 @@ final class PathFiltersTest extends BaseTest {
       ShipItPathFilters::stripPaths($changeset, $patterns, $exceptions);
 
     \expect(Keyset\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual($expected_files);
+      ->toEqual($expected_files);
   }
 
   public static function examplesForMoveDirectories(): dict<
@@ -145,7 +145,7 @@ final class PathFiltersTest extends BaseTest {
     $changeset =
       ShipItPathFilters::moveDirectories($changeset, $map, $skip_patterns);
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual($expected);
+      ->toEqual($expected);
   }
 
   public static function examplesForStripExceptDirectories(
@@ -174,7 +174,7 @@ final class PathFiltersTest extends BaseTest {
       );
     $changeset = ShipItPathFilters::stripExceptDirectories($changeset, $roots);
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual($paths_expected);
+      ->toEqual($paths_expected);
   }
 
   public function testRewriteCppIncludeDirectivePaths(): void {
@@ -200,7 +200,7 @@ final class PathFiltersTest extends BaseTest {
         'folly/' => 'folly/',
       ],
     );
-    \expect($changeset->getDiffs()[0]['body'])->toBePHPEqual(
+    \expect($changeset->getDiffs()[0]['body'])->toEqual(
       Str\join(
         vec[
           '#include "src/test.h"',

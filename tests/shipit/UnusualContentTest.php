@@ -106,7 +106,7 @@ final class UnusualContentTest extends BaseTest {
     $changeset = \expect($changeset)->toNotBeNull();
 
     $message = $changeset->getMessage();
-    \expect($message)->toBePHPEqual("");
+    \expect($message)->toEqual("");
   }
 
   public function testStripFileListFromLongCommit(): void {
@@ -121,7 +121,7 @@ final class UnusualContentTest extends BaseTest {
     \expect($changeset->getSubject())->toContainSubstring(
       'This is a long commit message.',
     );
-    \expect($message)->toBePHPEqual(
+    \expect($message)->toEqual(
       "This is a really long commit message.\n\n".
       "And it also has a \"---\" block in it.\n\n".
       "---\n\n".
@@ -148,8 +148,8 @@ final class UnusualContentTest extends BaseTest {
       __DIR__.'/hg-diffs/has-pound-sign-in-subject-and-message.patch',
     );
     $changeset = ShipItRepoHG::getChangesetFromExportedPatch($header, $patch);
-    \expect($changeset->getSubject())->toBePHPEqual('# Testing pound signs');
-    \expect($changeset->getMessage())->toBePHPEqual(
+    \expect($changeset->getSubject())->toEqual('# Testing pound signs');
+    \expect($changeset->getMessage())->toEqual(
       "```\n# This is a code comment\n```",
     );
   }

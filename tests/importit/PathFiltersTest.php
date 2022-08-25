@@ -64,7 +64,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
       );
     $changeset = ImportItPathFilters::moveDirectories($changeset, $map);
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
-      ->toBePHPEqual($expected);
+      ->toEqual($expected);
   }
 
   public function testMoveDirectoriesThrowsWithDuplciationMappings(): void {
@@ -107,7 +107,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
         'folly/' => 'folly/',
       ],
     );
-    \expect($changeset->getDiffs()[0]['body'])->toBePHPEqual(
+    \expect($changeset->getDiffs()[0]['body'])->toEqual(
       Str\join(
         vec[
           '#include "deep/project/in/fbsource/test.h"',

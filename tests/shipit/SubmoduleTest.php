@@ -45,8 +45,8 @@ final class SubmoduleTest extends ShellTest {
     $old_pos = Str\search($change, '6d9dffd0233c53bb83e4daf5475067073df9cdca');
     $new_pos = Str\search($change, 'ae031dcc9594163f5b0c35e7026563f1c8372595');
 
-    \expect($old_pos)->toBePHPEqual(6);
-    \expect($new_pos)->toBePHPEqual(48);
+    \expect($old_pos)->toEqual(6);
+    \expect($new_pos)->toEqual(48);
   }
 
   public async function testCommitPatchWithSubmodule(): Awaitable<void> {
