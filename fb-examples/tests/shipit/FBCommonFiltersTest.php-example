@@ -50,42 +50,6 @@ final class FBCommonFiltersTest extends FBBaseTest {
     \expect($out->getMessage())->toEqual("Pulled By: JoelMarcey");
   }
 
-  public static function examplesForAuthorEmailCorrection(
-  ): vec<(string, string)> {
-    return vec[
-      tuple('Email change <fredemmott@fb.com>', 'Fred Emmott <fe@fb.com>'),
-      tuple(
-        'Ex Employee email change <sgolemon@fb.com>',
-        'Sara Golemon <saramg@fb.com>',
-      ),
-      tuple('Some Bot <svcscm@fb.com>', 'Some Bot <svcscm@fb.com>'),
-      tuple(
-        'Invalid User <thisuserdoesnotexist@fb.com>',
-        'Invalid User <thisuserdoesnotexist@fb.com>',
-      ),
-    ];
-  }
-
-  <<\DataProvider('examplesForAuthorEmailCorrection')>>
-  public async function testAuthorEmailCorrection(
-    string $in_author,
-    string $expected_author,
-  ): Awaitable<void> {
-    // fredemmott@ => fe@
-    $changeset = await (
-      (new ShipItChangeset())
-        ->withAuthor($in_author)
-      |> FBCommonFilters::genApplyAll(
-        $$,
-        shape(
-          'filterMessageSections/keepFields' => self::getKeepSections(),
-          'projectFullName' => '',
-        ),
-      )
-    );
-    \expect($changeset->getAuthor())->toEqual($expected_author);
-  }
-
   public async function testSVNAuthor(): Awaitable<void> {
     $fake_uuid = Str\repeat('a', 36);
     $in = (new ShipItChangeset())

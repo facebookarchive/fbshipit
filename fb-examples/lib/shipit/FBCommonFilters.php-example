@@ -65,8 +65,7 @@ final abstract class FBCommonFilters {
     );
     $changeset = await self::genRewriteMentions($changeset);
     $changeset = await self::genRewriteReviewers($changeset);
-    return await self::genRewriteAuthor($changeset)
-      |> self::stripCoAuthoredByLines($$);
+    return self::stripCoAuthoredByLines($changeset);
   }
 
   public static async function genStripSummariesByDefault(
@@ -102,18 +101,6 @@ final abstract class FBCommonFilters {
   ////////////////////////////////////////////
   ///// most users can stop reading here /////
   ////////////////////////////////////////////
-
-  public static async function genRewriteAuthor(
-    ShipItChangeset $changeset,
-  ): Awaitable<ShipItChangeset> {
-    return await ShipItUserFilters::genRewriteAuthorWithUserPattern(
-      $changeset,
-      FBToGitHubUserInfo::class,
-      // Email domains should match
-      // OpensourceConstants::FACEBOOK_EMAIL_DOMAINS_REGEX
-      re'/<(?<user>[^<]+)(@fb.com|@oculus.com|@wa.com|@instagram.com|@meta.com)>$/',
-    );
-  }
 
   public static function skipIfAlreadyOnGitHub(
     ShipItChangeset $changeset,
