@@ -16,41 +16,6 @@ namespace Facebook\ShipIt;
 use namespace HH\Lib\{C, Regex, Str}; // @oss-enable
 
 abstract final class ShipItUserFilters {
-  /** Rewrite authors that match a certain pattern.
-   *
-   * @param $pattern a regular expression defining a 'user' named capture
-   */
-  public static async function genRewriteAuthorWithUserPattern(
-    ShipItChangeset $changeset,
-    classname<ShipItUserInfo> $user_info,
-    Regex\Pattern<shape('user' => string, ...)> $pattern,
-  ): Awaitable<ShipItChangeset> {
-    $matches = Regex\first_match($changeset->getAuthor(), $pattern);
-    if ($matches is nonnull) {
-      $author =
-        await $user_info::genDestinationAuthorFromLocalUser($matches['user']);
-      if ($author !== null) {
-        return $changeset->withAuthor($author);
-      }
-    }
-    return $changeset;
-  }
-
-  /** Rewrite author fields created by git-svn or HgSubversion.
-   *
-   * Original author: foobar@uuid
-   * New author: Foo Bar <foobar@example.com>
-   */
-  public static async function genRewriteSVNAuthor(
-    ShipItChangeset $changeset,
-    classname<ShipItUserInfo> $user_info,
-  ): Awaitable<ShipItChangeset> {
-    return await self::genRewriteAuthorWithUserPattern(
-      $changeset,
-      $user_info,
-      re'/^(?<user>.*)@[a-f0-9-]{36}$/',
-    );
-  }
 
   public static async function genRewriteMentions(
     ShipItChangeset $changeset,

@@ -17,23 +17,6 @@ use namespace HH\Lib\Str; // @oss-enable
 use type Facebook\HackTest\DataProvider; // @oss-enable
 // @oss-disable: use type DataProvider;
 
-final class UserInfoTestImplementation extends ShipItUserInfo {
-  <<__Override>>
-  public static async function genDestinationAuthorFromLocalUser(
-    string $local_user,
-  ): Awaitable<string> {
-    $user = await self::genDestinationUserFromLocalUser($local_user);
-    return 'Example User <'.$user.'@example.com>';
-  }
-
-  <<__Override>>
-  public static async function genDestinationUserFromLocalUser(
-    string $local_user,
-  ): Awaitable<string> {
-    return $local_user.'-public';
-  }
-}
-
 <<\Oncalls('open_source')>>
 final class UserFiltersTest extends BaseTest {
   public static function examplesForGetMentions(
@@ -100,28 +83,5 @@ final class UserFiltersTest extends BaseTest {
     \expect(ShipItMentions::containsMention($changeset, '@foo'))->toBeTrue();
     \expect(ShipItMentions::containsMention($changeset, '@bar'))->toBeTrue();
     \expect(ShipItMentions::containsMention($changeset, '@baz'))->toBeFalse();
-  }
-
-  public static function examplesForSVNUserMapping(): vec<(string, string)> {
-    $fake_uuid = Str\repeat('a', 36);
-    return vec[
-      tuple('Foo <foo@example.com>', 'Foo <foo@example.com>'),
-      tuple('foo@'.$fake_uuid, 'Example User <foo-public@example.com>'),
-    ];
-  }
-
-  <<DataProvider('examplesForSVNUserMapping')>>
-  public async function testSVNUserMapping(
-    string $in,
-    string $expected,
-  ): Awaitable<void> {
-    $changeset = await (
-      (new ShipItChangeset())->withAuthor($in)
-      |> ShipItUserFilters::genRewriteSVNAuthor(
-        $$,
-        UserInfoTestImplementation::class,
-      )
-    );
-    \expect($changeset->getAuthor())->toEqual($expected);
   }
 }

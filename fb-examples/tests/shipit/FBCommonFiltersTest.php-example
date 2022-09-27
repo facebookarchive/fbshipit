@@ -50,17 +50,6 @@ final class FBCommonFiltersTest extends FBBaseTest {
     \expect($out->getMessage())->toEqual("Pulled By: JoelMarcey");
   }
 
-  public async function testSVNAuthor(): Awaitable<void> {
-    $fake_uuid = Str\repeat('a', 36);
-    $in = (new ShipItChangeset())
-      ->withAuthor('fredemmott@'.$fake_uuid);
-    $out = await ShipItUserFilters::genRewriteSVNAuthor(
-      $in,
-      FBToGitHubUserInfo::class,
-    );
-    \expect($out->getAuthor())->toEqual('Fred Emmott <fe@fb.com>');
-  }
-
   public static function exampleFacebookDirectories(): vec<(string, bool)> {
     return vec[
       /* tuple(string $path, bool $private) */

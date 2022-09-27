@@ -17,7 +17,6 @@ For example, Facebook uses it to:
 
  - read from Git or Mercurial (hg) repositories
  - write to Git or Mercurial (hg) repositories
- - rewrite `user@uuid` authors from HgSubversion/git-svn
  - remove files or directories matching certain patterns
  - remove/rewrite sections of commit messages
  - modify commit authors (for example, if all internal commits are authored by

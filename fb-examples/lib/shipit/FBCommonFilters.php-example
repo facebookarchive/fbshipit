@@ -56,9 +56,8 @@ final abstract class FBCommonFilters {
       )
       |> self::stripSevRevertSummary($$)
       |> self::delinkifyDifferentialURLs($$)
-      |> ShipItUserFilters::genRewriteSVNAuthor($$, FBToGitHubUserInfo::class)
+      |> self::genRestoreGitHubAuthor($$)
     );
-    $changeset = await self::genRestoreGitHubAuthor($changeset);
     $changeset = self::filterMessageSections(
       $changeset,
       await self::genKeepSections($changeset, $config),
