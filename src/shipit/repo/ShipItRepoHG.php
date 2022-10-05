@@ -23,8 +23,6 @@ final class ShipItRepoHGException extends ShipItRepoException {}
 class ShipItRepoHG extends ShipItRepo {
   private ?string $branch;
   const string COMMIT_SEPARATOR = '-~-~-~';
-  const string SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING_ENV_KEY =
-    'SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING';
 
   <<__Override>>
   public async function genSetBranch(string $branch): Awaitable<bool> {
@@ -157,10 +155,7 @@ class ShipItRepoHG extends ShipItRepo {
   }
 
   public static function renderPatch(ShipItChangeset $patch): string {
-
-    $return = self::shouldDisableHgNativePatchRendering()
-      ? self::renderGitHeader($patch)
-      : self::renderHgHeader($patch);
+    $return = self::renderHgHeader($patch);
 
     // Render the body as a Git extended diff format (original)
     // Note: This is not the default format consumed by Hg externally but is for Meta's
@@ -168,29 +163,6 @@ class ShipItRepoHG extends ShipItRepo {
     $return .= self::renderGitExtendedDiffPatchBodyForPatch($patch);
 
     return $return;
-  }
-
-  /**
-   * Determines if HG native patch rendering should be disabled.
-   *
-   * This condition is met if environment variable 'SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING'
-   * is set as long as that value is not 'false' (case insensitive)
-   */
-  private static function shouldDisableHgNativePatchRendering(): bool {
-    $disable_hg_native_patch_rendering_raw_value =
-      ShipItEnv::getEnv(self::SHIPIT_DISABLE_HG_NATIVE_PATCH_RENDERING_ENV_KEY);
-
-    if ($disable_hg_native_patch_rendering_raw_value is null) {
-      return false;
-    }
-
-    $comparison = Str\compare_ci(
-      Str\trim($disable_hg_native_patch_rendering_raw_value),
-      'false',
-    ) !==
-      0;
-
-    return $comparison;
   }
 
   private static function renderGitExtendedDiffPatchBodyForPatch(
@@ -227,21 +199,6 @@ class ShipItRepoHG extends ShipItRepo {
       "{$commit_message}\n\n";
 
     return $hg_header;
-  }
-
-  private static function renderGitHeader(ShipItChangeset $patch): string {
-    // Mon Sep 17 is a magic date used by format-patch to distinguish from real
-    // mailboxes. cf. https://git-scm.com/docs/git-format-patch
-    $commit_message = self::getCommitMessage($patch)
-      |> self::fixInlinePatchesInCommitMessage($$);
-    $ret = "From {$patch->getID()} Mon Sep 17 00:00:00 2001\n".
-      "From: {$patch->getAuthor()}\n".
-      "Date: ".
-      PHP\date('r', $patch->getTimestamp()).
-      "\n".
-      "Subject: [PATCH] {$commit_message}\n---\n\n";
-
-    return $ret;
   }
 
   public async function genPush(): Awaitable<void> {
