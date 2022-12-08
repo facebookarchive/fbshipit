@@ -99,7 +99,7 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
         ),
       ),
     ]);
-    $changeset = ImportItPathFilters::rewriteCppIncludeDirectivePaths(
+    $changeset = ImportItPathFilters::rewriteIncludeDirectivePaths(
       $changeset,
       dict[
         'deep/project/in/fbsource/' => 'src/',
@@ -114,6 +114,38 @@ final class PathFiltersTest extends \Facebook\ShipIt\BaseTest {
           '#include <functional>',
           '#include "other.h"',
           '#include <folly/something.h>',
+        ],
+        "\n",
+      ),
+    );
+  }
+
+  public function testRewriteThriftIncludeDirectivePaths(): void {
+    $changeset = (new \Facebook\ShipIt\ShipItChangeset())->withDiffs(vec[
+      shape(
+        'path' => 'junk',
+        'body' => Str\join(
+          vec[
+            'include "src/test.thrift"',
+            'include "other.thrift"',
+          ],
+          "\n",
+        ),
+      ),
+    ]);
+    $changeset = ImportItPathFilters::rewriteIncludeDirectivePaths(
+      $changeset,
+      dict[
+        'deep/project/in/fbsource/' => 'src/',
+        'root/ignored/' => '',
+        'folly/' => 'folly/',
+      ],
+    );
+    \expect($changeset->getDiffs()[0]['body'])->toEqual(
+      Str\join(
+        vec[
+          'include "deep/project/in/fbsource/test.thrift"',
+          'include "other.thrift"',
         ],
         "\n",
       ),

@@ -43,12 +43,12 @@ abstract final class ImportItPathFilters {
    *
    * E.g. `#include "src/header.h"` imports to `#include "deep/project/header.h"`.
    */
-  public static function rewriteCppIncludeDirectivePaths(
+  public static function rewriteIncludeDirectivePaths(
     \Facebook\ShipIt\ShipItChangeset $changeset,
     dict<string, string> $path_mappings,
   ): \Facebook\ShipIt\ShipItChangeset {
     $path_mappings = self::invertShipIt($path_mappings);
-    return \Facebook\ShipIt\ShipItPathFilters::rewriteCppIncludeDirectivePaths(
+    return \Facebook\ShipIt\ShipItPathFilters::rewriteIncludeDirectivePaths(
       $changeset,
       $path_mappings,
     );

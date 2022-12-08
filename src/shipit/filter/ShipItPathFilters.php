@@ -259,11 +259,13 @@ abstract final class ShipItPathFilters {
   }
 
   /**
-   * Rewrite C/C++ #include directives using path mappings.
+   * Rewrite C/C++ #include and Thrift include directives using path mappings.
    *
-   * E.g. `#include "deep/project/name.h"` exports to `#include "src/name.h"`
+   * E.g.
+   * 1. `#include "deep/project/name.h"` exports to `#include "src/name.h"`
+   * 2. `include "fbcode/glean/service.thrift"` exports to `include "glean/service.thrift"`
    */
-  public static function rewriteCppIncludeDirectivePaths(
+  public static function rewriteIncludeDirectivePaths(
     ShipItChangeset $changeset,
     dict<string, string> $path_mappings,
   ): ShipItChangeset {
@@ -278,7 +280,9 @@ abstract final class ShipItPathFilters {
     foreach ($changeset->getDiffs() as $diff) {
       $diff['body'] = Regex\replace_with(
         $diff['body'],
-        re"/#include [<\"](.*)[>\"]/",
+        // "#" is optional because Thrift include statements do not have a
+        // leading "#" but CXX includes do.
+        re"/#?include [<\"](.*)[>\"]/",
         ($match) ==> {
           $full_match = $match[0];
           $path = $match[1];
