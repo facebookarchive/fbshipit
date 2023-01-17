@@ -16,10 +16,8 @@ use namespace HH\Lib\{Regex, Str}; // @oss-enable
 
 type ShipItGitHubCredentials = shape(
   'name' => string,
-  'user' => ?string,
   'email' => string,
-  'password' => ?string,
-  'access_token' => ?string,
+  'access_token' => string,
 );
 
 abstract class ShipItGitHubUtils {
@@ -70,7 +68,7 @@ abstract class ShipItGitHubUtils {
           await self::genCloneAndVerifyRepo($origin, $local_path);
           break;
         }
-        $origin = self::authHttpsRemoteUrl($origin, $transport, $credentials);
+        $origin = self::authHttpsRemoteUrl($origin, $credentials);
         await self::genCloneAndVerifyRepo($origin, $local_path);
 
         await $git_config('user.name', $credentials['name'])->genRun();
@@ -81,26 +79,11 @@ abstract class ShipItGitHubUtils {
     await $git_config('remote.origin.url', $origin)->genRun();
   }
 
-  public static function authHttpsRemoteUrl(
+  final public static function authHttpsRemoteUrl(
     string $remote_url,
-    ShipItTransport $transport,
     ShipItGitHubCredentials $credentials,
   ): string {
-    if ($transport !== ShipItTransport::HTTPS) {
-      return $remote_url;
-    }
-    $access_token = $credentials['access_token'];
-    $auth_user = $access_token;
-    if ($auth_user === null) {
-      $user = $credentials['user'];
-      $password = $credentials['password'];
-      invariant(
-        $user is nonnull && $password is nonnull,
-        'Either an access token or user/password is required.',
-      );
-      $auth_user =
-        Str\format('%s:%s', PHP\urlencode($user), PHP\urlencode($password));
-    }
+    $auth_user = $credentials['access_token'];
     if (Str\search($remote_url, self::GIT_HTTPS_URL_PREFIX) === 0) {
       $prefix_len = Str\length(self::GIT_HTTPS_URL_PREFIX);
       return Str\slice($remote_url, 0, $prefix_len).

@@ -21,10 +21,8 @@ final class DemoGitHubUtils extends ShipItGitHubUtils {
   ): Awaitable<ShipItGitHubCredentials> {
     return shape(
       'name' => self::$committerName,
-      'user' => self::$committerUser,
       'email' => self::$committerEmail,
       'access_token' => 'ACCESS_TOKEN_HERE',
-      'password' => null,
     );
   }
 }

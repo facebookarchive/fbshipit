@@ -74,7 +74,6 @@ final class ShipItPushLfsPhase extends ShipItPhase {
       '/info/lfs';
     $auth_url = ShipItGitHubUtils::authHttpsRemoteUrl(
       $pushUrl,
-      ShipItTransport::HTTPS,
       await $github_utils_class::genCredentialsForProject(
         $this->organization,
         $this->project,
