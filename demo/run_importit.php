@@ -64,7 +64,7 @@ final class ImportDemoProject {
     try {
       await (new ShipItPhaseRunner($manifest, $phases))->genRun();
     } catch (ShipItExitException $e) {
-      exit($e->exitCode);
+      PHP\fb\exit($e->exitCode);
     }
   }
 }
