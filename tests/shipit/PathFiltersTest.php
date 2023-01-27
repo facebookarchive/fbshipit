@@ -84,10 +84,8 @@ final class PathFiltersTest extends BaseTest {
       ->toEqual($expected_files);
   }
 
-  public static function examplesForMoveDirectories(): dict<
-    string,
-    (dict<string, string>, vec<string>, vec<string>, vec<string>),
-  > {
+  public static function examplesForMoveDirectories(
+  ): dict<string, (dict<string, string>, vec<string>, vec<string>)> {
     return dict[
       'first takes precedence (first is more specific)' => tuple(
         dict[
@@ -96,7 +94,6 @@ final class PathFiltersTest extends BaseTest {
         ],
         vec['foo/orig_root_file', 'foo/public_tld/public_root_file'],
         vec['orig_root_file', 'public_root_file'],
-        vec[],
       ),
       // this mapping doesn't make sense given the behavior, just using it to
       // check that order matters
@@ -107,7 +104,6 @@ final class PathFiltersTest extends BaseTest {
         ],
         vec['foo/orig_root_file', 'foo/public_tld/public_root_file'],
         vec['orig_root_file', 'public_tld/public_root_file'],
-        vec[],
       ),
       'only one rule applied' => tuple(
         dict[
@@ -119,13 +115,6 @@ final class PathFiltersTest extends BaseTest {
           'bar/part of project foo',
           'project_bar/part of project bar',
         ],
-        vec[],
-      ),
-      'skipped file is not moved despite match' => tuple(
-        dict['foo/' => ''],
-        vec['foo/bar', 'foo/car'],
-        vec['foo/bar', 'car'],
-        vec['@^foo/bar$@'],
       ),
     ];
   }
@@ -135,14 +124,12 @@ final class PathFiltersTest extends BaseTest {
     dict<string, string> $map,
     vec<string> $in,
     vec<string> $expected,
-    vec<string> $skip_patterns,
   ): void {
     $changeset = (new ShipItChangeset())
       ->withDiffs(
         Vec\map($in, $path ==> shape('path' => $path, 'body' => 'junk')),
       );
-    $changeset =
-      ShipItPathFilters::moveDirectories($changeset, $map, $skip_patterns);
+    $changeset = ShipItPathFilters::moveDirectories($changeset, $map);
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
       ->toEqual($expected);
   }

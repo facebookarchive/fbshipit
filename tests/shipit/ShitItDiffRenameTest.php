@@ -38,7 +38,7 @@ final class ShitItDiffRenameTest extends ShellTest {
         "fbcode/opensource/github_actions/tagit/TagIt.yml",
       "" => "fbcode/opensource/phabtest_fbsource/",
     ];
-    $changeset = ShipItPathFilters::moveDirectories($changeset, $map, vec[]);
+    $changeset = ShipItPathFilters::moveDirectories($changeset, $map);
     \expect(C\count($changeset->getDiffs()))->toEqual(1);
     $diff = $changeset->getDiffs()[0];
     \expect($diff['path'])->toEqual(

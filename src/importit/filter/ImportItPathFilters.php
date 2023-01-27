@@ -27,14 +27,10 @@ abstract final class ImportItPathFilters {
   public static function moveDirectories(
     \Facebook\ShipIt\ShipItChangeset $changeset,
     dict<string, string> $shipit_mapping,
-    vec<string> $skip_patterns = vec[],
   ): \Facebook\ShipIt\ShipItChangeset {
     $mapping = self::invertShipIt($shipit_mapping);
-    return \Facebook\ShipIt\ShipItPathFilters::moveDirectories(
-      $changeset,
-      $mapping,
-      $skip_patterns,
-    );
+    return
+      \Facebook\ShipIt\ShipItPathFilters::moveDirectories($changeset, $mapping);
   }
 
   /**

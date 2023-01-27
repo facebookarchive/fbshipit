@@ -75,15 +75,10 @@ abstract final class ShipItPathFilters {
   public static function moveDirectories(
     ShipItChangeset $changeset,
     dict<string, string> $mapping,
-    vec<string> $skip_patterns = vec[],
   ): ShipItChangeset {
     return self::rewritePaths(
       $changeset,
       $path ==> {
-        $match = self::matchesAnyPattern($path, $skip_patterns);
-        if ($match !== null) {
-          return $path;
-        }
         foreach ($mapping as $src => $dest) {
           if (!Str\starts_with($path, $src)) {
             continue;
