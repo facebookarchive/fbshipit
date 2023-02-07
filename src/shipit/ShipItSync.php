@@ -23,6 +23,22 @@ final class ShipItMultipleImportPathsException
   extends ShipItImportDisallowedException {}
 
 final class ShipItSync {
+  <<__Reifiable>>
+  const type TSyncStats = shape(
+    'source' => shape(
+      'id' => ?string,
+      'timestamp' => ?int,
+      'branch' => string,
+    ),
+    'destination' => shape(
+      'id' => ?string,
+      'timestamp' => ?int,
+      'branch' => string,
+    ),
+    'changesets' => vec<string>,
+    'skipped' => vec<string>,
+  );
+
   public function __construct(
     private ShipItManifest $manifest,
     private ShipItSyncConfig $syncConfig,
@@ -221,25 +237,32 @@ final class ShipItSync {
     $destination_repo = await $this->genRepo<ShipItDestinationRepo>();
     $destination_changeset = await $destination_repo
       ->genHeadChangeset();
-    PHP\file_put_contents(
+    $this->dumpSyncStatsToFile(
       $filename,
-      \json_encode(dict[
-        'source' => dict[
+      shape(
+        'source' => shape(
           'id' => $source_changeset?->getID(),
           'timestamp' => $source_changeset?->getTimestamp(),
           'branch' => $this->manifest->getSourceBranch(),
-        ],
-        'destination' => dict[
+        ),
+        'destination' => shape(
           'id' => $destination_changeset?->getID(),
           'timestamp' => $destination_changeset?->getTimestamp(),
           'branch' => $destination_branch,
-        ],
+        ),
         'changesets' =>
           Vec\map($changesets_applied, $changeset ==> $changeset->getID()),
         'skipped' =>
           Vec\map($changesets_skipped, $changeset ==> $changeset->getID()),
-      ]),
+      ),
     );
+  }
+
+  private function dumpSyncStatsToFile(
+    string $filename,
+    self::TSyncStats $sync_stats,
+  ): void {
+    PHP\file_put_contents($filename, \json_encode($sync_stats));
   }
 
   /** Sync the change ONLY if:
