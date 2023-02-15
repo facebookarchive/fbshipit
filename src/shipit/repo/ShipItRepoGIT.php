@@ -538,12 +538,13 @@ class ShipItRepoGIT extends ShipItRepo {
       $rev = Str\trim(await $this->genGitCommand('rev-parse', 'HEAD'));
     }
 
-    // .gitattributes and .gitignore are excluded by default, we want them
-    // included so that we can correctly verify repos that have these files
-    // at the root of the source (and create new destination repos for the same)
+    // Some projects have a .gitattributes file that does things we don't want
+    // (like exclude files from exports, and enabling format subsitutions).
+    // We need to disable all that in order to get a correct base to compare
+    // against.
     PHP\file_put_contents(
       Str\format('%s/.git/info/attributes', $this->getPath()),
-      ".gitattributes !export-ignore\n.gitignore !export-ignore",
+      "* !export-ignore -export-subst",
     );
 
     $dest = new ShipItTempDir('git-export');
