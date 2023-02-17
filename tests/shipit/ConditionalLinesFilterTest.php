@@ -19,7 +19,6 @@ use type Facebook\HackTest\DataProvider; // @oss-enable
 <<\Oncalls('open_source')>>
 final class ConditionalLinesFilterTest extends BaseTest {
   const string COMMENT_LINES_NO_COMMENT_END = 'comment-lines-no-comment-end';
-  const string COMMENT_LINES_COMMENT_END = 'comment-lines-comment-end';
 
   private static function getChangeset(string $name): ShipItChangeset {
     $header = \file_get_contents(__DIR__.'/git-diffs/'.$name.'.header');
@@ -46,51 +45,19 @@ final class ConditionalLinesFilterTest extends BaseTest {
     \expect($diff)->toNotMatchRegex(re"/ @x-oss-disable$/");
   }
 
-  public function testCommentingLinesWithCommentEnd(): void {
-    $changeset = self::getChangeset(self::COMMENT_LINES_COMMENT_END);
-    $changeset = ShipItConditionalLinesFilter::commentLines(
-      $changeset,
-      null,
-      '@x-oss-disable',
-      '/*',
-      '*/',
-    );
-    $diffs = $changeset->getDiffs();
-    \expect(C\count($diffs))->toEqual(1);
-    $diff = $diffs[0]['body'];
-
-    \expect($diff)->toMatchRegex(re"/^\+\/\* @x-oss\-disable\: baz \*\/$/m");
-    \expect($diff)->toMatchRegex(re"/^\-  \/\* @x-oss\-disable\: derp \*\/$/m");
-    \expect($diff)->toNotMatchRegex(re"/ @x-oss-disable \*\/$/");
-  }
-
-  public static function testFilesProvider(): vec<(string, string, ?string)> {
-    return vec[
-      tuple(self::COMMENT_LINES_NO_COMMENT_END, '//', null),
-      tuple(self::COMMENT_LINES_COMMENT_END, '/*', '*/'),
-    ];
-  }
-
-  <<DataProvider('testFilesProvider')>>
-  public function testUncommentLines(
-    string $name,
-    string $comment_start,
-    ?string $comment_end,
-  ): void {
-    $changeset = self::getChangeset($name);
+  public function testUncommentLines(): void {
+    $changeset = self::getChangeset(self::COMMENT_LINES_NO_COMMENT_END);
     $commented = ShipItConditionalLinesFilter::commentLines(
       $changeset,
       null,
       '@x-oss-disable',
-      $comment_start,
-      $comment_end,
+      '//',
     );
     $uncommented = ShipItConditionalLinesFilter::uncommentLines(
       $commented,
       null,
       '@x-oss-disable',
-      $comment_start,
-      $comment_end,
+      '//',
     );
     \expect($commented->getDiffs()[0]['body'])->toNotEqual(
       $changeset->getDiffs()[0]['body'],

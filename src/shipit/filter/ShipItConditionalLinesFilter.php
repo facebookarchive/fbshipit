@@ -20,7 +20,6 @@ use namespace HH\Lib\{Str, Vec}; // @oss-enable
  *
  * Eg if:
  *  - comment start is '//'
- *  - comment end is null
  *  - marker is '@x-oss-disable'
  *
  * commentLines():
@@ -36,22 +35,17 @@ final abstract class ShipItConditionalLinesFilter {
     ?string $path_regex,
     string $marker,
     string $comment_start,
-    ?string $comment_end = null,
     bool $remove_content = false,
   ): ShipItChangeset {
     $pattern = '/^([-+ ]\s*)(\S.*) '.
       PHP\preg_quote($comment_start, '/').
       ' '.
       PHP\preg_quote($marker, '/').
-      ($comment_end === null ? '' : (' '.PHP\preg_quote($comment_end, '/'))).
       '$/';
 
     $replacement = '\\1'.$comment_start.' '.$marker;
     if (!$remove_content) {
       $replacement .= ': \\2';
-    }
-    if ($comment_end !== null) {
-      $replacement .= ' '.$comment_end;
     }
 
     return self::process($changeset, $path_regex, $pattern, $replacement);
@@ -62,19 +56,14 @@ final abstract class ShipItConditionalLinesFilter {
     ?string $path_regex,
     string $marker,
     string $comment_start,
-    ?string $comment_end = null,
   ): ShipItChangeset {
     $pattern = '/^([-+ ]\s*)'.
       PHP\preg_quote($comment_start, '/').
       ' '.
       PHP\preg_quote($marker, '/').
       ': (.+)'.
-      ($comment_end === null ? '' : (' '.PHP\preg_quote($comment_end, '/'))).
       '$/';
     $replacement = '\\1\\2 '.$comment_start.' '.$marker;
-    if ($comment_end !== null) {
-      $replacement .= ' '.$comment_end;
-    }
 
     return self::process($changeset, $path_regex, $pattern, $replacement);
   }
