@@ -493,13 +493,14 @@ class ShipItRepoGIT extends ShipItRepo {
       '7',
     );
     await $this->genGitCommand('lfs', 'fetch', '--recent');
+    await $this->genGitCommand('lfs', 'pull');
     await $this->genGitCommand(
       'config',
       '--local',
       'lfs.pushurl',
       $push_endpoint,
     );
-    await $this->genGitCommand('lfs', 'push', 'origin', $this->branch);
+    await $this->genGitCommand('lfs', 'push', '--all', 'origin', $this->branch);
   }
 
   <<__Override>>
