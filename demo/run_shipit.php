@@ -65,7 +65,8 @@ final class ShipDemoProject {
     try {
       await (new ShipItPhaseRunner($manifest, $phases))->genRun();
     } catch (ShipItExitException $e) {
-      PHP\fb\exit($e->exitCode);
+      exit($e->exitCode); // @oss-enable
+      // @oss-disable: PHP\fb\exit($e->exitCode);
     }
   }
 }
