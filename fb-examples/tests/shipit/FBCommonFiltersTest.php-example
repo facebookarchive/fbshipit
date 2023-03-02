@@ -29,6 +29,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getAuthor())->toEqual($in->getAuthor());
@@ -43,6 +46,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getAuthor())->toEqual('Fred Emmott <fe@meta.com>');
@@ -83,6 +89,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
 
@@ -107,6 +116,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect(Vec\map($changeset->getDiffs(), $diff ==> $diff['path']))
@@ -121,6 +133,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual('');
@@ -134,6 +149,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual("Summary:\nTest diff\nblah");
@@ -147,6 +165,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual('');
@@ -181,6 +202,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual(
@@ -195,6 +219,9 @@ final class FBCommonFiltersTest extends FBBaseTest {
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual('Summary: cause_a_sev_many_files');
@@ -212,6 +239,9 @@ Differential Revision: D1234567',
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toEqual("Differential Revision: D1234567");
@@ -228,6 +258,9 @@ Differential Revision: D1234567',
           shape(
             'filterMessageSections/keepFields' => self::getKeepSections(),
             'projectFullName' => '',
+            'stripCommonFiles/exceptions' => vec[],
+            'keepTags' => false,
+            'referencePullRequestNumber' => true,
           ),
         )
       )->getMessage(),
@@ -252,6 +285,9 @@ Differential Revision: D1234567',
           shape(
             'filterMessageSections/keepFields' => self::getKeepSections(),
             'projectFullName' => 'facebook/fbshipit',
+            'stripCommonFiles/exceptions' => vec[],
+            'keepTags' => false,
+            'referencePullRequestNumber' => true,
           ),
         )
       )->getMessage(),
@@ -280,6 +316,9 @@ Differential Revision: D1234567',
           shape(
             'filterMessageSections/keepFields' => self::getKeepSections(),
             'projectFullName' => 'facebook/fbshipit',
+            'stripCommonFiles/exceptions' => vec[],
+            'keepTags' => false,
+            'referencePullRequestNumber' => true,
           ),
         )
       )->getMessage(),
@@ -441,6 +480,9 @@ This fixes a bug.';
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => 'facebook/fbshipit',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($changeset->getSubject())->toEqual($original_subject.' (#42)');
@@ -463,6 +505,9 @@ cause_a_sev_many_files';
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($changeset->getSubject())->toEqual($original_subject.' (#42)');
@@ -484,6 +529,9 @@ So is @[12345:This] but with a greedy test char: ] foo
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     $expected_message = 'Summary:
@@ -510,6 +558,9 @@ Name2';
         shape(
           'filterMessageSections/keepFields' => self::getKeepSections(),
           'projectFullName' => '',
+          'stripCommonFiles/exceptions' => vec[],
+          'keepTags' => false,
+          'referencePullRequestNumber' => true,
         ),
       );
     })
@@ -522,6 +573,9 @@ Name2';
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($changeset_2->getMessage())->toEqual('');
@@ -537,6 +591,9 @@ Name2';
       shape(
         'filterMessageSections/keepFields' => self::getKeepSections(),
         'projectFullName' => '',
+        'stripCommonFiles/exceptions' => vec[],
+        'keepTags' => false,
+        'referencePullRequestNumber' => true,
       ),
     );
     \expect($out->getMessage())->toNotContainSubstring("Co-authored-by");

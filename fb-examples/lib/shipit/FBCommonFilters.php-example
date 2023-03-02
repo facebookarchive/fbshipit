@@ -21,22 +21,19 @@ final abstract class FBCommonFilters {
   public static async function genApplyAll(
     ShipItChangeset $changeset,
     shape(
-      ?'stripCommonFiles/exceptions' => vec<string>,
+      'stripCommonFiles/exceptions' => vec<string>,
       'filterMessageSections/keepFields' => keyset<string>,
-      ?'keepTags' => bool,
-      ?'referencePullRequestNumber' => bool,
+      'keepTags' => bool,
+      'referencePullRequestNumber' => bool,
       'projectFullName' => string,
     ) $config,
   ): Awaitable<ShipItChangeset> {
     $changeset = await (
       self::allowEmptyCommit($changeset)
       |> self::skipIfAlreadyOnGitHub($$)
-      |> self::stripCommonFiles(
-        $$,
-        $config['stripCommonFiles/exceptions'] ?? vec[],
-      )
+      |> self::stripCommonFiles($$, $config['stripCommonFiles/exceptions'])
       |> self::stripSubjectMergePrefix($$)
-      |> self::genStripSubjectTags($$, $config['keepTags'] ?? false)
+      |> self::genStripSubjectTags($$, $config['keepTags'])
     )
       |> self::stripEmptyTestPlans($$)
       |> self::stripCommands($$)
@@ -45,7 +42,7 @@ final abstract class FBCommonFilters {
       $changeset,
       $config['projectFullName'],
     );
-    if ($config['referencePullRequestNumber'] ?? true) {
+    if ($config['referencePullRequestNumber']) {
       $changeset = self::referencePullRequestNumber($changeset);
     }
     $changeset = await (
