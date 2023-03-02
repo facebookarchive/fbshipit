@@ -124,7 +124,7 @@ function stripslashes(string $str): string {
 function preg_match(
   string $pattern,
   string $subject,
-  inout varray_or_darray<string> $matches,
+  inout vec_or_dict<string> $matches,
   int $flags = 0,
   int $offset = 0,
 ): int {
@@ -157,7 +157,7 @@ function ctype_space(mixed $text): bool {
 function preg_match_all(
   string $pattern,
   string $subject,
-  inout varray_or_darray<mixed> $matches,
+  inout vec_or_dict<mixed> $matches,
   int $flags = 0,
   int $offset = 0,
 ): mixed {
@@ -206,7 +206,7 @@ function fclose(resource $handle): bool {
   return \fclose($handle);
 }
 
-function proc_get_status(resource $process): darray<string, dynamic> {
+function proc_get_status(resource $process): dict<string, dynamic> {
   return \proc_get_status($process);
 }
 
@@ -259,6 +259,6 @@ function gettype(mixed $v): string {
 function getopt(
   string $options,
   mixed $longopts = null,
-): darray<arraykey, dynamic> {
+): dict<arraykey, dynamic> {
   return \getopt($options, $longopts);
 }
