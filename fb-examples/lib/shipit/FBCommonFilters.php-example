@@ -38,10 +38,6 @@ final abstract class FBCommonFilters {
       |> self::stripEmptyTestPlans($$)
       |> self::stripCommands($$)
       |> self::stripAccept2Ship($$);
-    $changeset = await FBDiffFilters::genAddCommitLinksToDiffNumbers(
-      $changeset,
-      $config['projectFullName'],
-    );
     if ($config['referencePullRequestNumber']) {
       $changeset = self::referencePullRequestNumber($changeset);
     }
