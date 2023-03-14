@@ -314,7 +314,6 @@ final abstract class FBCommonFilters {
       ShipItMessageSectionHeaders::FACEBOOK,
       ShipItMessageSectionHeaders::INTERNAL,
       ShipItMessageSectionHeaders::GITHUB_AUTHOR,
-      ShipItMessageSectionHeaders::GITHUB_PR_SYNC,
       ShipItMessageSectionHeaders::TEST_PLAN,
       ShipItMessageSectionHeaders::REVIEWERS,
       ShipItMessageSectionHeaders::REVIEWED_BY,

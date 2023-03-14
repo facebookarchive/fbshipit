@@ -7,8 +7,6 @@ Summary:
 Closes https://github.com/facebook/react-native/pull/5923
 Github Author: Brent Vatne <brentvatne@gmail.com>
 
-Github PR Sync: {sync, type="child", parent="github", parentrepo="facebook/react-native", parentprnum="5923", parentprfbid="777253142406666"}
-
 Test Plan: Imported from GitHub, without a `Test Plan:` line.
 
 Reviewers: svcscm

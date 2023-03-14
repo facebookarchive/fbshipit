@@ -19,7 +19,6 @@ enum ShipItMessageSectionHeaders: string as string {
   FACEBOOK = 'facebook';
   INTERNAL = 'internal';
   GITHUB_AUTHOR = 'github author';
-  GITHUB_PR_SYNC = 'github pr sync';
   TEST_PLAN = 'test plan';
   TESTS = 'tests'; // Phabricator alias for Test Plan
   REVIEWERS = 'reviewers';
