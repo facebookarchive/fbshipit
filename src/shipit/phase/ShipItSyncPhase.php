@@ -28,7 +28,6 @@ final class ShipItSyncPhase extends ShipItPhase {
     private ?ShipItSyncConfig::TPostFilterChangesetsFn $postFilterChangesets =
       null,
     private bool $allowEmptyCommit = false,
-    private ?ShipItSyncConfig::TStatsFn $statsFunction = null,
   ) {}
 
   <<__Override>>
@@ -126,7 +125,6 @@ final class ShipItSyncPhase extends ShipItPhase {
       ->withSkippedSourceCommits($this->skippedSourceCommits)
       ->withPatchesDirectory($this->patchesDirectory)
       ->withStatsFilename($this->statsFilename)
-      ->withStatsFunction($this->statsFunction)
       ->withAllowEmptyCommits($this->allowEmptyCommit)
       ->withShouldDoSubmodules($this->shouldDoSubmodules)
       ->withNativeRenames($this->nativeRenames);
