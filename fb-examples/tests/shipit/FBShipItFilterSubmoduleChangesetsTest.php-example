@@ -25,9 +25,7 @@ final class FBShipItFilterSubmoduleChangesetsTest extends ShellTest {
       ];
     }
     return (new ShipItChangeset())
-      ->withAuthor(
-        \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
-      )
+      ->withAuthor(\OpensourceBot::getCommitAuthorLine())
       ->withSubject(FBShipItConfig::UPDATE_SUBMODULE_SUBJECT)
       ->withMessage(
         'Updating submodules
@@ -90,7 +88,7 @@ Reviewed By: nobody',
     $merged_changesets = $config_object->mergeSubmoduleChangesets($changesets);
     \expect(C\count($merged_changesets))->toEqual(4);
     \expect($merged_changesets[0]->getAuthor())->toEqual(
-      \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
+      \OpensourceBot::getCommitAuthorLine(),
     );
     \expect($merged_changesets[0]->getSubject())->toEqual(
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
@@ -114,7 +112,7 @@ Test Plan:',
     \expect($merged_changesets[1])->toEqual($changesets[2]);
     \expect($merged_changesets[2])->toEqual($changesets[3]);
     \expect($merged_changesets[3]->getAuthor())->toEqual(
-      \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
+      \OpensourceBot::getCommitAuthorLine(),
     );
     \expect($merged_changesets[3]->getSubject())->toEqual(
       FBShipItConfig::UPDATE_SUBMODULE_SUBJECT,
@@ -130,9 +128,7 @@ Test Plan:',
   public function testMergeSubmoduleChangesetsNoMerge(): void {
     $changesets = vec[
       (new ShipItChangeset())
-        ->withAuthor(
-          \SandcastleOpensourceUpdateProjectSHAsCommand::UPDATE_SUBMODULE_AUTHOR,
-        )
+        ->withAuthor(\OpensourceBot::getCommitAuthorLine())
         ->withDiffs(vec[
           shape('path' => 'dep_a.txt', 'body' => '9'),
           shape('path' => 'dep_b.txt', 'body' => '9'),
