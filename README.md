@@ -1,6 +1,9 @@
 # FBShipIt
 
-[![CI](https://github.com/facebook/fbshipit/workflows/CI/badge.svg)](https://github.com/facebook/fbshipit/actions?query=branch%3Amaster)
+NOTE: This project is no longer maintained. Meta has switched to using a
+(currently) closed-source solution to this that we hope to release in the
+future. Existing Open Source users can check out
+[Copybara](https://github.com/google/copybara).
 
 FBShipIt is a library written in [Hack](http://hacklang.org) for
 copying commits from one repository to another.
